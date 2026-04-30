@@ -1,0 +1,85 @@
+@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@plugin "daisyui/index.js";
+
+@theme {
+    --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, system-ui, 'Helvetica Neue', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-vanilla-custard-50: #f6f8ec;
+    --color-vanilla-custard-100: #eef2d9;
+    --color-vanilla-custard-200: #dde5b3;
+    --color-vanilla-custard-300: #cbd88d;
+    --color-vanilla-custard-400: #bacb67;
+    --color-vanilla-custard-500: #a9be41;
+    --color-vanilla-custard-600: #879834;
+    --color-vanilla-custard-700: #657227;
+    --color-vanilla-custard-800: #444c1a;
+    --color-vanilla-custard-900: #22260d;
+    --color-vanilla-custard-950: #181b09;
+
+    --color-emerald-50: #eef7f0;
+    --color-emerald-100: #ddeee0;
+    --color-emerald-200: #bbddc2;
+    --color-emerald-300: #98cda3;
+    --color-emerald-400: #76bc84;
+    --color-emerald-500: #54ab65;
+    --color-emerald-600: #438951;
+    --color-emerald-700: #32673d;
+    --color-emerald-800: #224429;
+    --color-emerald-900: #112214;
+    --color-emerald-950: #0c180e;
+
+    --color-fern-50: #eef7ef;
+    --color-fern-100: #dcefdf;
+    --color-fern-200: #b9dfbf;
+    --color-fern-300: #96cf9f;
+    --color-fern-400: #73bf7f;
+    --color-fern-500: #50af5e;
+    --color-fern-600: #408c4c;
+    --color-fern-700: #306939;
+    --color-fern-800: #204626;
+    --color-fern-900: #102313;
+    --color-fern-950: #0b180d;
+
+    --color-dark-spruce-50: #eef7f1;
+    --color-dark-spruce-100: #ddeee3;
+    --color-dark-spruce-200: #badec6;
+    --color-dark-spruce-300: #98cdaa;
+    --color-dark-spruce-400: #75bd8d;
+    --color-dark-spruce-500: #53ac71;
+    --color-dark-spruce-600: #428a5a;
+    --color-dark-spruce-700: #326744;
+    --color-dark-spruce-800: #21452d;
+    --color-dark-spruce-900: #112217;
+    --color-dark-spruce-950: #0c1810;
+
+    --color-shadow-grey-50: #eff1f5;
+    --color-shadow-grey-100: #dfe3ec;
+    --color-shadow-grey-200: #c0c8d8;
+    --color-shadow-grey-300: #a0acc5;
+    --color-shadow-grey-400: #8191b1;
+    --color-shadow-grey-500: #61759e;
+    --color-shadow-grey-600: #4e5e7e;
+    --color-shadow-grey-700: #3a465f;
+    --color-shadow-grey-800: #272f3f;
+    --color-shadow-grey-900: #131720;
+    --color-shadow-grey-950: #0e1016;
+
+}
+
+#typing-text::after {
+  content: "|";
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
