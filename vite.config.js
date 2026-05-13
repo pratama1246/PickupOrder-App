@@ -11,6 +11,14 @@ export default defineConfig({
         }),
     ],
     server: {
+        host: '0.0.0.0',
+        port: 5173,
+        hmr: {
+            host: 'vite.mytamakikii.web.id',
+            protocol: 'wss',
+            clientPort: 443,
+        },
+        allowedHosts: ['vite.mytamakikii.web.id'],
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },

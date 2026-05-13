@@ -1,7 +1,7 @@
 <div class="card bg-base-100 rounded-xl shadow-sm p-0 md:p-6 flex flex-col md:flex-row gap-0 md:gap-6">
-    <figure class="w-auto md:w-54 h-auto overflow-hidden rounded-fit md:rounded-2xl">
+    <figure class="w-auto md:w-56 h-auto overflow-hidden rounded-fit md:rounded-2xl">
         <img
-            src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+            src="{{ asset('assets/food/es teh.jpg') }}"
             class="w-full h-full object-cover"
             alt="Shoes"
         />
@@ -21,9 +21,9 @@
             <span>🕒 07.00–16.00</span>
         </div>
         <div class="mt-auto flex justify-end">
-            <button class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-lg w-full md:w-fit">
+            <a href="/kantin" class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-lg w-full md:w-fit">
                 Lihat Menu
-            </button>
+            </a>
         </div>
     </div>
 </div>
