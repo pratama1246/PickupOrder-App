@@ -17,29 +17,30 @@
 
     {{-- Header Section --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
-        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+        <div class="max-w-8xl flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
             <div>
-                <h1 class="text-2xl sm:text-4xl font-extrabold text-base-content mb-2">Detail Pesanan</h1>
+                <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Detail Pesanan</h1>
                 <p class="text-base-content/70 text-sm sm:text-lg font-medium">Menampilkan detail dari daftar pesanan yang pernah dibuat pengguna.</p>
             </div>
-            <button class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-lg font-bold text-sm w-full sm:w-auto">
-                Pesan Lagi
-            </button>
         </div>
     </section>
 
     {{-- Order Detail Card Section --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
-        <div class="max-w-4xl mx-auto space-y-6">
+        <div class="max-w-8xl">
+            <div class="max-w-4xl space-y-6">
             
             <div class="bg-vanilla-custard-50 border border-base-content/30 rounded-3xl p-4 sm:p-8 shadow-sm">
                 
                 {{-- Top Header --}}
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 border-b border-base-content/20 pb-6 mb-6">
                     <div>
-                        <h2 class="text-lg sm:text-2xl font-extrabold text-base-content mb-1">No. Order : PNC-123455478836</h2>
-                        <x-status-badge status="Selesai" />
+                        <h2 class="text-lg sm:text-2xl font-bold text-base-content mb-1">No. Order : PNC-123455478836</h2>
+                        <x-status-badge status="Diproses" />
                     </div>
+                    <button class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-lg font-bold text-sm w-full sm:w-auto">
+                        Pesan Lagi
+                    </button>
                 </div>
 
                 {{-- Info Box --}}
@@ -104,8 +105,8 @@
                 </div>
 
             </div>
-
         </div>
-    </section>
+    </div>
+</section>
 </main>
 @endsection

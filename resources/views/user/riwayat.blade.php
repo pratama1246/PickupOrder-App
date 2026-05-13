@@ -16,7 +16,7 @@
 
     {{-- Header Section --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-8xl">
             <h1 class="text-2xl sm:text-4xl font-extrabold text-base-content mb-2">Riwayat Pesanan</h1>
             <p class="text-base-content/70 text-sm sm:text-lg font-medium">Menampilkan daftar pesanan yang pernah dibuat pengguna.</p>
         </div>
@@ -24,7 +24,7 @@
 
     {{-- Filter and Search Section --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 mb-8">
-        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div class="max-w-8xl flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             {{-- Filter Button --}}
             <button class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content text-sm font-bold border-none rounded-full px-6 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -33,16 +33,22 @@
                 Filter By:
             </button>
             
-            {{-- Search --}}
-            <input type="text" placeholder="Cari riwayat pesanan..." class="input input-bordered input-md w-full sm:max-w-[18rem] border-base-content/40 rounded-full focus:outline-none focus:border-base-content font-medium text-sm sm:text-base" />
+            {{-- Search Bar --}}
+            <label class="input input-bordered flex items-center gap-2 w-full sm:max-w-md shadow-sm rounded-full border-base-content/40 focus-within:border-base-content input-md sm:pl-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="search" class="grow text-sm sm:text-base font-medium pl-1" placeholder="Cari riwayat pesanan..." />
+            </label>
         </div>
     </section>
 
     {{-- Order List Section --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
-        <div class="max-w-4xl mx-auto space-y-6">
-            
-            {{-- Card Riwayat --}}
+        <div class="max-w-8xl">
+            <div class="max-w-4xl space-y-6">
+                
+                {{-- Card Riwayat --}}
             <div class="bg-vanilla-custard-50 border border-base-content/30 rounded-3xl p-4 sm:p-10 shadow-sm">
                 
                 {{-- Top Header of Card --}}
@@ -81,7 +87,7 @@
 
                 {{-- Action Buttons --}}
                 <div class="flex flex-col sm:flex-row justify-end gap-3 mt-6 sm:mt-8">
-                    <a href="/riwayat/detail" class="btn bg-[#d9d9d9] hover:bg-gray-400 text-black border-none w-full sm:w-auto px-8 py-2 min-h-0 h-auto rounded-md font-bold text-sm">
+                    <a href="/riwayat/detail" class="btn bg-base-300 hover:bg-base-400 text-base-content border-none w-full sm:w-auto px-8 py-2 min-h-0 h-auto rounded-md font-bold text-sm">
                         Detail
                     </a>
                     <button class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-8 py-2 min-h-0 h-auto rounded-md font-bold text-sm">
@@ -91,6 +97,7 @@
 
             </div>
 
+            </div>
         </div>
     </section>
 </main>

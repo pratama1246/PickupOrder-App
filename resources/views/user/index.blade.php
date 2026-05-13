@@ -36,7 +36,7 @@
                     </span>
                 </h2>
 
-                <p class="text-sm sm:text-base text-base-content/60 max-w-md mx-auto lg:mx-0 mb-8 leading-relaxed">
+                <p class="text-sm sm:text-base text-base-content/70 font-medium max-w-md mx-auto lg:mx-0 mb-8 leading-relaxed">
                     Platform pemesanan makanan kampus yang cepat, efisien, dan dirancang untuk seluruh Civitas Akademik Politeknik Negeri Cilacap.
                 </p>
 
