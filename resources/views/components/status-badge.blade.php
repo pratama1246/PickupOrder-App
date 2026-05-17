@@ -24,6 +24,6 @@
     $style = $config[$statusLower] ?? ['bg' => 'bg-gray-200', 'text' => 'text-gray-900'];
 @endphp
 
-<span {{ $attributes->merge(['class' => "{$style['bg']} {$style['text']} text-xs sm:text-sm font-bold px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-md inline-block shadow-sm"]) }}>
+<span {{ $attributes->merge(['class' => "{$style['bg']} {$style['text']} text-xs sm:text-sm font-medium px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-md inline-block shadow-sm"]) }}>
     {{ $status }}
 </span>

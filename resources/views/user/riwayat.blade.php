@@ -17,7 +17,7 @@
     {{-- Header Section --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
         <div class="max-w-8xl">
-            <h1 class="text-2xl sm:text-4xl font-extrabold text-base-content mb-2">Riwayat Pesanan</h1>
+            <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Riwayat Pesanan</h1>
             <p class="text-base-content/70 text-sm sm:text-lg font-medium">Menampilkan daftar pesanan yang pernah dibuat pengguna.</p>
         </div>
     </section>
@@ -54,8 +54,8 @@
                 {{-- Top Header of Card --}}
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6">
                     <div>
-                        <h2 class="text-lg sm:text-2xl font-extrabold text-base-content mb-1">No. Orderan : PNC-123455478836</h2>
-                        <p class="text-xs sm:text-sm font-bold text-base-content">Jenis Pesanan :</p>
+                        <h2 class="text-lg sm:text-2xl font-bold text-base-content mb-1">No. Orderan : PNC-123455478836</h2>
+                        <p class="text-xs sm:text-sm font-medium text-base-content">Jenis Pesanan :</p>
                     </div>
                     <x-status-badge status="Diproses" />
                 </div>
@@ -64,7 +64,7 @@
                 <div class="bg-white border border-base-content/30 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-6">
                     <div class="flex justify-between items-center mb-4 sm:mb-6">
                         <h3 class="text-xl sm:text-2xl font-bold text-base-content">Kantin 1</h3>
-                        <span class="text-xs sm:text-sm font-extrabold text-base-content">4 Pesanan</span>
+                        <span class="text-xs sm:text-sm font-bold text-base-content">4 Pesanan</span>
                     </div>
 
                     {{-- Item 1 --}}

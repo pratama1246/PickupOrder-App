@@ -32,13 +32,13 @@
                             </div>
                         </div>
                         
-                        <h1 class="text-2xl sm:text-5xl md:text-6xl font-black text-white mb-2 sm:mb-4 drop-shadow-2xl tracking-tight">Kantin 1</h1>
+                        <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-2 sm:mb-4 drop-shadow-2xl tracking-tight">Kantin 1</h1>
                         
-                        <p class="text-white/80 text-[10px] sm:text-lg max-w-2xl mb-4 sm:mb-8 line-clamp-2 sm:line-clamp-none font-medium drop-shadow-sm">
+                        <p class="text-white/80 text-sm sm:text-lg max-w-2xl mb-4 sm:mb-8 line-clamp-2 sm:line-clamp-none font-medium drop-shadow-sm">
                             Kantin yang menyediakan nasi goreng, mi bakso, dan berbagai macam pilihan menu lezat lainnya dengan harga terjangkau khusus mahasiswa.
                         </p>
                         
-                        <div class="flex flex-wrap items-center gap-4 sm:gap-8 text-white/90 text-[10px] sm:text-sm font-bold drop-shadow-sm">
+                        <div class="flex flex-wrap items-center gap-4 sm:gap-8 text-white/90 text-xs sm:text-sm font-bold drop-shadow-sm">
                             <span class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-fern-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                 25 Menu
