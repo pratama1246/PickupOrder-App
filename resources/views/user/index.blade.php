@@ -75,12 +75,12 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
             </div>
 
         </div>
@@ -96,10 +96,10 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <x-canteencard />
-                <x-canteencard />
-                <x-canteencard />
-                <x-canteencard />
+                <x-user.canteencard />
+                <x-user.canteencard />
+                <x-user.canteencard />
+                <x-user.canteencard />
             </div>
 
         </div>

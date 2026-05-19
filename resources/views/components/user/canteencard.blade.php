@@ -1,10 +1,6 @@
 <div class="card bg-base-100 rounded-xl shadow-sm p-0 md:p-6 flex flex-col md:flex-row gap-0 md:gap-6">
     <figure class="w-auto md:w-56 h-auto overflow-hidden rounded-fit md:rounded-2xl">
-        <img
-            src="{{ asset('assets/food/es teh.jpg') }}"
-            class="w-full h-full object-cover"
-            alt="Shoes"
-        />
+        <img src="{{ asset('assets/food/es teh.jpg') }}" class="w-full h-full object-cover" alt="Shoes" />
     </figure>
     <div class="flex flex-col flex-1 card-body p-6 md:p-2">
         <h2 class="card-title mb-2">

@@ -71,7 +71,7 @@
                     </div>
 
                     {{-- Item 1 --}}
-                    <x-order-item 
+                    <x-user.order-item 
                         image="{{ asset('assets/food1.jpg') }}"
                         name="Nasi Rames"
                         description="Nasi + Sayur Mi + Kering Tempe + Sayur Sawi"
@@ -81,7 +81,7 @@
                     />
 
                     {{-- Item 2 --}}
-                    <x-order-item 
+                    <x-user.order-item 
                         image="{{ asset('assets/es_teh.jpg') }}"
                         name="Es Teh"
                         price="Rp. 6.000"

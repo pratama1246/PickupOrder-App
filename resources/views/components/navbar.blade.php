@@ -23,22 +23,50 @@
   <div class="navbar-end gap-1">
 
     <!-- CART -->
+    {{--
+      Saat sudah ada CartService / session cart, ganti $cartCount dengan:
+        - Session: session('cart_count', 0)
+        - Auth + DB: auth()->user()?->cartItemCount() ?? 0
+        - Helper: cart()->count()
+      Badge otomatis hilang kalau count = 0 lewat conditional di bawah.
+    --}}
+    @php $cartCount = 0; /* ganti dengan: session('cart_count', 0) */ @endphp
+
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle hover:bg-transparent">
+      <a href="/keranjang" tabindex="0" role="button" class="btn btn-ghost btn-circle hover:bg-transparent">
         <div class="indicator">
+
+          {{-- Cart Icon --}}
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
             <path fill="white" d="M17 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2M1 2v2h2l3.6 7.59l-1.36 2.45c-.15.28-.24.61-.24.96a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25q0-.075.03-.12L8.1 13h7.45c.75 0 1.41-.42 1.75-1.03l3.58-6.47c.07-.16.12-.33.12-.5a1 1 0 0 0-1-1H5.21l-.94-2M7 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2"/>
           </svg>
-          <span class="badge badge-sm indicator-item bg-fern-700 text-white border-0">8</span>
+
+          {{-- Badge: hanya tampil kalau cartCount > 0 --}}
+          @if($cartCount > 0)
+            <span class="badge badge-sm indicator-item bg-fern-700 text-white border-0 font-bold">
+              {{ $cartCount > 99 ? '99+' : $cartCount }}
+            </span>
+          @endif
+
         </div>
-      </div>
-      <div tabindex="0" class="card card-compact dropdown-content bg-base-100 z-10 mt-3 w-60 shadow-lg border border-base-200">
+      </a>
+
+      {{-- Mini Cart Dropdown --}}
+      <div tabindex="0" class="card card-compact dropdown-content bg-base-100 z-10 mt-3 w-64 shadow-lg border border-base-200">
         <div class="card-body">
-          <span class="text-lg font-bold">8 Items</span>
-          <span class="text-fern-700 font-medium">Subtotal: Rp. 80.000</span>
-          <div class="card-actions mt-2">
-            <button class="btn bg-fern-700 text-white hover:bg-fern-800 btn-block">Lihat Keranjang</button>
-          </div>
+          @if($cartCount > 0)
+            <span class="text-base font-bold">{{ $cartCount }} Item</span>
+            {{-- Ganti $cartSubtotal dengan nilai dari service/session --}}
+            <span class="text-fern-700 font-medium">Subtotal: Rp. 0</span>
+            <div class="card-actions mt-2">
+              <a href="/keranjang" class="btn bg-fern-700 text-white hover:bg-fern-800 btn-block border-none font-bold">Lihat Keranjang</a>
+            </div>
+          @else
+            <p class="text-sm text-base-content/60 font-medium text-center py-2">Keranjang masih kosong</p>
+            <div class="card-actions mt-1">
+              <a href="/pesan" class="btn bg-fern-700 text-white hover:bg-fern-800 btn-block border-none font-bold text-sm">Mulai Pesan</a>
+            </div>
+          @endif
         </div>
       </div>
     </div>

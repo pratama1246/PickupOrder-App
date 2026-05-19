@@ -83,12 +83,12 @@
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 mb-12">
         <div class="max-w-8xl mx-auto">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
+                <x-user.foodcard />
             </div>
         </div>
     </section>
