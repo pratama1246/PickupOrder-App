@@ -3,9 +3,37 @@
 @section('title', 'Keranjang Belanja - PNC')
 
 @section('content')
-<main class="min-h-screen bg-base-100 pb-16">
+<main class="min-h-screen bg-base-100 pb-16"
+      x-data="{
+          canteenItems: {
+              'Nasi Rames': { qty: 2, price: 10000 },
+              'Es Teh': { qty: 2, price: 3000 }
+          },
+          get totalQty() {
+              return Object.values(this.canteenItems).reduce((sum, item) => sum + item.qty, 0);
+          },
+          get totalPrice() {
+              return Object.values(this.canteenItems).reduce((sum, item) => sum + (item.qty * item.price), 0);
+          },
+          updateItem(name, qty, price) {
+              if (this.canteenItems[name]) {
+                  this.canteenItems[name].qty = qty;
+                  localStorage.setItem('cart', JSON.stringify(this.canteenItems));
+                  window.dispatchEvent(new Event('cart-updated'));
+              }
+          },
+          removeItem(name) {
+              delete this.canteenItems[name];
+              this.canteenItems = { ...this.canteenItems };
+              localStorage.setItem('cart', JSON.stringify(this.canteenItems));
+              window.dispatchEvent(new Event('cart-updated'));
+          }
+      }"
+      x-init="localStorage.setItem('cart', JSON.stringify(canteenItems)); window.dispatchEvent(new Event('cart-updated'))"
+      x-on:cart-item-updated.window="updateItem($event.detail.name, $event.detail.qty, $event.detail.price)"
+      x-on:cart-item-removed.window="removeItem($event.detail.name)"
+>
 
-    {{-- Breadcrumb --}}
     <x-breadcrumb
         class="pt-8 pb-4"
         :links="[
@@ -14,7 +42,6 @@
         ]"
     />
 
-    {{-- Header --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
         <div class="max-w-8xl mx-auto">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Keranjang Belanja</h1>
@@ -22,23 +49,19 @@
         </div>
     </section>
 
-    {{-- Main Content --}}
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
         <div class="max-w-8xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
 
-            {{-- ======= KIRI: ITEM LIST ======= --}}
             <div class="w-full lg:flex-1 min-w-0 space-y-5">
 
-                {{-- Card Kantin 1 --}}
-                <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
+                <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm"
+                     x-show="totalQty > 0">
 
-                    {{-- Header Kantin --}}
                     <div class="flex items-center justify-between mb-5">
                         <h2 class="text-lg sm:text-xl font-bold text-base-content">Kantin 1</h2>
-                        <span class="text-sm font-bold text-base-content/60">4 Pesanan</span>
+                        <span class="text-sm font-bold text-base-content/60"><span x-text="totalQty">4</span> Pesanan</span>
                     </div>
 
-                    {{-- Item List --}}
                     <div class="space-y-3 mb-5">
 
                         <x-user.cart-item
@@ -58,7 +81,6 @@
 
                     </div>
 
-                    {{-- Catatan --}}
                     <textarea
                         rows="3"
                         placeholder="Catatan untuk kantin (Opsional)"
@@ -67,9 +89,21 @@
 
                 </div>
 
+                <div class="bg-white border border-base-content/20 rounded-3xl p-8 text-center shadow-sm"
+                     x-show="totalQty === 0"
+                     style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-base-content/30 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <h3 class="text-lg font-bold text-base-content mb-1">Keranjang Belanja Kosong</h3>
+                    <p class="text-sm text-base-content/60 mb-5 font-medium">Anda belum menambahkan makanan atau minuman.</p>
+                    <a href="/pesan" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none px-6 rounded-2xl font-bold text-sm shadow-md active:scale-95 transition-all">
+                        Mulai Cari Menu
+                    </a>
+                </div>
+
             </div>
 
-            {{-- ======= KANAN: RINGKASAN ======= --}}
             <div class="w-full lg:w-80 xl:w-96 shrink-0">
                 <x-user.cart-summary
                     :canteens="[

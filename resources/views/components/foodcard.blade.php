@@ -1,9 +1,7 @@
 <div class="card bg-base-100 w-full shadow-sm rounded-2xl overflow-hidden">
 
-    {{-- ===== MOBILE: Horizontal layout ===== --}}
     <div class="flex sm:hidden gap-3 p-3">
 
-        {{-- Gambar kiri --}}
         <div class="w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-base-200">
             <img
                 src="{{ asset('assets/food/Nasi Rames.jpg') }}"
@@ -12,7 +10,6 @@
             />
         </div>
 
-        {{-- Info kanan --}}
         <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
             <div>
                 <div class="flex items-start justify-between gap-1 mb-0.5">
@@ -34,14 +31,17 @@
 
             <div class="flex items-center justify-between mt-2">
                 <span class="font-extrabold text-sm text-base-content">Rp. 10.000</span>
-                <button class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-lg font-bold text-xs px-3 shadow-sm">
-                    Pesan
-                </button>
+                @if(isset($action))
+                    {{ $action }}
+                @else
+                    <button class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-lg font-bold text-xs px-3 shadow-sm">
+                        Pesan
+                    </button>
+                @endif
             </div>
         </div>
     </div>
 
-    {{-- ===== DESKTOP (sm+): Vertikal layout ===== --}}
     <figure class="hidden sm:block overflow-hidden">
         <img
             src="{{ asset('assets/food/Nasi Rames.jpg') }}"
@@ -68,9 +68,13 @@
 
         <div class="flex justify-between items-center mt-3">
             <span class="font-bold text-lg text-base-content">Rp. 10.000</span>
-            <button class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-lg font-bold shadow-sm">
-                Pesan
-            </button>
+            @if(isset($action))
+                {{ $action }}
+            @else
+                <button class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-lg font-bold shadow-sm">
+                    Pesan
+                </button>
+            @endif
         </div>
     </div>
 

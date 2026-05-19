@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Search Bar --}}
     <section class="px-6 sm:px-10 md:px-16 lg:px-24 mt-4 mb-4">
         <div class="max-w-8xl mx-auto flex justify-end">
            <label class="input input-bordered flex items-center gap-2 w-full max-w-sm shadow-sm rounded-3xl input-md">
@@ -15,11 +14,9 @@
     </section>
 
 
-    {{-- ======================== HERO SECTION ======================== --}}
     <section class="px-6 sm:px-10 md:px-16 lg:px-24 py-8 md:py-10">
         <div class="max-w-8xl mx-auto flex flex-col lg:flex-row items-start gap-10">
 
-            {{-- Hero Text --}}
             <div class="flex-1 text-center lg:text-left">
 
                 <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-3 text-base-content">
@@ -50,10 +47,8 @@
                 </div>
             </div>
 
-            {{-- Hero Illustration --}}
             <div class="flex-1 flex justify-center lg:justify-end">
                 <div class="w-80 h-80 sm:w-96 sm:h-96 lg:w-150 lg:h-150 overflow-hidden flex items-center justify-center">
-                    {{-- Ganti src ini dengan ilustrasi aslinya nanti --}}
                     <img
                         src="{{ asset('assets/illustration/Eating%20healthy%20food-cuate%20(1).svg') }}"
                         alt="Ilustrasi Pesan Makanan"
@@ -65,7 +60,6 @@
         </div>
     </section>
 
-    {{-- ======================== MENU POPULER ======================== --}}
     <section class="px-6 sm:px-10 md:px-16 lg:px-24 py-10">
         <div class="max-w-8xl mx-auto">
 
@@ -75,18 +69,17 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                <x-user.foodcard />
-                <x-user.foodcard />
-                <x-user.foodcard />
-                <x-user.foodcard />
-                <x-user.foodcard />
-                <x-user.foodcard />
+                <x-foodcard />
+                <x-foodcard />
+                <x-foodcard />
+                <x-foodcard />
+                <x-foodcard />
+                <x-foodcard />
             </div>
 
         </div>
     </section>
 
-    {{-- ======================== PILIH KANTIN ======================== --}}
     <section class="px-6 sm:px-10 md:px-16 lg:px-24 py-10">
         <div class="max-w-8xl mx-auto">
 
@@ -96,10 +89,10 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <x-user.canteencard />
-                <x-user.canteencard />
-                <x-user.canteencard />
-                <x-user.canteencard />
+                <x-canteencard />
+                <x-canteencard />
+                <x-canteencard />
+                <x-canteencard />
             </div>
 
         </div>
@@ -114,21 +107,21 @@
     let j = 0;
     let currentWord = "";
     let isDeleting = false;
-
+ 
     function typeEffect() {
         currentWord = words[i];
-
+ 
         if (isDeleting) {
             j--;
         } else {
             j++;
         }
-
+ 
         document.getElementById("typing-text").textContent =
             currentWord.substring(0, j);
-
+ 
         let speed = isDeleting ? 50 : 100;
-
+ 
         if (!isDeleting && j === currentWord.length) {
             speed = 1200;
             isDeleting = true;
@@ -137,10 +130,10 @@
             i = (i + 1) % words.length;
             speed = 300;
         }
-
+ 
         setTimeout(typeEffect, speed);
     }
-
+ 
     typeEffect();
 </script>
 @endpush
