@@ -9,7 +9,7 @@
 
     <div class="flex flex-col gap-4">
         
-        @for($i = 1; $i <= 3; $i++)
+        @for($i = 1; $i <= 5; $i++)
         <div class="bg-vanilla-custard-50 border border-base-content/30 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h2 class="text-base sm:text-lg font-bold text-base-content mb-1">No. Orderan : PNC-123455478836</h2>

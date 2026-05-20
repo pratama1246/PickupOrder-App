@@ -1,4 +1,9 @@
-<aside class="w-52 min-h-full bg-shadow-grey-900 flex flex-col shrink-0 border-r border-white/5">
+<aside class="w-72 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
+    <!-- Header Sidebar (Tinggi disamakan dengan navbar) -->
+    <div class="h-16 sm:h-20 shrink-0 flex items-center px-6">
+        <span class="text-white/90 font-bold text-sm sm:text-base tracking-wide">Kantin 1 Dashboard</span>
+    </div>
+    
     <nav class="flex-1 px-3 py-4 space-y-1">
         
         <a href="/vendor/dashboard"
