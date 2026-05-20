@@ -15,9 +15,9 @@
 
 
     <section class="px-6 sm:px-10 md:px-16 lg:px-24 py-8 md:py-10">
-        <div class="max-w-8xl mx-auto flex flex-col lg:flex-row items-start gap-10">
+        <div class="max-w-8xl mx-auto flex flex-col lg:flex-row items-center lg:items-start gap-10">
 
-            <div class="flex-1 text-center lg:text-left">
+            <div class="flex-1 w-full text-center lg:text-left">
 
                 <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-3 text-base-content">
                     Laper Abis 
@@ -47,8 +47,8 @@
                 </div>
             </div>
 
-            <div class="flex-1 flex justify-center lg:justify-end">
-                <div class="w-80 h-80 sm:w-96 sm:h-96 lg:w-150 lg:h-150 overflow-hidden flex items-center justify-center">
+            <div class="flex-1 w-full flex justify-center lg:justify-end">
+                <div class="w-[350px] h-[350px] sm:w-[450px] sm:h-[450px] md:w-[520px] md:h-[520px] lg:w-[580px] lg:h-[580px] max-w-full overflow-hidden flex items-center justify-center">
                     <img
                         src="{{ asset('assets/illustration/Eating%20healthy%20food-cuate%20(1).svg') }}"
                         alt="Ilustrasi Pesan Makanan"
