@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <figure class="hidden sm:block overflow-hidden h-40">
+    <figure class="hidden sm:block overflow-hidden w-full aspect-video">
         <img
             src="{{ $imageUrl }}"
             alt="{{ $name }}"
