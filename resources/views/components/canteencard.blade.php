@@ -45,10 +45,14 @@
                 {{ $time }}
             </span>
         </div>
-        <div class="mt-auto flex justify-end">
-            <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-lg w-full md:w-fit">
-                {{ $actionText }}
-            </a>
+        <div class="mt-auto flex justify-end gap-3 flex-wrap">
+            @if (isset($buttons))
+                {{ $buttons }}
+            @else
+                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-lg w-full md:w-fit">
+                    {{ $actionText }}
+                </a>
+            @endif
         </div>
     </div>
 </div>

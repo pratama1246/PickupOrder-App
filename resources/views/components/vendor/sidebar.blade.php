@@ -41,4 +41,19 @@
             Menu
         </a>
     </nav>
+    
+    <div class="p-3 border-t border-white/10 mt-auto">
+        <a href="#" onclick="event.preventDefault(); document.getElementById('vendor-logout-form').submit();"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm text-red-400 hover:bg-white/10 hover:text-red-300 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Keluar
+        </a>
+        <form id="vendor-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
+    </div>
 </aside>

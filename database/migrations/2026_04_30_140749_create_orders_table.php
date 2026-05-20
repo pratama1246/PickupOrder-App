@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('canteen_id')->constrained()->onDelete('cascade');
             $table->string('order_code')->unique(); // format: ORD-20240430-XXXX
             $table->enum('status', [
-                'menunggu', 'dimasak', 'siap_diambil', 'selesai', 'dibatalkan'
+                'menunggu', 'dimasak', 'siap_diambil', 'selesai', 'dibatalkan',
             ])->default('menunggu');
             $table->dateTime('pickup_time');
             $table->decimal('total_price', 10, 2);

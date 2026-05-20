@@ -14,11 +14,11 @@
                 <div class="flex items-center gap-2 min-w-0">
                     <span class="w-1.5 h-1.5 rounded-full bg-base-content/40 shrink-0"></span>
                     <span class="text-sm font-medium text-base-content truncate">
-                        {{ $canteen['name'] }} (<span x-text="totalQty">{{ $canteen['itemCount'] }}</span> Item)
+                        {{ $canteen['canteen_name'] }} (<span>{{ count($canteen['items']) }}</span> Item)
                     </span>
                 </div>
                 <span class="text-sm font-bold text-base-content whitespace-nowrap shrink-0">
-                    Rp. <span x-text="totalPrice.toLocaleString('id-ID')">{{ number_format($canteen['subtotal'], 0, ',', '.') }}</span>
+                    Rp. <span>{{ number_format(array_sum(array_column($canteen['items'], 'subtotal')), 0, ',', '.') }}</span>
                 </span>
             </div>
         @empty
@@ -31,13 +31,12 @@
     <div class="mb-6">
         <p class="text-sm font-bold text-base-content/60 mb-1">Total</p>
         <p class="text-2xl sm:text-3xl font-extrabold text-base-content">
-            Rp. <span x-text="totalPrice.toLocaleString('id-ID')">{{ number_format($total, 0, ',', '.') }}</span>,00
+            Rp. <span>{{ number_format($total, 0, ',', '.') }}</span>,00
         </p>
     </div>
 
     <a href="{{ $checkoutUrl }}"
-       :class="totalQty === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''"
-       class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all">
+       class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all">
         Bayar Sekarang
     </a>
 

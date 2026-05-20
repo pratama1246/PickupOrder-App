@@ -19,30 +19,21 @@
 
   <div class="navbar-end gap-1">
 
-    <a href="/keranjang" class="btn btn-ghost btn-circle hover:bg-transparent"
-       x-data="{
-           cartCount: 0,
-           init() {
-               this.updateCount();
-               window.addEventListener('cart-updated', () => this.updateCount());
-               window.addEventListener('storage', () => this.updateCount());
-           },
-           updateCount() {
-               let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-               this.cartCount = Object.keys(cart).length;
-           }
-       }">
+    @php
+        $cartCount = count(session('cart', []));
+    @endphp
+    <a href="/keranjang" class="btn btn-ghost btn-circle hover:bg-transparent">
       <div class="indicator">
 
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
           <path fill="white" d="M17 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2M1 2v2h2l3.6 7.59l-1.36 2.45c-.15.28-.24.61-.24.96a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25q0-.075.03-.12L8.1 13h7.45c.75 0 1.41-.42 1.75-1.03l3.58-6.47c.07-.16.12-.33.12-.5a1 1 0 0 0-1-1H5.21l-.94-2M7 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2"/>
         </svg>
 
-        <span class="badge badge-sm indicator-item bg-fern-700 text-white border-0 font-bold"
-              x-show="cartCount > 0"
-              x-text="cartCount"
-              style="display: none;">
+        @if($cartCount > 0)
+        <span class="badge badge-sm indicator-item bg-fern-700 text-white border-0 font-bold">
+            {{ $cartCount }}
         </span>
+        @endif
 
       </div>
     </a>
@@ -56,7 +47,12 @@
       <ul tabindex="0" class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-56 p-2 shadow-lg border border-base-200">
         <li><a class="justify-between font-medium">Profil <span class="badge badge-sm bg-fern-100 text-fern-700 border-0 font-medium">Baru</span></a></li>
         <li><a class="font-medium">Pengaturan</a></li>
-        <li><a class="text-error font-medium">Keluar</a></li>
+        <li>
+          <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-error font-medium">Keluar</a>
+          <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+              @csrf
+          </form>
+        </li>
       </ul>
     </div>
 

@@ -9,8 +9,8 @@
         class="pt-8 pb-4"
         :links="[
             ['label' => 'Beranda', 'url' => '/'],
-            ['label' => 'Kantin 1', 'url' => '/kantin'],
-            ['label' => 'Nasi Rames']
+            ['label' => $menu->canteen->name, 'url' => route('canteen.show', $menu->canteen_id)],
+            ['label' => $menu->name]
         ]"
     />
 
@@ -29,55 +29,41 @@
 
                     <div class="w-full aspect-square rounded-2xl overflow-hidden mb-5 bg-base-200">
                         <img
-                            src="{{ asset('assets/food/Nasi Rames.jpg') }}"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Nasi+Rames&background=random'"
-                            alt="Nasi Rames"
+                            src="{{ $menu->image ? asset('storage/' . $menu->image) : asset('assets/food/Nasi Rames.jpg') }}"
+                            onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->name) }}&background=random'"
+                            alt="{{ $menu->name }}"
                             class="w-full h-full object-cover"
                         />
                     </div>
 
-                    <p class="text-sm text-base-content/60 font-medium mb-1">Kantin 1</p>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-base-content mb-2">Nasi Rames</h2>
-                    <p class="text-lg font-bold text-base-content mb-3">Rp. 10.000</p>
+                    <p class="text-sm text-base-content/60 font-medium mb-1">{{ $menu->canteen->name }}</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-base-content mb-2">{{ $menu->name }}</h2>
+                    <p class="text-lg font-bold text-base-content mb-3">{{ $menu->formatted_price }}</p>
 
                     <p class="text-sm text-base-content/70 font-medium leading-relaxed mb-4">
-                        Perpaduan nasi hangat dengan aneka lauk pilihan dan sambal khas yang bikin makan jadi puas dan nagih.
+                        {{ $menu->description ?? 'Belum ada deskripsi untuk menu ini.' }}
                     </p>
 
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        @foreach(['Nasi', 'Sayur', 'Ayam'] as $tag)
-                            <span class="bg-base-200 text-base-content/70 text-xs font-bold px-3 py-1 rounded-full border border-base-content/10">
-                                {{ $tag }}
-                            </span>
-                        @endforeach
-                    </div>
-
-                    <div class="mb-5" x-data="{ qty: 1, harga: 10000 }">
+                    <div class="mb-5" x-data="{ qty: 1, harga: {{ $menu->price }} }">
                         <x-user.quantity-control x-model="qty" />
 
                         <div class="mt-5 pt-4 border-t border-base-content/10">
                             <p class="text-sm font-bold text-base-content/60 mb-1">Total :</p>
                             <p class="text-2xl sm:text-3xl font-extrabold text-base-content"
                                x-text="'Rp. ' + (qty * harga).toLocaleString('id-ID')">
-                                Rp. 10.000
+                                {{ $menu->formatted_price }}
                             </p>
                         </div>
 
-                        <button class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full mt-5 rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all"
-                                x-on:click="
-                                    let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-                                    let name = 'Nasi Rames';
-                                    if (cart[name]) {
-                                        cart[name].qty += qty;
-                                    } else {
-                                        cart[name] = { qty: qty, price: harga };
-                                    }
-                                    localStorage.setItem('cart', JSON.stringify(cart));
-                                    window.dispatchEvent(new Event('cart-updated'));
-                                    alert('Berhasil ditambahkan ke keranjang!');
-                                ">
-                            Tambah ke Keranjang
-                        </button>
+                        <!-- Real Cart form to CartController@store -->
+                        <form action="{{ route('cart.store') }}" method="POST" class="mt-5">
+                            @csrf
+                            <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+                            <input type="hidden" name="quantity" x-bind:value="qty">
+                            <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all {{ !$menu->isInStock() ? 'btn-disabled opacity-50' : '' }}">
+                                {{ $menu->isInStock() ? 'Tambah ke Keranjang' : 'Stok Habis' }}
+                            </button>
+                        </form>
                     </div>
 
                 </div>
@@ -86,17 +72,28 @@
             <div class="w-full min-w-0">
 
                 <div class="mb-8">
-                    <x-user.info-bar rating="4.7" estimasi="10 - 15 Menit" :populer="true" :tersedia="true" />
+                    <x-user.info-bar rating="4.8" estimasi="10 - 15 Menit" :populer="true" :tersedia="$menu->isInStock()" />
                 </div>
 
-                <h2 class="text-xl sm:text-2xl font-bold text-base-content mb-4">Menu Lain dari Kantin 1</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-base-content mb-4">Menu Lain dari {{ $menu->canteen->name }}</h2>
 
                 <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:-mx-10 sm:px-10 md:-mx-16 md:px-16 lg:mx-0 lg:px-0">
-                    @foreach(range(1, 6) as $i)
-                        <div class="snap-start shrink-0 w-64 sm:w-72">
-                            <x-user.foodcard />
+                    @forelse($otherMenus as $otherMenu)
+                        <div class="snap-start shrink-0 w-80 sm:w-72">
+                            <x-foodcard 
+                                :id="$otherMenu->id" 
+                                :name="$otherMenu->name"
+                                :canteenName="$otherMenu->canteen->name"
+                                :description="$otherMenu->description"
+                                :price="$otherMenu->formatted_price"
+                                :image="$otherMenu->image ? asset('storage/' . $otherMenu->image) : null"
+                                rating="4.8"
+                                :actionUrl="route('menu.show', ['canteenId' => $otherMenu->canteen_id, 'id' => $otherMenu->id])"
+                            />
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-base-content/60 font-medium">Belum ada menu lain.</p>
+                    @endforelse
                 </div>
 
             </div>

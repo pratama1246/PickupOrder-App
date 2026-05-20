@@ -2,31 +2,80 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $fillable = [
+        'name',
+        'nim',
+        'email',
+        'password',
+        'role',
+        'is_first_login',
+        'password_changed',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_first_login' => 'boolean',
+            'password_changed' => 'boolean',
         ];
+    }
+
+    /**
+     * Kantin milik vendor ini (hanya untuk role vendor).
+     */
+    public function canteen(): HasOne
+    {
+        return $this->hasOne(Canteen::class);
+    }
+
+    /**
+     * Semua pesanan yang dibuat user ini (untuk role mahasiswa).
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Cek apakah user adalah admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Cek apakah user adalah vendor kantin.
+     */
+    public function isVendor(): bool
+    {
+        return $this->role === 'vendor';
+    }
+
+    /**
+     * Cek apakah user adalah mahasiswa.
+     */
+    public function isMahasiswa(): bool
+    {
+        return $this->role === 'mahasiswa';
     }
 }

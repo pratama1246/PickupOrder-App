@@ -55,12 +55,19 @@
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <x-canteencard />
-                <x-canteencard />
-                <x-canteencard />
-                <x-canteencard />
-                <x-canteencard />
-                <x-canteencard />
+                @forelse ($canteens as $canteen)
+                    <x-canteencard :id="$canteen->id" :name="$canteen->name" :image="$canteen->image ? asset('storage/' . $canteen->image) : null" :description="$canteen->description ?? 'Kantin pilihan mahasiswa.'"
+                        :menuCount="$canteen->available_menus_count ?? $canteen->menus->count()" :actionUrl="route('canteen.show', $canteen->id)" actionText="Lihat Kantin" />
+                @empty
+                    <div
+                        class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
+                        <p class="text-base-content/60 font-medium">Belum ada kantin terdaftar atau buka.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="pt-6">
+                {{ $canteens->links() }}
             </div>
         </div>
     </section>
@@ -73,20 +80,18 @@
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-                <x-foodcard />
-            </div>
-
-            <div class="flex justify-center mt-10">
-                <button class="btn bg-[#d9d9d9] hover:bg-gray-400 text-black border-none px-8 py-2 min-h-0 h-auto rounded-full font-bold text-sm">
-                    Muat Lebih Banyak
-                </button>
+                @php
+                    $allMenus = $canteens->getCollection()->flatMap->menus->take(12);
+                @endphp
+                @forelse ($allMenus as $menu)
+                    <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$menu->canteen->name" :description="$menu->description"
+                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" rating="4.8" :actionUrl="route('menu.show', ['canteenId' => $menu->canteen_id, 'id' => $menu->id])" />
+                @empty
+                    <div
+                        class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
+                        <p class="text-base-content/60 font-medium">Belum ada menu tersedia dari kantin-kantin tersebut.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
