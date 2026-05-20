@@ -11,12 +11,22 @@
             </svg>
             <span class="hidden sm:inline">Ke Halaman Utama</span>
         </a>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-fern-700 flex items-center justify-center cursor-pointer shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+        <div class="dropdown dropdown-end ml-1">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <div class="w-8 rounded-full ring-2 ring-fern-200">
+              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="avatar" />
+            </div>
+          </div>
+          <ul tabindex="0" class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-56 p-2 shadow-lg border border-base-200 text-base-content">
+            <li><a class="justify-between font-medium">Profil <span class="badge badge-sm bg-fern-100 text-fern-700 border-0 font-medium">Baru</span></a></li>
+            <li><a class="font-medium">Pengaturan</a></li>
+            <li>
+              <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-error font-medium">Keluar</a>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                  @csrf
+              </form>
+            </li>
+          </ul>
         </div>
     </div>
 </header>
