@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="pb-16 lg:pb-0 bg-base-100">
+<body class="pb-24 lg:pb-0 bg-base-100">
 
     <x-navbar />
 
