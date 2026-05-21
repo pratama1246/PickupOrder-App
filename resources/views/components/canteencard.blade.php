@@ -49,7 +49,7 @@
             @if (isset($buttons))
                 {{ $buttons }}
             @else
-                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-lg w-full md:w-fit">
+                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none shadow-md rounded-2xl w-full md:w-fit transition-all duration-200 active:scale-95 hover:shadow-lg">
                     {{ $actionText }}
                 </a>
             @endif

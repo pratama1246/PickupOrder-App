@@ -90,7 +90,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('kantin', AdminCanteenController::class);
 
     // Manajemen pengguna
-    Route::get('/pengguna', [AdminUserController::class, 'index'])->name('pengguna.index');
-    Route::put('/pengguna/{id}', [AdminUserController::class, 'update'])->name('pengguna.update');
-    Route::delete('/pengguna/{id}', [AdminUserController::class, 'destroy'])->name('pengguna.destroy');
+    Route::patch('/pengguna/{id}/toggle', [AdminUserController::class, 'toggle'])->name('pengguna.toggle');
+    Route::resource('pengguna', AdminUserController::class)->except(['show']);
 });

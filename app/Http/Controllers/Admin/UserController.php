@@ -37,11 +37,88 @@ class UserController extends Controller
     }
 
     /**
+     * Form tambah pengguna baru (/admin/pengguna/create).
+     */
+    public function create(): View
+    {
+        return view('admin.pengguna-create');
+    }
+
+    /**
+     * Simpan pengguna baru ke database.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'nim' => [$request->role === 'vendor' ? 'nullable' : 'required', 'string', 'max:50', 'unique:users,nim'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'in:mahasiswa,vendor'],
+            'is_first_login' => ['required', 'boolean'],
+        ]);
+
+        if ($request->role === 'vendor') {
+            $validated['nim'] = null;
+        }
+
+        $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        $validated['password_changed'] = false;
+
+        User::create($validated);
+
+        return redirect()->route('admin.pengguna.index')
+            ->with('success', 'Pengguna berhasil ditambahkan.');
+    }
+
+    /**
+     * Form edit data pengguna (/admin/pengguna/{id}/edit).
+     */
+    public function edit(int $id): View
+    {
+        $user = User::whereIn('role', ['mahasiswa', 'vendor'])->findOrFail($id);
+
+        return view('admin.pengguna-edit', compact('user'));
+    }
+
+    /**
+     * Update data pengguna.
+     */
+    public function update(Request $request, int $id): RedirectResponse
+    {
+        $user = User::whereIn('role', ['mahasiswa', 'vendor'])->findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'nim' => [$request->role === 'vendor' ? 'nullable' : 'required', 'string', 'max:50', 'unique:users,nim,' . $id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'in:mahasiswa,vendor'],
+            'is_first_login' => ['required', 'boolean'],
+        ]);
+
+        if ($request->role === 'vendor') {
+            $validated['nim'] = null;
+        }
+
+        if (! empty($validated['password'])) {
+            $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        $user->update($validated);
+
+        return redirect()->route('admin.pengguna.index')
+            ->with('success', 'Pengguna berhasil diperbarui.');
+    }
+
+    /**
      * Toggle status aktif/nonaktif akun pengguna.
      * Menggunakan kolom is_first_login sebagai status aktif (sementara).
      * Implementasi penuh memerlukan kolom is_active di migrasi.
      */
-    public function update(Request $request, int $id): RedirectResponse
+    public function toggle(int $id): RedirectResponse
     {
         $user = User::whereIn('role', ['mahasiswa', 'vendor'])->findOrFail($id);
 

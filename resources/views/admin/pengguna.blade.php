@@ -11,7 +11,7 @@
             
             <!-- Action Buttons (Mobile only, Icon-only) -->
             <div class="flex md:hidden items-center gap-2">
-                <a href="/admin/pengguna/tambah"
+                <a href="{{ route('admin.pengguna.create') }}"
                     class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm active:scale-95 transition-all flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -52,7 +52,7 @@
 
             <!-- Desktop Action Buttons (Icon-only, visible on desktop next to Search/Filter) -->
             <div class="hidden md:flex items-center gap-2 shrink-0">
-                <a href="#"
+                <a href="{{ route('admin.pengguna.create') }}"
                     class="btn btn-md bg-fern-700 hover:bg-fern-800 text-white border-none rounded-full w-12 h-12 p-0 shadow-sm active:scale-95 transition-all flex items-center justify-center"
                     title="Tambah Pengguna">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -98,14 +98,18 @@
                                 </td>
                                 <td class="py-3 px-4">
                                     <div class="flex gap-2">
-                                        <form action="{{ route('admin.pengguna.update', $user->id) }}" method="POST" class="m-0 p-0">
+                                        <form action="{{ route('admin.pengguna.toggle', $user->id) }}" method="POST" class="m-0 p-0">
                                             @csrf
-                                            @method('PUT')
+                                            @method('PATCH')
                                             <button type="submit"
                                                 class="btn btn-xs {{ !$user->is_first_login ? 'bg-orange-100 hover:bg-orange-200 text-orange-700' : 'bg-fern-100 hover:bg-fern-200 text-fern-700' }} border-none rounded-md font-bold">
                                                 {{ !$user->is_first_login ? 'Nonaktifkan' : 'Aktifkan' }}
                                             </button>
                                         </form>
+                                        <a href="{{ route('admin.pengguna.edit', $user->id) }}"
+                                           class="btn btn-xs bg-amber-500 hover:bg-amber-600 text-white border-none rounded-md font-bold">
+                                            Edit
+                                        </a>
                                         <form action="{{ route('admin.pengguna.destroy', $user->id) }}" method="POST" class="m-0 p-0" onsubmit="return confirm('Yakin ingin menghapus pengguna ini?');">
                                             @csrf
                                             @method('DELETE')

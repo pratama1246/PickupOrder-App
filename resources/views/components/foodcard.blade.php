@@ -49,7 +49,7 @@
                 @if(isset($action))
                     {{ $action }}
                 @else
-                    <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-lg font-bold text-xs px-3 shadow-sm flex items-center justify-center">
+                    <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-lg font-bold text-xs px-3 shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
                         Pesan
                     </a>
                 @endif
@@ -86,7 +86,7 @@
             @if(isset($action))
                 {{ $action }}
             @else
-                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-lg font-bold shadow-sm flex items-center justify-center">
+                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-lg font-bold shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
                     Pesan
                 </a>
             @endif

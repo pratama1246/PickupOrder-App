@@ -38,10 +38,10 @@
                 </p>
 
                 <div class="flex flex-col gap-3 justify-center lg:justify-start items-center lg:items-start">
-                    <button class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-md px-6 py-2 min-h-0 h-auto text-sm rounded-2xl w-52">
+                    <button class="btn bg-fern-700 text-white hover:bg-fern-800 border-none shadow-md px-6 py-2 min-h-0 h-auto text-sm rounded-2xl w-52 transition-all duration-200 active:scale-95 hover:shadow-lg">
                         Pesan Sekarang
                     </button>
-                    <button class="btn bg-vanilla-custard-300 text-black hover:bg-fern-700 hover:text-white px-6 py-2 min-h-0 h-auto text-sm rounded-2xl w-52">
+                    <button class="btn bg-vanilla-custard-300 text-black hover:bg-fern-700 hover:text-white border-none shadow-md px-6 py-2 min-h-0 h-auto text-sm rounded-2xl w-52 transition-all duration-200 active:scale-95 hover:shadow-lg">
                         Lihat Menu
                     </button>
                 </div>
