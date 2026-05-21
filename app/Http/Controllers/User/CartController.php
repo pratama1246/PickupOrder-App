@@ -67,7 +67,7 @@ class CartController extends Controller
     /**
      * Update qty satu item di keranjang.
      */
-    public function update(Request $request, int $menuId): RedirectResponse
+    public function update(Request $request, int $menuId)
     {
         $request->validate([
             'quantity' => ['required', 'integer', 'min:1', 'max:20'],
@@ -81,17 +81,33 @@ class CartController extends Controller
             session([self::SESSION_KEY => $cart]);
         }
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Jumlah item diperbarui.',
+                'cart'    => $cart,
+            ]);
+        }
+
         return back()->with('success', 'Jumlah item diperbarui.');
     }
 
     /**
      * Hapus satu item dari keranjang.
      */
-    public function destroy(int $menuId): RedirectResponse
+    public function destroy(Request $request, int $menuId)
     {
         $cart = session(self::SESSION_KEY, []);
         unset($cart[$menuId]);
         session([self::SESSION_KEY => $cart]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Item dihapus dari keranjang.',
+                'cart'    => $cart,
+            ]);
+        }
 
         return back()->with('success', 'Item dihapus dari keranjang.');
     }
