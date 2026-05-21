@@ -48,13 +48,7 @@ class CanteenController extends Controller
      */
     public function create(): View
     {
-        // Hanya user ber-role vendor yang belum punya kantin yang bisa dipilih
-        $vendors = User::where('role', 'vendor')
-            ->doesntHave('canteen')
-            ->orderBy('name')
-            ->get();
-
-        return view('admin.kantin-create', compact('vendors'));
+        return view('admin.kantin-create');
     }
 
     /**
@@ -63,12 +57,37 @@ class CanteenController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
             'name' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:500'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'is_open' => ['boolean'],
         ]);
+
+        // Generate base email (tanpa spasi/dash, e.g. kantinharmoni)
+        $cleanName = \Illuminate\Support\Str::slug($validated['name'], '');
+        $baseEmail = $cleanName . '@pnc.ac.id';
+        $email = $baseEmail;
+        $counter = 1;
+        
+        // Ensure email is unique
+        while (User::where('email', $email)->exists()) {
+            $email = $cleanName . $counter . '@pnc.ac.id';
+            $counter++;
+        }
+
+        $password = 'pncpickup123';
+
+        // Auto-create vendor user
+        $user = User::create([
+            'name' => 'Vendor ' . $validated['name'],
+            'email' => $email,
+            'password' => \Illuminate\Support\Facades\Hash::make($password),
+            'role' => 'vendor',
+            'is_first_login' => true,
+            'password_changed' => false,
+        ]);
+
+        $validated['user_id'] = $user->id;
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('canteens', 'public');
@@ -77,7 +96,7 @@ class CanteenController extends Controller
         Canteen::create($validated);
 
         return redirect()->route('admin.kantin.index')
-            ->with('success', 'Kantin berhasil ditambahkan.');
+            ->with('success', "Kantin berhasil ditambahkan. Akun Vendor dibuat dengan Email: {$email} dan Password: {$password}");
     }
 
     /**
@@ -87,15 +106,7 @@ class CanteenController extends Controller
     {
         $canteen = Canteen::with('owner')->findOrFail($id);
 
-        $vendors = User::where('role', 'vendor')
-            ->where(function ($q) use ($canteen) {
-                $q->doesntHave('canteen')
-                    ->orWhere('id', $canteen->user_id);
-            })
-            ->orderBy('name')
-            ->get();
-
-        return view('admin.kantin-edit', compact('canteen', 'vendors'));
+        return view('admin.kantin-edit', compact('canteen'));
     }
 
     /**
@@ -106,7 +117,6 @@ class CanteenController extends Controller
         $canteen = Canteen::findOrFail($id);
 
         $validated = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
             'name' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:500'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],

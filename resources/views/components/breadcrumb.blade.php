@@ -1,6 +1,9 @@
-@props(['links' => []])
+@props([
+    'links' => [],
+    'compact' => false,
+])
 
-<section {{ $attributes->merge(['class' => 'px-4 sm:px-10 md:px-16 lg:px-24 pt-8 pb-4']) }}>
+<section {{ $attributes->merge(['class' => $compact ? 'pt-0 pb-4' : 'px-4 sm:px-10 md:px-16 lg:px-24 pt-8 pb-4']) }}>
     <div class="max-w-8xl mx-auto flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm font-bold">
         @foreach($links as $link)
             @if(!$loop->last)

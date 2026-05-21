@@ -4,7 +4,15 @@
 
 @section('content')
 
-<div class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 shadow-sm">
+<div class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
+    <x-breadcrumb
+        compact
+        :links="[
+            ['label' => 'Kantin', 'url' => route('admin.kantin.index')],
+            ['label' => 'Edit Kantin']
+        ]"
+    />
+
     <h1 class="text-2xl font-bold text-base-content mb-6">Edit Kantin</h1>
 
     <form action="{{ route('admin.kantin.update', $canteen->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
@@ -22,17 +30,9 @@
 
         <div>
             <label class="block text-sm font-bold text-base-content mb-1.5">Pengelola (Vendor)</label>
-            <select name="user_id" required
-                    class="select select-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium">
-                @foreach ($vendors as $vendor)
-                    <option value="{{ $vendor->id }}" {{ old('user_id', $canteen->user_id) == $vendor->id ? 'selected' : '' }}>
-                        {{ $vendor->name }} (NIM/NIP: {{ $vendor->nim }})
-                    </option>
-                @endforeach
-            </select>
-            @error('user_id')
-                <p class="text-error text-xs mt-1">{{ $message }}</p>
-            @enderror
+            <input type="text" value="{{ $canteen->owner->name }} ({{ $canteen->owner->email }})" disabled
+                   class="input input-bordered w-full rounded-xl border-base-content/25 bg-base-200 text-sm font-medium" />
+            <p class="text-xs text-base-content/50 mt-1">Pengelola kantin tidak dapat diubah.</p>
         </div>
 
         <div>

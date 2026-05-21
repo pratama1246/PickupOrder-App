@@ -29,7 +29,7 @@ class Order extends Model
 
     /**
      * Generate order_code otomatis sebelum disimpan ke DB.
-     * Format: ORD-YYYYMMDD-XXXX
+     * Format: PNC-ORD-YYYYMMDD-XXXX
      */
     protected static function booted(): void
     {
@@ -43,7 +43,7 @@ class Order extends Model
     private static function generateOrderCode(): string
     {
         do {
-            $code = 'ORD-'.now()->format('Ymd').'-'.strtoupper(Str::random(4));
+            $code = 'PNC-ORD-'.now()->format('Ymd').'-'.strtoupper(Str::random(4));
         } while (self::where('order_code', $code)->exists());
 
         return $code;

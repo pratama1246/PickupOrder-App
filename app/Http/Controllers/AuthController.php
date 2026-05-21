@@ -24,33 +24,43 @@ class AuthController extends Controller
      */
     public function login(Request $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'nim' => ['required', 'string'],
+        $request->validate([
+            'identifier' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors([
-                'nim' => 'NIM/NIP atau password tidak sesuai.',
-            ])->onlyInput('nim');
+        $identifier = $request->identifier;
+        $remember = $request->boolean('remember');
+
+        // Check if identifier matches email or nim
+        $credentialsByNim = ['nim' => $identifier, 'password' => $request->password];
+        $credentialsByEmail = ['email' => $identifier, 'password' => $request->password];
+
+        if (Auth::attempt($credentialsByNim, $remember) || Auth::attempt($credentialsByEmail, $remember)) {
+            $request->session()->regenerate();
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            // Paksa ganti password jika login pertama kali
+            if ($user->is_first_login) {
+                return redirect()->route('password.change.form');
+            }
+
+            return match ($user->role) {
+                'admin' => redirect()->route('admin.dashboard'),
+                'vendor' => redirect()->route('vendor.dashboard'),
+                default => redirect()->route('home'),
+            };
         }
 
-        $request->session()->regenerate();
-
-        /** @var User $user */
-        $user = Auth::user();
-
-        // Paksa ganti password jika login pertama kali
-        if ($user->is_first_login) {
-            return redirect()->route('password.change.form');
-        }
-
-        return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'vendor' => redirect()->route('vendor.dashboard'),
-            default => redirect()->route('home'),
-        };
+        return back()->withErrors([
+            'identifier' => 'Email/NIM/NIP atau password tidak sesuai.',
+        ])->onlyInput('identifier');
     }
+
+
+    
 
     /**
      * Logout user dan hapus session.
@@ -111,15 +121,17 @@ class AuthController extends Controller
     public function forgotPassword(Request $request): RedirectResponse
     {
         $request->validate([
-            'nim' => ['required', 'string'],
+            'identifier' => ['required', 'string'],
         ]);
 
-        $user = User::where('nim', $request->nim)->first();
+        $user = User::where('nim', $request->identifier)
+                    ->orWhere('email', $request->identifier)
+                    ->first();
 
         if (! $user) {
             return back()->withErrors([
-                'nim' => 'NIM/NIP tidak ditemukan dalam sistem.',
-            ])->onlyInput('nim');
+                'identifier' => 'Email/NIM/NIP tidak ditemukan dalam sistem.',
+            ])->onlyInput('identifier');
         }
 
         // Cek jika akun belum ada email terdaftar

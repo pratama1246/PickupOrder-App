@@ -4,7 +4,15 @@
 
 @section('content')
 
-<div class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 shadow-sm">
+<div class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
+    <x-breadcrumb
+        compact
+        :links="[
+            ['label' => 'Pengguna', 'url' => route('admin.pengguna.index')],
+            ['label' => 'Edit Pengguna']
+        ]"
+    />
+
     <h1 class="text-2xl font-bold text-base-content mb-6">Edit Pengguna</h1>
 
     <form action="{{ route('admin.pengguna.update', $user->id) }}" method="POST" class="space-y-5" x-data="{ role: '{{ old('role', $user->role) }}' }">

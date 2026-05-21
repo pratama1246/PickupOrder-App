@@ -4,7 +4,15 @@
 
 @section('content')
 
-<div class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 shadow-sm">
+<div class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
+    <x-breadcrumb
+        compact
+        :links="[
+            ['label' => 'Menu', 'url' => route('vendor.menu.index')],
+            ['label' => 'Edit Menu']
+        ]"
+    />
+
     <h1 class="text-2xl font-bold text-base-content mb-6">Edit Menu</h1>
 
     <form action="{{ route('vendor.menu.update', $menu->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5">

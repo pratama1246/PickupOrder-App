@@ -46,6 +46,13 @@
       </div>
       <ul tabindex="0" class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-56 p-2 shadow-lg border border-base-200">
         <li><a class="justify-between font-medium">Profil <span class="badge badge-sm bg-fern-100 text-fern-700 border-0 font-medium">Baru</span></a></li>
+        @auth
+          @if(auth()->user()->isAdmin())
+            <li><a href="{{ route('admin.dashboard') }}" class="font-medium">Dashboard Admin</a></li>
+          @elseif(auth()->user()->isVendor())
+            <li><a href="{{ route('vendor.dashboard') }}" class="font-medium">Dashboard Kantin</a></li>
+          @endif
+        @endauth
         <li><a class="font-medium">Pengaturan</a></li>
         <li>
           <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-error font-medium">Keluar</a>

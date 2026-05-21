@@ -29,18 +29,18 @@
     <form action="{{ route('login') }}" method="POST" class="space-y-5">
         @csrf
 
-        {{-- NIM/NIP --}}
+        {{-- Email/NIM/NIP --}}
         <div>
-            <label class="block text-sm font-bold text-base-content mb-1.5">NIM/NIP</label>
+            <label class="block text-sm font-bold text-base-content mb-1.5">Email / NIM / NIP</label>
             <input
                 type="text"
-                name="nim"
-                value="{{ old('nim') }}"
-                placeholder="Masukkan NIM/NIP Anda"
+                name="identifier"
+                value="{{ old('identifier') }}"
+                placeholder="Masukkan Email atau NIM/NIP Anda"
                 autocomplete="username"
                 required
                 class="input input-bordered w-full rounded-xl bg-white border-base-content/20 focus:outline-none focus:border-fern-600 text-sm font-medium placeholder:text-base-content/35
-                       @error('nim') border-red-400 @enderror"
+                       @error('identifier') border-red-400 @enderror"
             />
         </div>
 

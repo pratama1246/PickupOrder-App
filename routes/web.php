@@ -90,6 +90,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('kantin', AdminCanteenController::class);
 
     // Manajemen pengguna
+    Route::get('/pengguna/import', [AdminUserController::class, 'importForm'])->name('pengguna.import.form');
+    Route::post('/pengguna/import', [AdminUserController::class, 'import'])->name('pengguna.import');
+    Route::get('/pengguna/import/template', [AdminUserController::class, 'downloadTemplate'])->name('pengguna.import.template');
     Route::patch('/pengguna/{id}/toggle', [AdminUserController::class, 'toggle'])->name('pengguna.toggle');
     Route::resource('pengguna', AdminUserController::class)->except(['show']);
 });

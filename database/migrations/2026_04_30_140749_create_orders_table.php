@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('canteen_id')->constrained()->onDelete('cascade');
-            $table->string('order_code')->unique(); // format: ORD-20240430-XXXX
+            $table->string('order_code')->unique(); // format: PNC-ORD-20240430-XXXX
             $table->enum('status', [
                 'menunggu', 'dimasak', 'siap_diambil', 'selesai', 'dibatalkan',
             ])->default('menunggu');
