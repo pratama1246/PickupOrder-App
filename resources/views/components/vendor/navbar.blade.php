@@ -8,15 +8,21 @@
 
     <div class="flex items-center gap-3">
         <div class="dropdown dropdown-end ml-1">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder">
+            @if(auth()->check() && auth()->user()->avatar)
             <div class="w-8 rounded-full ring-2 ring-fern-200">
-              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="avatar" />
+              <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="avatar" class="object-cover" />
             </div>
+            @else
+            <div class="bg-fern-100 text-fern-700 w-8 rounded-full ring-2 ring-fern-200 flex items-center justify-center">
+              <span class="text-sm font-bold uppercase">{{ substr(auth()->user()->name ?? 'V', 0, 1) }}</span>
+            </div>
+            @endif
           </div>
           <ul tabindex="0" class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-56 p-2 shadow-lg border border-base-200 text-base-content">
             <li><a href="{{ route('home') }}" class="font-medium">Halaman Utama</a></li>
-            <li><a class="justify-between font-medium">Profil <span class="badge badge-sm bg-fern-100 text-fern-700 border-0 font-medium">Baru</span></a></li>
-            <li><a class="font-medium">Pengaturan</a></li>
+            <li><a href="{{ route('profile.edit') }}" class="justify-between font-medium">Profil <span class="badge badge-sm bg-fern-100 text-fern-700 border-0 font-medium">Baru</span></a></li>
+            <li><a href="{{ route('profile.edit') }}" class="font-medium">Pengaturan</a></li>
             <li>
               <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-error font-medium">Keluar</a>
               <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">

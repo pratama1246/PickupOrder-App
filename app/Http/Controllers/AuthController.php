@@ -40,7 +40,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             /** @var User $user */
-            $user = Auth::user();
+            $user = Auth::user()->fresh();
 
             // Paksa ganti password jika login pertama kali
             if ($user->is_first_login) {

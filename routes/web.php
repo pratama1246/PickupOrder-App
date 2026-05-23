@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\CanteenController as UserCanteenController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
@@ -33,6 +34,11 @@ Route::middleware('auth')->group(function () {
     // First login - ganti password wajib
     Route::get('/ganti-password', [AuthController::class, 'showChangePassword'])->name('password.change.form');
     Route::post('/ganti-password', [AuthController::class, 'changePassword'])->name('password.change');
+
+    // Profile & Settings
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 // ---------------------------------------------------------------------------

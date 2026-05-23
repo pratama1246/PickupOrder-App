@@ -18,6 +18,7 @@ class User extends Authenticatable
         'name',
         'nim',
         'email',
+        'avatar',
         'password',
         'role',
         'is_first_login',
