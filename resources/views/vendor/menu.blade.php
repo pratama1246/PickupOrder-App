@@ -55,11 +55,7 @@
             </form>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success rounded-xl mb-4 text-sm font-bold shadow-sm">
-                <span>{{ session('success') }}</span>
-            </div>
-        @endif
+
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             @forelse ($menus as $menu)

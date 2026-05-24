@@ -18,19 +18,7 @@
         <p class="text-sm text-base-content/70 mt-1">Kelola informasi pribadi dan pengaturan keamanan akun Anda.</p>
     </div>
 
-    @if (session('status') === 'profile-updated')
-        <div role="alert" class="alert alert-success bg-fern-50 text-fern-700 border-fern-200 mb-6 rounded-2xl shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>Informasi profil berhasil diperbarui!</span>
-        </div>
-    @endif
 
-    @if (session('status') === 'password-updated')
-        <div role="alert" class="alert alert-success bg-fern-50 text-fern-700 border-fern-200 mb-6 rounded-2xl shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>Password berhasil diperbarui!</span>
-        </div>
-    @endif
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6" x-data="{ avatarPreview: '{{ $user->avatar ? asset('storage/' . $user->avatar) : '' }}' }" @avatar-cropped.window="avatarPreview = $event.detail">
         

@@ -25,17 +25,7 @@
 
             <div class="w-full lg:flex-1 min-w-0 space-y-5">
                 
-                @if(session('success'))
-                    <div class="alert alert-success rounded-xl text-sm font-bold shadow-sm">
-                        <span>{{ session('success') }}</span>
-                    </div>
-                @endif
-                
-                @if(session('error'))
-                    <div class="alert alert-error rounded-xl text-sm font-bold shadow-sm text-white">
-                        <span>{{ session('error') }}</span>
-                    </div>
-                @endif
+
 
                 @forelse ($grouped as $canteenId => $data)
                     <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">

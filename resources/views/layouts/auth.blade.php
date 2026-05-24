@@ -86,6 +86,7 @@
 
     </div>
 
+    <x-toast />
 </body>
 
 </html>

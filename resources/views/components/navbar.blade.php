@@ -51,7 +51,6 @@
         @endif
       </div>
       <ul tabindex="0" class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-56 p-2 shadow-lg border border-base-200">
-        <li><a href="{{ route('profile.edit') }}" class="justify-between font-medium">Profil <span class="badge badge-sm bg-fern-100 text-fern-700 border-0 font-medium">Baru</span></a></li>
         @auth
           @if(auth()->user()->isAdmin())
             <li><a href="{{ route('admin.dashboard') }}" class="font-medium">Dashboard Admin</a></li>
@@ -59,7 +58,7 @@
             <li><a href="{{ route('vendor.dashboard') }}" class="font-medium">Dashboard Kantin</a></li>
           @endif
         @endauth
-        <li><a href="{{ route('profile.edit') }}" class="font-medium">Pengaturan</a></li>
+        <li><a href="{{ route('profile.edit') }}" class="font-medium">Profil dan Pengaturan</a></li>
         <li>
           <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-error font-medium">Keluar</a>
           <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">

@@ -149,6 +149,29 @@ class UserController extends Controller
     }
 
     /**
+     * Hapus beberapa akun pengguna sekaligus.
+     */
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['required', 'exists:users,id'],
+        ]);
+
+        $ids = array_filter($request->ids, function ($id) {
+            return $id != auth()->id();
+        });
+
+        if (empty($ids)) {
+            return back()->with('error', 'Tidak ada pengguna valid yang dipilih untuk dihapus.');
+        }
+
+        User::whereIn('id', $ids)->whereIn('role', ['mahasiswa', 'vendor'])->delete();
+
+        return back()->with('success', count($ids) . ' akun pengguna berhasil dihapus.');
+    }
+
+    /**
      * Tampilkan form import pengguna CSV (/admin/pengguna/import).
      */
     public function importForm(): View
