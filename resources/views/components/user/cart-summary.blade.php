@@ -36,7 +36,7 @@
     </div>
 
     <a href="{{ $checkoutUrl }}"
-       class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all">
+       class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all">
         Bayar Sekarang
     </a>
 

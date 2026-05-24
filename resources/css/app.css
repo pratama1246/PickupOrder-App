@@ -83,3 +83,18 @@
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+/* Custom Profile Picture Cropper styles */
+.cropper-view-box,
+.cropper-face {
+    border-radius: 50%;
+    outline: 2px solid #306939 !important; /* warna fern-700 */
+    outline-offset: -1px;
+}
+.cropper-line, .cropper-point {
+    display: none !important;
+}
+.cropper-bg {
+    background-image: none !important;
+    background-color: #f3f4f6;
+}

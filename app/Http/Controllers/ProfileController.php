@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\Encoders\WebpEncoder;
 
 class ProfileController extends Controller
 {
@@ -55,10 +56,11 @@ class ProfileController extends Controller
             $filename = 'avatars/' . uniqid('avatar_') . '.webp';
             
             // Kompres dan ubah ke webp
-            $image = Image::read($file);
-            $image->cover(400, 400); // Potong otomatis ke aspect ratio 1:1 untuk profile
+            $image = Image::decode($file);
+            $image->cover(400, 400);
+            $webp = $image->encode(new WebpEncoder(quality: 80));
             
-            Storage::disk('public')->put($filename, (string) $image->toWebp(80));
+            Storage::disk('public')->put($filename, $webp->toString());
             
             $data['avatar'] = $filename;
         }

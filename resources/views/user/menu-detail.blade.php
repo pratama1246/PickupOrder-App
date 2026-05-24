@@ -60,7 +60,7 @@
                             @csrf
                             <input type="hidden" name="menu_id" value="{{ $menu->id }}">
                             <input type="hidden" name="quantity" x-bind:value="qty">
-                            <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all {{ !$menu->isInStock() ? 'btn-disabled opacity-50' : '' }}">
+                            <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all {{ !$menu->isInStock() ? 'btn-disabled opacity-50' : '' }}">
                                 {{ $menu->isInStock() ? 'Tambah ke Keranjang' : 'Stok Habis' }}
                             </button>
                         </form>

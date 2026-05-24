@@ -38,10 +38,10 @@
                 </p>
 
                 <div class="flex flex-col gap-3 justify-center lg:justify-start items-center lg:items-start">
-                    <button class="btn bg-fern-700 text-white hover:bg-fern-800 border-none shadow-md px-6 py-2 min-h-0 h-auto text-sm rounded-2xl w-52 transition-all duration-200 active:scale-95 hover:shadow-lg">
+                    <button class="btn bg-fern-700 text-white hover:bg-fern-800 border-none shadow-md px-6 py-2 min-h-0 h-auto text-sm rounded-xl w-52 transition-all duration-200 active:scale-95 hover:shadow-lg">
                         Pesan Sekarang
                     </button>
-                    <button class="btn bg-vanilla-custard-300 text-black hover:bg-fern-700 hover:text-white border-none shadow-md px-6 py-2 min-h-0 h-auto text-sm rounded-2xl w-52 transition-all duration-200 active:scale-95 hover:shadow-lg">
+                    <button class="btn bg-vanilla-custard-300 text-black hover:bg-fern-700 hover:text-white border-none shadow-md px-6 py-2 min-h-0 h-auto text-sm rounded-xl w-52 transition-all duration-200 active:scale-95 hover:shadow-lg">
                         Lihat Menu
                     </button>
                 </div>
@@ -101,41 +101,3 @@
     </section>
 
 @endsection
-
-@push('scripts')
-<script>
-    const words = ["Nugas?", "Praktikum?", "Ngoding?", "Kelas?", "Begadang?"];
-    let i = 0;
-    let j = 0;
-    let currentWord = "";
-    let isDeleting = false;
- 
-    function typeEffect() {
-        currentWord = words[i];
- 
-        if (isDeleting) {
-            j--;
-        } else {
-            j++;
-        }
- 
-        document.getElementById("typing-text").textContent =
-            currentWord.substring(0, j);
- 
-        let speed = isDeleting ? 50 : 100;
- 
-        if (!isDeleting && j === currentWord.length) {
-            speed = 1200;
-            isDeleting = true;
-        } else if (isDeleting && j === 0) {
-            isDeleting = false;
-            i = (i + 1) % words.length;
-            speed = 300;
-        }
- 
-        setTimeout(typeEffect, speed);
-    }
- 
-    typeEffect();
-</script>
-@endpush

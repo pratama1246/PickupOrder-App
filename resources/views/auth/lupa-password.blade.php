@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    {{-- Success: punya email -> link dikirim --}}
+    {{-- Success --}}
     @if(session('status') === 'reset-sent')
         <div class="bg-fern-50 border border-fern-200 rounded-xl px-4 py-4 mb-5">
             <p class="text-sm font-bold text-fern-700 mb-1">Link reset dikirim!</p>
@@ -27,7 +27,7 @@
         </div>
     @endif
 
-    {{-- Info: tidak punya email -> hubungi admin --}}
+    {{-- Gagal hubungi admin --}}
     @if(session('status') === 'no-email')
         <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-4 mb-5">
             <p class="text-sm font-bold text-amber-700 mb-1">Akun kamu belum punya email terdaftar.</p>
@@ -38,7 +38,7 @@
     <form action="{{ route('password.request.submit') }}" method="POST" class="space-y-5">
         @csrf
 
-        {{-- NIM/NIP --}}
+        {{-- Field Email/NIM/NIP --}}
         <div>
             <label class="block text-sm font-bold text-base-content mb-1.5">Email / NIM / NIP</label>
             <input
@@ -58,7 +58,7 @@
             Kirim Permintaan Reset
         </button>
 
-        {{-- Back to login --}}
+        {{-- Kembali Login --}}
         <div class="text-center">
             <a href="{{ route('login') }}" class="text-sm font-bold text-base-content/50 hover:text-fern-700 transition-colors">
                 Kembali ke Login

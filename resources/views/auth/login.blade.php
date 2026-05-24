@@ -8,7 +8,7 @@
 
     {{-- Heading --}}
     <div class="mb-7">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-base-content mb-1">Selamat Datang!</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold text-base-content mb-1">Selamat Datang!</h2>
         <p class="text-sm text-base-content/60 font-medium">Login dulu ya best, biar bisa jajan sepuasnya. hehe</p>
     </div>
 
@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    {{-- Session Status (misal: setelah ganti password) --}}
+    {{-- Session Status --}}
     @if(session('status'))
         <div class="bg-fern-50 border border-fern-200 text-fern-700 text-sm font-medium rounded-xl px-4 py-3 mb-5">
             {{ session('status') }}

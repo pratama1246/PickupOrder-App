@@ -72,7 +72,7 @@
                         </svg>
                         <h3 class="text-lg font-bold text-base-content mb-1">Keranjang Belanja Kosong</h3>
                         <p class="text-sm text-base-content/60 mb-5 font-medium">Anda belum menambahkan makanan atau minuman.</p>
-                        <a href="/pesan" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none px-6 rounded-2xl font-bold text-sm shadow-md active:scale-95 transition-all">
+                        <a href="/pesan" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none px-6 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
                             Mulai Cari Menu
                         </a>
                     </div>

@@ -6,11 +6,10 @@
 
     <div class="max-w-8xl">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <!-- Title & Action Buttons Group (Mobile: Title + Icons on one row) -->
+            <!-- Title & Action Button -->
             <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
                 <h1 class="text-2xl font-bold text-base-content shrink-0">Daftar Menu</h1>
                 
-                <!-- Action Buttons (Mobile only, Icon-only) -->
                 <div class="flex md:hidden items-center gap-2">
                     <a href="{{ route('vendor.menu.create') }}"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm active:scale-95 transition-all flex items-center justify-center">
@@ -21,9 +20,9 @@
                 </div>
             </div>
 
-            <!-- Search, Filter & Action Buttons Group (Desktop: side-by-side on right) -->
+            <!-- Search, Filter & Action Button -->
             <form method="GET" action="{{ route('vendor.menu.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                <!-- Search Input -->
+
                 <label
                     class="input input-bordered flex items-center gap-2 w-full md:w-64 xl:w-80 shadow-sm rounded-full border-base-content/40 focus-within:border-base-content input-md sm:pl-6 grow">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/50" viewBox="0 0 24 24"
@@ -34,7 +33,6 @@
                     <input type="search" name="search" value="{{ request('search') }}" class="grow text-sm sm:text-base font-medium pl-1" placeholder="Cari menu..." />
                 </label>
 
-                <!-- Filter Button (Below Search on Mobile) -->
                 <button type="submit"
                     class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 active:scale-95 transition-all w-fit sm:w-auto shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/70" fill="none" viewBox="0 0 24 24"
@@ -45,7 +43,6 @@
                     <span>Cari</span>
                 </button>
 
-                <!-- Action Buttons (Desktop only, side-by-side with labels) -->
                 <div class="hidden md:flex items-center gap-2 shrink-0">
                     <a href="{{ route('vendor.menu.create') }}"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white font-bold text-sm border-none rounded-md px-6 py-2.5 h-auto min-h-0 shadow-sm active:scale-95 transition-all flex items-center gap-2">

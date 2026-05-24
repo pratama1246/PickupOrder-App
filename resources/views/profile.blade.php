@@ -32,24 +32,39 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" x-data="{ avatarPreview: '{{ $user->avatar ? asset('storage/' . $user->avatar) : '' }}' }" @avatar-cropped.window="avatarPreview = $event.detail">
         
         <!-- Sidebar Profile Card -->
         <div class="md:col-span-1 space-y-6">
             <div class="bg-white border border-base-content/10 rounded-3xl p-6 shadow-sm text-center">
-                @if($user->avatar)
-                <div class="avatar mb-4">
-                    <div class="w-24 rounded-full ring ring-fern-50 ring-offset-base-100 ring-offset-2">
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="object-cover" />
+                <!-- Interactive Avatar Upload -->
+                <div class="relative w-24 h-24 mx-auto mb-4 group cursor-pointer" @click="document.getElementById('avatar-input').click()" title="Klik untuk ubah foto profil">
+                    <!-- Image Display -->
+                    <div class="w-full h-full rounded-full ring ring-fern-50 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-base-100">
+                        <template x-if="avatarPreview">
+                            <img :src="avatarPreview" alt="Avatar" class="w-full h-full object-cover" />
+                        </template>
+                        <template x-if="!avatarPreview">
+                            <div class="bg-fern-100 text-fern-700 w-full h-full flex items-center justify-center text-4xl font-bold uppercase">
+                                {{ substr($user->name, 0, 1) }}
+                            </div>
+                        </template>
+                    </div>
+                    
+                    <!-- Hover Camera Overlay -->
+                    <div class="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.66-1.01l.82-1.23A2 2 0 0 1 10.08 4h3.84a2 2 0 0 1 1.67 1.01l.82 1.23A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>
+                            <circle cx="12" cy="13" r="3"/>
+                        </svg>
+                        <span class="text-[9px] text-white font-bold uppercase tracking-wider">Ubah</span>
                     </div>
                 </div>
-                @else
-                <div class="avatar placeholder mb-4">
-                    <div class="bg-fern-100 text-fern-700 rounded-full w-24 ring ring-fern-50 ring-offset-base-100 ring-offset-2 flex items-center justify-center">
-                        <span class="text-4xl font-bold uppercase">{{ substr($user->name, 0, 1) }}</span>
-                    </div>
-                </div>
-                @endif
+                
+                @error('avatar')
+                    <p class="text-error text-xs mb-3 font-semibold">{{ $message }}</p>
+                @enderror
+
                 <h2 class="text-xl font-bold text-shadow-grey-900">{{ $user->name }}</h2>
                 <p class="text-sm text-base-content/60 mt-1">{{ $user->email ?? 'Belum ada email' }}</p>
                 <div class="mt-4">
@@ -79,13 +94,9 @@
                     @csrf
                     @method('PATCH')
 
-                    <div>
-                        <label class="block text-sm font-bold text-base-content mb-1.5">Foto Profil (Opsional)</label>
-                        <input type="file" name="avatar" class="file-input file-input-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium {{ $errors->has('avatar') ? 'file-input-error' : '' }}" accept="image/*" />
-                        @error('avatar')
-                            <p class="text-error text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <!-- Hidden file input triggered by avatar container -->
+                    <input type="file" id="avatar-input" name="avatar" class="hidden" accept="image/*"
+                           @change="handleAvatarSelect($event)" />
 
                     <div>
                         <label class="block text-sm font-bold text-base-content mb-1.5">Nama Lengkap</label>
@@ -104,7 +115,7 @@
                     </div>
 
                     <div class="pt-2 flex justify-end">
-                        <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-0 rounded-2xl px-8 shadow-sm transition active:scale-95">Simpan Perubahan</button>
+                        <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-0 rounded-xl px-8 shadow-sm transition active:scale-95">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
@@ -139,7 +150,7 @@
                     </div>
 
                     <div class="pt-2 flex justify-end">
-                        <button type="submit" class="btn bg-shadow-grey-900 hover:bg-black text-white border-0 rounded-2xl px-8 shadow-sm transition active:scale-95">Perbarui Password</button>
+                        <button type="submit" class="btn bg-shadow-grey-900 hover:bg-black text-white border-0 rounded-xl px-8 shadow-sm transition active:scale-95">Perbarui Password</button>
                     </div>
                 </form>
             </div>
@@ -147,4 +158,30 @@
         </div>
     </div>
 </div>
+
+<!-- Modal untuk Cropping Gambar -->
+<dialog id="cropper_modal" class="modal">
+    <div class="modal-box max-w-md bg-white rounded-3xl border border-base-content/10 p-6 shadow-xl">
+        <h3 class="font-extrabold text-lg text-base-content mb-2">Sesuaikan Foto Profil</h3>
+        <p class="text-xs text-base-content/60 font-medium mb-4">Seret atau perbesar foto agar pas di dalam lingkaran.</p>
+        
+        <!-- Area Cropper (Wajib dibatasi tingginya agar rapi) -->
+        <div class="w-full aspect-square bg-base-200 overflow-hidden flex items-center justify-center rounded-2xl border border-base-content/10">
+            <img id="cropper_image" src="" class="max-w-full block" />
+        </div>
+        
+        <div class="modal-action mt-6 flex justify-end gap-3">
+            <button type="button" class="btn btn-ghost rounded-xl text-sm font-bold active:scale-95 transition-all" onclick="closeCropperModal(true)">Batal</button>
+            <button type="button" class="btn bg-fern-700 hover:bg-fern-800 text-white border-0 rounded-xl px-6 shadow-md text-sm font-bold active:scale-95 transition-all" onclick="applyCrop()">Terapkan</button>
+        </div>
+    </div>
+</dialog>
+
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />
+@endpush
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+@endpush
 @endsection

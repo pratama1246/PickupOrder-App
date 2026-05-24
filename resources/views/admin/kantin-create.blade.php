@@ -29,7 +29,7 @@
 
         <div class="alert alert-info bg-blue-50 text-blue-800 border-none rounded-xl text-sm font-medium">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span>Akun pengelola (Vendor) akan dibuat secara otomatis berdasarkan Nama Kantin. Email dan Password akan ditampilkan setelah berhasil ditambahkan.</span>
+            <span>Akun pengelola akan dibuat secara otomatis berdasarkan Nama Kantin. Email dan Password akan ditampilkan setelah berhasil ditambahkan.</span>
         </div>
 
         <div>
