@@ -17,13 +17,13 @@
                     <x-status-badge :status="$order->status_label" />
                 </div>
 
-                <a href="{{ route('vendor.order.show', $order->id) }}" class="btn bg-base-300 hover:bg-base-400 text-base-content border-none w-full sm:w-auto px-6 shadow-sm font-bold">
+                <a href="{{ route('vendor.order.show', $order->id) }}" class="btn bg-base-300 hover:bg-base-400 text-base-content border-none w-full sm:w-auto px-6 shadow-sm font-bold rounded-xl">
                     Detail
                 </a>
             </div>
         @empty
             <div class="bg-vanilla-custard-50 border border-base-content/30 rounded-2xl p-8 text-center shadow-sm">
-                <p class="text-base-content/60 font-medium">Belum ada transaksi masuk.</p>
+                <p class="text-base-content/60 font-medium">Belum ada ditransaksi masuk.</p>
             </div>
         @endforelse
 

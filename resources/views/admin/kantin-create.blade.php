@@ -62,7 +62,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                     </svg>
                     <p class="mb-1 text-xs"><span class="font-bold">Klik untuk mengunggah</span> atau seret gambar</p>
-                    <p class="text-xxs opacity-75">PNG, JPG, WEBP maks. 2MB</p>
+                    <p class="text-xxs opacity-75">PNG, JPG, WEBP maks. 10MB</p>
                 </div>
                 <input type="file" name="image" accept="image/*" class="hidden"
                        @change="if ($event.target.files.length) imageUrl = URL.createObjectURL($event.target.files[0])" />

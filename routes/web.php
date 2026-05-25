@@ -97,6 +97,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Manajemen pengguna
     Route::delete('/pengguna/bulk-destroy', [AdminUserController::class, 'bulkDestroy'])->name('pengguna.bulkDestroy');
+    Route::patch('/pengguna/bulk-toggle', [AdminUserController::class, 'bulkToggle'])->name('pengguna.bulkToggle');
     Route::get('/pengguna/import', [AdminUserController::class, 'importForm'])->name('pengguna.import.form');
     Route::post('/pengguna/import', [AdminUserController::class, 'import'])->name('pengguna.import');
     Route::get('/pengguna/import/template', [AdminUserController::class, 'downloadTemplate'])->name('pengguna.import.template');

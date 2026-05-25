@@ -43,6 +43,17 @@
                     <span>Cari</span>
                 </button>
 
+                @if(request('search'))
+                    <!-- Clear Search Button -->
+                    <a href="{{ route('vendor.menu.index') }}"
+                        class="btn btn-md bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 active:scale-95 transition-all w-fit sm:w-auto shrink-0" title="Kembali ke daftar lengkap">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span>Kembali</span>
+                    </a>
+                @endif
+
                 <div class="hidden md:flex items-center gap-2 shrink-0">
                     <a href="{{ route('vendor.menu.create') }}"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white font-bold text-sm border-none rounded-md px-6 py-2.5 h-auto min-h-0 shadow-sm active:scale-95 transition-all flex items-center gap-2">

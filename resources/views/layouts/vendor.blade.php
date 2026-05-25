@@ -14,7 +14,7 @@
 
     <div class="drawer lg:drawer-open h-screen overflow-hidden">
         <input id="vendor-drawer" type="checkbox" class="drawer-toggle" />
-        
+
         <div class="drawer-content flex flex-col h-full overflow-hidden">
             <x-vendor.navbar />
 

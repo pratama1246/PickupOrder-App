@@ -135,7 +135,7 @@
                         </p>
                         <p class="text-xs font-bold text-fern-700 mt-1" x-show="fileName" x-text="fileName"
                             style="display: none;"></p>
-                        <p class="text-xxs opacity-75 mt-0.5" x-show="!fileName">CSV maks. 2MB</p>
+                        <p class="text-xxs opacity-75 mt-0.5" x-show="!fileName">CSV maks. 10MB</p>
                     </div>
                     <input type="file" name="file" accept=".csv,text/csv" required class="hidden"
                         @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''" />

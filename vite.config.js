@@ -1,11 +1,10 @@
-import { defineConfig, loadEnv } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig, loadEnv } from 'vite'
+import laravel from 'laravel-vite-plugin'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }) => {
-    // Load env variables
-    const env = loadEnv(mode, process.cwd(), '');
-    const isTunnel = env.APP_URL && env.APP_URL.includes('mytamakikii.web.id');
+    const env = loadEnv(mode, process.cwd(), '')
+    const isTunnel = env.APP_URL?.includes('mytamakikii.web.id')
 
     return {
         plugins: [
@@ -15,26 +14,27 @@ export default defineConfig(({ mode }) => {
                 refresh: true,
             }),
         ],
-        server: isTunnel ? {
+        server: {
             host: '0.0.0.0',
             port: 5173,
-            cors: true,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            hmr: {
-                host: 'vite.mytamakikii.web.id',
-                protocol: 'wss',
-                clientPort: 443,
-            },
-            allowedHosts: ['vite.mytamakikii.web.id'],
+            strictPort: true,
             watch: {
                 ignored: ['**/storage/framework/views/**'],
             },
-        } : {
-            watch: {
-                ignored: ['**/storage/framework/views/**'],
-            },
+            ...(isTunnel
+                ? {
+                      allowedHosts: [
+                          'pickuporder.mytamakikii.web.id',
+                          'vite.mytamakikii.web.id',
+                      ],
+                      cors: true,
+                      hmr: {
+                          host: 'vite.mytamakikii.web.id',
+                          protocol: 'wss',
+                          clientPort: 443,
+                      },
+                  }
+                : {}),
         },
-    };
-});
+    }
+})

@@ -172,6 +172,34 @@ class UserController extends Controller
     }
 
     /**
+     * Aktifkan/Nonaktifkan beberapa akun pengguna sekaligus.
+     */
+    public function bulkToggle(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['required', 'exists:users,id'],
+            'action' => ['required', 'in:activate,deactivate'],
+        ]);
+
+        $ids = array_filter($request->ids, function ($id) {
+            return $id != auth()->id();
+        });
+
+        if (empty($ids)) {
+            return back()->with('error', 'Tidak ada pengguna valid yang dipilih.');
+        }
+
+        $isFirstLogin = $request->action === 'deactivate' ? true : false;
+        User::whereIn('id', $ids)->whereIn('role', ['mahasiswa', 'vendor'])->update([
+            'is_first_login' => $isFirstLogin,
+        ]);
+
+        $status = $request->action === 'activate' ? 'diaktifkan' : 'dinonaktifkan';
+        return back()->with('success', count($ids) . " akun pengguna berhasil $status.");
+    }
+
+    /**
      * Tampilkan form import pengguna CSV (/admin/pengguna/import).
      */
     public function importForm(): View
@@ -209,7 +237,7 @@ class UserController extends Controller
     public function import(Request $request): RedirectResponse
     {
         $request->validate([
-            'file' => 'required|file|mimes:csv,txt|max:2048',
+            'file' => 'required|file|mimes:csv,txt|max:10240',
         ]);
 
         $file = $request->file('file');
