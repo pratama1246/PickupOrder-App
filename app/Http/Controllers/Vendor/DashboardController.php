@@ -10,6 +10,25 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    public function toggleStatus(\Illuminate\Http\Request $request)
+    {
+        $canteen = Auth::user()->canteen;
+        abort_if(is_null($canteen), 403, 'Akun vendor ini belum memiliki kantin terdaftar.');
+        
+        $isOpen = $request->has('is_open') ? $request->boolean('is_open') : !$canteen->is_open;
+        $canteen->update(['is_open' => $isOpen]);
+        
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_open' => $canteen->is_open,
+                'message' => $canteen->is_open ? 'Kantin berhasil dibuka!' : 'Kantin telah ditutup.'
+            ]);
+        }
+        
+        return back()->with('success', $canteen->is_open ? 'Kantin berhasil dibuka!' : 'Kantin telah ditutup.');
+    }
+
     public function index(): View
     {
         $canteen = Auth::user()->canteen;

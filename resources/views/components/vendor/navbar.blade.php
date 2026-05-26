@@ -1,9 +1,36 @@
 <header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between lg:justify-end px-4 sm:px-6 shrink-0 z-50 shadow-md">
-    <div class="flex items-center gap-3 sm:gap-4 lg:hidden">
+    <div class="flex items-center gap-3 sm:gap-4 lg:hidden min-w-0 flex-1">
         <div class="bg-fern-700 text-white font-bold text-xs px-2 py-1 rounded-md tracking-wide shrink-0">
             LOGO
         </div>
-        <span class="text-white/90 font-bold text-sm sm:text-base">Kantin 1 <span class="max-[380px]:hidden">Dashboard</span></span>
+        
+        <div x-data="{ 
+                hover: false,
+                scrollDist: 0,
+                check() {
+                    const el = this.$refs.text;
+                    const isTruncated = el.classList.contains('truncate');
+                    if (isTruncated) el.classList.remove('truncate', 'block');
+                    el.classList.add('whitespace-nowrap', 'inline-block');
+                    
+                    this.scrollDist = el.scrollWidth - this.$refs.container.clientWidth;
+                    
+                    el.classList.remove('whitespace-nowrap', 'inline-block');
+                    if (isTruncated) el.classList.add('truncate', 'block');
+                }
+             }"
+             @mouseenter="check(); hover = true"
+             @mouseleave="hover = false"
+             x-ref="container"
+             class="min-w-0 flex-1 overflow-hidden">
+             
+            <div x-ref="text" 
+                 class="text-white/90 font-bold text-sm sm:text-base tracking-wide transition-transform ease-linear"
+                 :class="hover && scrollDist > 0 ? 'whitespace-nowrap inline-block' : 'truncate block'"
+                 :style="hover && scrollDist > 0 ? `transform: translateX(-${scrollDist + 8}px); transition-duration: ${Math.max(scrollDist * 20, 500)}ms;` : 'transform: translateX(0); transition-duration: 300ms;'">
+                {{ optional(auth()->user()->canteen)->name ?? 'Vendor' }} <span class="max-[380px]:hidden">Dashboard</span>
+            </div>
+        </div>
     </div>
 
     <div class="flex items-center gap-3">

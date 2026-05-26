@@ -5,11 +5,53 @@
 @section('content')
     <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-6 lg:pb-0">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
                 <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Dashboard Kantin</h1>
                 <p class="text-base-content/70 text-sm sm:text-lg font-medium">Halo, <strong>{{ $canteen->name }}</strong>!
                     Berikut performa hari ini.</p>
+            </div>
+            
+            <div x-data="{ 
+                    isOpen: {{ $canteen->is_open ? 'true' : 'false' }}, 
+                    isLoading: false,
+                    async toggleStatus() {
+                        this.isLoading = true;
+                        try {
+                            const response = await fetch('{{ route('vendor.canteen.toggle') }}', {
+                                method: 'PATCH',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ is_open: this.isOpen })
+                            });
+                            const data = await response.json();
+                            if(data.success) {
+                                this.isOpen = data.is_open;
+                                $dispatch('notify', { message: data.message, type: 'success' });
+                            }
+                        } catch (error) {
+                            console.error('Error toggling status:', error);
+                            this.isOpen = !this.isOpen;
+                            $dispatch('notify', { message: 'Gagal mengubah status kantin.', type: 'error' });
+                        } finally {
+                            this.isLoading = false;
+                        }
+                    }
+                 }" 
+                 class="bg-white rounded-xl px-4 py-3 flex sm:items-center justify-between gap-4 border border-base-content/10 shadow-sm w-full sm:w-fit shrink-0">
+                <div>
+                    <p class="text-xs font-bold text-base-content/50 uppercase">Status Kantin</p>
+                    <p class="text-sm font-bold transition-colors" :class="isOpen ? 'text-emerald-700' : 'text-rose-600'" x-text="isOpen ? 'Buka' : 'Tutup'"></p>
+                </div>
+                <div class="m-0 p-0 flex items-center shrink-0">
+                    <input type="checkbox" x-model="isOpen" @change="toggleStatus" :disabled="isLoading"
+                           class="toggle transition-colors duration-300"
+                           :class="isOpen ? 'bg-emerald-500 border-emerald-600 hover:bg-emerald-600' : 'bg-rose-500 border-rose-600 hover:bg-rose-600'" 
+                           title="Ubah status operasional kantin" />
+                </div>
             </div>
         </div>
 

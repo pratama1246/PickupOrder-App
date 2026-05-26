@@ -1,7 +1,37 @@
 <aside class="w-72 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
     <!-- Header Sidebar (Tinggi disamakan dengan navbar) -->
-    <div class="h-16 sm:h-20 shrink-0 flex items-center px-6">
-        <span class="text-white/90 font-bold text-sm sm:text-base tracking-wide">Kantin 1 Dashboard</span>
+    <div class="h-16 sm:h-20 shrink-0 flex items-center px-6 gap-3 overflow-hidden">
+        <div class="bg-fern-700 text-white font-bold text-xs sm:text-sm px-2 py-1 rounded-md tracking-wide shrink-0">
+            LOGO
+        </div>
+        
+        <div x-data="{ 
+                hover: false,
+                scrollDist: 0,
+                check() {
+                    const el = this.$refs.text;
+                    const isTruncated = el.classList.contains('truncate');
+                    if (isTruncated) el.classList.remove('truncate', 'block');
+                    el.classList.add('whitespace-nowrap', 'inline-block');
+                    
+                    this.scrollDist = el.scrollWidth - this.$refs.container.clientWidth;
+                    
+                    el.classList.remove('whitespace-nowrap', 'inline-block');
+                    if (isTruncated) el.classList.add('truncate', 'block');
+                }
+             }"
+             @mouseenter="check(); hover = true"
+             @mouseleave="hover = false"
+             x-ref="container"
+             class="min-w-0 flex-1 overflow-hidden">
+             
+            <div x-ref="text" 
+                 class="text-white/90 font-bold text-sm sm:text-base tracking-wide transition-transform ease-linear"
+                 :class="hover && scrollDist > 0 ? 'whitespace-nowrap inline-block' : 'truncate block'"
+                 :style="hover && scrollDist > 0 ? `transform: translateX(-${scrollDist + 8}px); transition-duration: ${Math.max(scrollDist * 20, 500)}ms;` : 'transform: translateX(0); transition-duration: 300ms;'">
+                {{ optional(auth()->user()->canteen)->name ?? 'Vendor' }} Dashboard
+            </div>
+        </div>
     </div>
     
     <nav class="flex-1 px-3 py-4 space-y-1">

@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="pb-10 lg:pb-0" x-data="{
+    <div class="max-w-8xl mx-auto pb-10 lg:pb-0" x-data="{
         selectedIds: [],
         allIds: @js($users->pluck('id')->toArray()),
         toggleAll() {
@@ -18,11 +18,14 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <!-- Title & Action Buttons Group (Mobile: Title + Icons on one row) -->
             <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
-                <div class="flex items-center gap-3">
-                    <h1 class="text-2xl font-bold text-base-content shrink-0">Daftar Pengguna</h1>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div>
+                        <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Pengguna</h1>
+                        <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola akun pengguna sistem.</p>
+                    </div>
                     
                     <!-- Desktop Bulk Actions -->
-                    <div x-show="selectedIds.length > 0" class="md:flex items-center gap-2 bg-white border border-base-content/15 px-3 py-1.5 rounded-full shadow-sm shrink-0">
+                    <div x-show="selectedIds.length > 0" class="hidden md:flex items-center gap-2 bg-white border border-base-content/15 px-3 py-1.5 rounded-full shadow-sm shrink-0" style="display: none;">
                         <span class="text-xs font-bold text-base-content/70 mr-1"><span x-text="selectedIds.length"></span> terpilih:</span>
                         
                         <!-- Aktifkan -->
@@ -169,18 +172,7 @@
             </div>
         </div>
 
-        @if(session('error_list'))
-            <div class="alert alert-error rounded-xl mb-4 text-sm shadow-sm flex flex-col items-start gap-2">
-                <span class="font-bold text-red-800">Beberapa baris data gagal diimpor:</span>
-                <ul class="list-disc pl-5 text-xs text-red-700 space-y-1 font-medium">
-                    @foreach(session('error_list') as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <div class="max-w-5xl">
+        <div class="max-w-8xl">
             <x-admin.pengguna-table :users="$users" />
             
             <div class="mt-4">

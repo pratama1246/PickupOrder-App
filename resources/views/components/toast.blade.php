@@ -6,6 +6,15 @@
     if (session('error')) {
         $toasts[] = ['type' => 'error', 'message' => session('error')];
     }
+    if (session('error_list')) {
+        $html = '<span class="font-bold block mb-1">Beberapa baris data gagal diimpor:</span>';
+        $html .= '<ul class="list-disc pl-4 text-xs space-y-0.5 font-medium max-h-32 overflow-y-auto scrollbar-thin">';
+        foreach (session('error_list') as $err) {
+            $html .= '<li>' . e($err) . '</li>';
+        }
+        $html .= '</ul>';
+        $toasts[] = ['type' => 'error', 'message' => $html];
+    }
     if (session('warning')) {
         $toasts[] = ['type' => 'warning', 'message' => session('warning')];
     }
@@ -88,17 +97,17 @@
             });
         }
     }"
-    class="fixed top-24 right-4 z-[9999] flex flex-col gap-3 w-full max-w-sm pointer-events-none px-4 sm:px-0"
+    class="fixed z-[9999] flex flex-col gap-3 w-[calc(100%-2rem)] sm:w-full max-w-sm pointer-events-none bottom-24 left-1/2 -translate-x-1/2 sm:bottom-auto sm:left-auto sm:translate-x-0 sm:top-24 sm:right-4"
 >
     <template x-for="toast in toasts" :key="toast.id">
         <div
             x-show="toast.show"
             x-transition:enter="transition ease-out duration-300 transform"
-            x-transition:enter-start="translate-y-[-20px] translate-x-[20px] opacity-0 scale-95"
+            x-transition:enter-start="translate-y-[20px] sm:translate-y-[-20px] translate-x-0 sm:translate-x-[20px] opacity-0 scale-95"
             x-transition:enter-end="translate-y-0 translate-x-0 opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-200 transform"
             x-transition:leave-start="translate-y-0 translate-x-0 opacity-100 scale-100"
-            x-transition:leave-end="translate-x-[50px] opacity-0 scale-95"
+            x-transition:leave-end="translate-y-[50px] sm:translate-y-0 sm:translate-x-[50px] opacity-0 scale-95"
             class="pointer-events-auto shadow-md rounded-2xl p-4 flex gap-3 relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg border"
             :class="{
                 'alert alert-success bg-white border-emerald-200 text-emerald-800': toast.type === 'success',
@@ -134,7 +143,7 @@
 
             <!-- Toast Content -->
             <div class="flex-1 pr-4">
-                <span class="text-sm font-semibold leading-relaxed" x-text="toast.message"></span>
+                <span class="text-sm font-semibold leading-relaxed" x-html="toast.message"></span>
             </div>
 
             <!-- Close Button -->

@@ -15,14 +15,6 @@ class HomeController extends Controller
      */
     public function index(): View|RedirectResponse
     {
-        if (auth()->check()) {
-            if (auth()->user()->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            } elseif (auth()->user()->isVendor()) {
-                return redirect()->route('vendor.dashboard');
-            }
-        }
-
         // Kantin yang sedang buka, diambil 6 teratas
         $canteens = Canteen::where('is_open', true)
             ->withCount('availableMenus')
@@ -30,9 +22,12 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        // Menu populer: menu tersedia, diurutkan berdasarkan frekuensi dipesan
+        // Menu populer: menu tersedia dari kantin yang buka, diurutkan berdasarkan frekuensi dipesan
         $popularMenus = Menu::where('is_available', true)
             ->where('stock', '>', 0)
+            ->whereHas('canteen', function ($query) {
+                $query->where('is_open', true);
+            })
             ->withCount('orderItems')
             ->orderByDesc('order_items_count')
             ->take(8)

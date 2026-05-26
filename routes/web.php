@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
 // ---------------------------------------------------------------------------
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
     Route::get('/dashboard', [VendorDashboardController::class, 'index'])->name('dashboard');
+    Route::patch('/canteen/toggle', [VendorDashboardController::class, 'toggleStatus'])->name('canteen.toggle');
 
     // Transaksi masuk
     Route::get('/order', [VendorOrderController::class, 'index'])->name('order.index');

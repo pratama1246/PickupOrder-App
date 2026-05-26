@@ -38,9 +38,21 @@ class CanteenController extends Controller
      */
     public function show(int $id): View
     {
-        $canteen = Canteen::with('owner')->withCount('menus')->findOrFail($id);
+        $canteen = Canteen::with('owner')
+            ->withCount('menus')
+            ->withCount('orders')
+            ->withCount(['orders as completed_orders_count' => function ($query) {
+                $query->where('status', 'selesai');
+            }])
+            ->withSum(['orders as total_revenue' => function ($query) {
+                $query->where('status', 'selesai');
+            }], 'total_price')
+            ->findOrFail($id);
 
-        return view('admin.kantin-show', compact('canteen'));
+        $menus = $canteen->menus()->latest()->paginate(5, ['*'], 'menus_page')->withQueryString();
+        $orders = $canteen->orders()->with('user')->latest()->paginate(5, ['*'], 'orders_page')->withQueryString();
+
+        return view('admin.kantin-show', compact('canteen', 'menus', 'orders'));
     }
 
     /**
