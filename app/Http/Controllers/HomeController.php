@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Canteen;
 use App\Models\Menu;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -12,8 +13,16 @@ class HomeController extends Controller
      * Beranda mahasiswa.
      * Menampilkan kantin yang sedang buka dan menu-menu populer.
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
+        if (auth()->check()) {
+            if (auth()->user()->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            } elseif (auth()->user()->isVendor()) {
+                return redirect()->route('vendor.dashboard');
+            }
+        }
+
         // Kantin yang sedang buka, diambil 6 teratas
         $canteens = Canteen::where('is_open', true)
             ->withCount('availableMenus')

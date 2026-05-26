@@ -10,7 +10,7 @@
         :links="[
             ['label' => 'Beranda', 'url' => '/'],
             ['label' => 'Riwayat', 'url' => '/riwayat'],
-            ['label' => 'Order No. PNC-123455478836']
+            ['label' => 'Order No. ' . $order->order_code]
         ]" 
     />
 
@@ -34,11 +34,6 @@
                         <h2 class="text-lg sm:text-2xl font-bold text-base-content mb-1">No. Order : {{ $order->order_code }}</h2>
                         <x-status-badge :status="$order->status_label" />
                     </div>
-                    @if ($order->status == 'menunggu' || $order->status == 'dimasak' || $order->status == 'siap_diambil')
-                        <a href="{{ route('order.queue', $order->id) }}" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-lg font-bold text-sm w-full sm:w-auto text-center flex items-center justify-center">
-                            Pantau Antrian
-                        </a>
-                    @endif
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">

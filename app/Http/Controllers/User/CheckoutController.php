@@ -90,7 +90,7 @@ class CheckoutController extends Controller
         // Kosongkan keranjang setelah berhasil checkout
         session()->forget(self::SESSION_KEY);
 
-        return redirect()->route('order.queue', $lastOrder->id)
+        return redirect()->route('order.show', $lastOrder->id)
             ->with('success', 'Pesanan berhasil dibuat!');
     }
 }

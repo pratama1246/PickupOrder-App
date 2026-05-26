@@ -51,24 +51,4 @@ class OrderController extends Controller
         return view('user.order-detail', compact('order'));
     }
 
-    /**
-     * Halaman antrian aktif pesanan mahasiswa (/pesanan/antrian/{id}).
-     * Menampilkan progress tracker 4-step secara real-time.
-     */
-    public function queue(int $id): View
-    {
-        $order = Order::with(['canteen', 'items.menu'])
-            ->where('user_id', Auth::id())
-            ->findOrFail($id);
-
-        // Step progress: mapping status DB ke indeks step (1-4)
-        $currentStep = match ($order->status) {
-            'menunggu' => 1,
-            'dimasak' => 3,
-            'siap_diambil' => 4,
-            default => 1,
-        };
-
-        return view('user.antrian', compact('order', 'currentStep'));
-    }
 }

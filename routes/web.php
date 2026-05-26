@@ -63,16 +63,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-    // Riwayat & antrian pesanan
+    // Riwayat pesanan
     Route::get('/riwayat', [UserOrderController::class, 'index'])->name('order.index');
     Route::get('/riwayat/{id}', [UserOrderController::class, 'show'])->name('order.show');
-    Route::get('/pesanan/antrian/{id}', [UserOrderController::class, 'queue'])->name('order.queue');
 });
 
 // ---------------------------------------------------------------------------
 // Vendor Routes
 // ---------------------------------------------------------------------------
-Route::middleware(['auth'])->prefix('vendor')->name('vendor.')->group(function () {
+Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
     Route::get('/dashboard', [VendorDashboardController::class, 'index'])->name('dashboard');
 
     // Transaksi masuk
@@ -88,7 +87,7 @@ Route::middleware(['auth'])->prefix('vendor')->name('vendor.')->group(function (
 // ---------------------------------------------------------------------------
 // Admin Routes
 // ---------------------------------------------------------------------------
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Manajemen kantin (resource)
