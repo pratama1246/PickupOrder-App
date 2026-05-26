@@ -61,13 +61,23 @@
                 @endif
 
                 @if (in_array($order->status, ['menunggu', 'dimasak']))
-                    <form action="{{ route('vendor.order.destroy', $order->id) }}" method="POST" onsubmit="return confirm('Batalkan pesanan ini?')" class="flex-1">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn bg-red-500 hover:bg-red-600 text-white border-none w-full rounded-xl font-bold shadow-sm">
+                    <div class="flex-1">
+                        <button type="button" onclick="document.getElementById('cancel_order_modal_{{ $order->id }}').showModal()" class="btn bg-red-500 hover:bg-red-600 text-white border-none w-full rounded-xl font-bold shadow-sm active:scale-95 transition-all">
                             Batalkan
                         </button>
-                    </form>
+                        <x-modal id="cancel_order_modal_{{ $order->id }}" type="error" title="Batalkan Pesanan">
+                            Apakah Anda yakin ingin membatalkan pesanan ini? Aksi ini tidak dapat diurungkan.
+                            
+                            <x-slot:footer>
+                                <button type="button" onclick="document.getElementById('cancel_order_modal_{{ $order->id }}').close()" class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">Batal</button>
+                                <form action="{{ route('vendor.order.destroy', $order->id) }}" method="POST" class="m-0 p-0 inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold active:scale-95 transition-all">Ya, Batalkan</button>
+                                </form>
+                            </x-slot:footer>
+                        </x-modal>
+                    </div>
                 @endif
             </div>
         </div>

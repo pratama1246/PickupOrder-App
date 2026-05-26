@@ -13,7 +13,10 @@
         ]"
     />
 
-    <h1 class="text-2xl font-bold text-base-content mb-6">Edit Menu</h1>
+    <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Edit Menu</h1>
+        <p class="text-base-content/70 text-sm sm:text-lg font-medium">Perbarui informasi dan harga hidangan Anda.</p>
+    </div>
 
     <form action="{{ route('vendor.menu.update', $menu->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
         @csrf

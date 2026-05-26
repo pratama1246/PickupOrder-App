@@ -7,12 +7,15 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <!-- Title & Action Buttons Group (Mobile: Title + Icons on one row) -->
         <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
-            <h1 class="text-2xl font-bold text-base-content shrink-0">Daftar Kantin</h1>
+            <div>
+                <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Kantin</h1>
+                <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola seluruh data kantin yang terdaftar.</p>
+            </div>
  
             <!-- Action Buttons (Mobile only, Icon-only) -->
             <div class="flex md:hidden items-center gap-2">
                 <a href="{{ route('admin.kantin.create') }}"
-                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm active:scale-95 transition-all flex items-center justify-center">
+                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -36,7 +39,7 @@
  
             <!-- Filter Button (Below Search on Mobile) -->
             <button
-                class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 active:scale-95 transition-all w-fit sm:w-auto shrink-0">
+                class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/70" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -48,7 +51,7 @@
             <!-- Desktop Action Buttons (Icon-only, visible on desktop next to Search/Filter) -->
             <div class="hidden md:flex items-center gap-2 shrink-0">
                 <a href="{{ route('admin.kantin.create') }}"
-                    class="btn btn-md bg-fern-700 hover:bg-fern-800 text-white border-none rounded-full w-12 h-12 p-0 shadow-sm active:scale-95 transition-all flex items-center justify-center"
+                    class="btn btn-md bg-fern-700 hover:bg-fern-800 text-white border-none rounded-full w-12 h-12 p-0 shadow-sm transition-colors flex items-center justify-center"
                     title="Tambah Kantin">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2.5">

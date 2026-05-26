@@ -13,7 +13,10 @@
         ]"
     />
 
-    <h1 class="text-2xl font-bold text-base-content mb-6">Tambah Kantin</h1>
+    <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Tambah Kantin</h1>
+        <p class="text-base-content/70 text-sm sm:text-lg font-medium">Daftarkan pengelola dan kantin baru ke dalam sistem.</p>
+    </div>
 
     <form action="{{ route('admin.kantin.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
         @csrf
@@ -55,7 +58,7 @@
 
         <div x-data="{ imageUrl: null }">
             <label class="block text-sm font-bold text-base-content mb-1.5">Gambar Kantin</label>
-            <label class="relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-base-content/25 rounded-2xl cursor-pointer hover:bg-base-content/5 hover:border-fern-600 transition-all group overflow-hidden bg-white shadow-xs">
+            <label class="relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-base-content/25 rounded-2xl cursor-pointer hover:bg-base-content/5 hover:border-fern-600 transition-colors group overflow-hidden bg-white shadow-xs">
                 <img x-show="imageUrl" :src="imageUrl" class="absolute inset-0 w-full h-full object-cover" style="display: none;" />
                 <div class="flex flex-col items-center justify-center pb-6 pt-5 px-4 text-center z-10" :class="imageUrl ? 'absolute inset-0 bg-black/50 text-white opacity-0 hover:opacity-100 transition-opacity duration-200' : 'text-base-content/60'">
                     <svg class="w-8 h-8 mb-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">

@@ -8,7 +8,10 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <!-- Title & Action Button -->
             <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
-                <h1 class="text-2xl font-bold text-base-content shrink-0">Daftar Menu</h1>
+                <div>
+                    <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Menu</h1>
+                    <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola semua menu yang ditawarkan kantin Anda.</p>
+                </div>
                 
                 <div class="flex md:hidden items-center gap-2">
                     <a href="{{ route('vendor.menu.create') }}"
@@ -89,17 +92,13 @@
                                         d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                 </svg>
                             </a>
-                            <form action="{{ route('vendor.menu.destroy', $menu->id) }}" method="POST" onsubmit="return confirm('Hapus menu ini?')" class="inline-block m-0 p-0">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-400 hover:text-red-600 transition-colors pt-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </form>
+                            <button type="button" onclick="openDeleteModal('{{ addslashes($menu->name) }}', '{{ route('vendor.menu.destroy', $menu->id) }}')" class="text-red-400 hover:text-red-600 transition-colors pt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
                         </div>
                     </x-slot:action>
                 </x-foodcard>
@@ -115,4 +114,31 @@
         </div>
     </div>
 
+    <!-- Global Delete Modal -->
+    <x-modal id="global_delete_modal" type="error" title="Hapus Menu" subtitle="Tindakan ini tidak dapat dibatalkan">
+        Apakah Anda yakin ingin menghapus menu <strong id="delete_menu_name"></strong>? Data pesanan yang terkait mungkin akan ikut terarsipkan.
+
+        <x-slot:footer>
+            <button type="button" onclick="document.getElementById('global_delete_modal').close()" class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">
+                Batal
+            </button>
+            <form id="delete_menu_form" method="POST" class="inline-block m-0 p-0">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white border-0 shadow-md rounded-xl font-bold active:scale-95 transition-all">
+                    Ya, Hapus
+                </button>
+            </form>
+        </x-slot:footer>
+    </x-modal>
 @endsection
+
+@push('scripts')
+<script>
+    function openDeleteModal(name, url) {
+        document.getElementById('delete_menu_name').innerText = name;
+        document.getElementById('delete_menu_form').action = url;
+        document.getElementById('global_delete_modal').showModal();
+    }
+</script>
+@endpush

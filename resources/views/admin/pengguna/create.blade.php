@@ -13,7 +13,10 @@
         ]"
     />
 
-    <h1 class="text-2xl font-bold text-base-content mb-6">Tambah Pengguna</h1>
+    <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Tambah Pengguna</h1>
+        <p class="text-base-content/70 text-sm sm:text-lg font-medium">Daftarkan akun pengguna baru ke dalam sistem.</p>
+    </div>
 
     <form action="{{ route('admin.pengguna.store') }}" method="POST" class="space-y-5" x-data="{ role: '{{ old('role', '') }}' }">
         @csrf
@@ -28,7 +31,7 @@
         </div>
 
         <div class="grid grid-cols-1 gap-4" :class="role !== 'vendor' ? 'sm:grid-cols-2' : ''">
-            <div x-show="role !== 'vendor'" x-transition class="transition-all duration-300">
+            <div x-show="role !== 'vendor'" x-transition class="transition-colors duration-300">
                 <label class="block text-sm font-bold text-base-content mb-1.5">NIM / NIP</label>
                 <input type="text" name="nim" value="{{ old('nim') }}" :disabled="role === 'vendor'" :required="role !== 'vendor'" placeholder="Masukkan NIM atau NIP"
                        class="input input-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium" />

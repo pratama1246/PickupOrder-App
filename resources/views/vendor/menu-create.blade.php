@@ -13,7 +13,10 @@
         ]"
     />
 
-    <h1 class="text-2xl font-bold text-base-content mb-6">Tambah Menu</h1>
+    <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Tambah Menu</h1>
+        <p class="text-base-content/70 text-sm sm:text-lg font-medium">Tambahkan hidangan baru untuk ditawarkan kepada mahasiswa.</p>
+    </div>
 
     <form action="{{ route('vendor.menu.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
         @csrf

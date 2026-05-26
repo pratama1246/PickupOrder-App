@@ -148,22 +148,17 @@
 </div>
 
 <!-- Modal untuk Cropping Gambar -->
-<dialog id="cropper_modal" class="modal">
-    <div class="modal-box max-w-md bg-white rounded-3xl border border-base-content/10 p-6 shadow-xl">
-        <h3 class="font-extrabold text-lg text-base-content mb-2">Sesuaikan Foto Profil</h3>
-        <p class="text-xs text-base-content/60 font-medium mb-4">Seret atau perbesar foto agar pas di dalam lingkaran.</p>
-        
-        <!-- Area Cropper (Wajib dibatasi tingginya agar rapi) -->
-        <div class="w-full aspect-square bg-base-200 overflow-hidden flex items-center justify-center rounded-2xl border border-base-content/10">
-            <img id="cropper_image" src="" class="max-w-full block" />
-        </div>
-        
-        <div class="modal-action mt-6 flex justify-end gap-3">
-            <button type="button" class="btn btn-ghost rounded-xl text-sm font-bold active:scale-95 transition-all" onclick="closeCropperModal(true)">Batal</button>
-            <button type="button" class="btn bg-fern-700 hover:bg-fern-800 text-white border-0 rounded-xl px-6 shadow-md text-sm font-bold active:scale-95 transition-all" onclick="applyCrop()">Terapkan</button>
-        </div>
+<x-modal id="cropper_modal" title="Sesuaikan Foto Profil" subtitle="Seret atau perbesar foto agar pas di dalam lingkaran." :clickOutside="false" :showClose="false">
+    <!-- Area Cropper (Wajib dibatasi tingginya agar rapi) -->
+    <div class="w-full aspect-square bg-base-200 overflow-hidden flex items-center justify-center rounded-2xl border border-base-content/10 mt-2">
+        <img id="cropper_image" src="" class="max-w-full block" />
     </div>
-</dialog>
+    
+    <x-slot:footer>
+        <button type="button" class="btn btn-ghost rounded-xl text-sm font-bold active:scale-95 transition-all" onclick="closeCropperModal(true)">Batal</button>
+        <button type="button" class="btn bg-fern-700 hover:bg-fern-800 text-white border-0 rounded-xl px-6 shadow-md text-sm font-bold active:scale-95 transition-all" onclick="applyCrop()">Terapkan</button>
+    </x-slot:footer>
+</x-modal>
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />

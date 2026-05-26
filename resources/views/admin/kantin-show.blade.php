@@ -24,14 +24,24 @@
             rating="4.8"
         >
             <x-slot:buttons>
-                <form action="{{ route('admin.kantin.destroy', $canteen->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kantin ini?')" class="inline-block m-0 p-0 w-full md:w-auto">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn bg-red-500 text-white hover:bg-red-600 shadow-lg rounded-xl w-full md:w-fit">
+                <div class="inline-block m-0 p-0 w-full md:w-auto">
+                    <button type="button" onclick="document.getElementById('delete_canteen_modal_{{ $canteen->id }}').showModal()" class="btn bg-red-500 text-white hover:bg-red-600 shadow-sm rounded-xl w-full md:w-fit transition-colors">
                         Hapus
                     </button>
-                </form>
-                <a href="{{ route('admin.kantin.edit', $canteen->id) }}" class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-lg rounded-xl w-full md:w-fit text-center">
+                    <x-modal id="delete_canteen_modal_{{ $canteen->id }}" type="error" title="Hapus Kantin">
+                        Apakah Anda yakin ingin menghapus kantin <strong>{{ $canteen->name }}</strong>? Seluruh data menu dan pesanan terkait mungkin akan ikut terhapus atau diarsipkan.
+                        
+                        <x-slot:footer>
+                            <button type="button" onclick="document.getElementById('delete_canteen_modal_{{ $canteen->id }}').close()" class="btn btn-ghost rounded-xl font-bold transition-colors">Batal</button>
+                            <form action="{{ route('admin.kantin.destroy', $canteen->id) }}" method="POST" class="m-0 p-0 inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold transition-colors">Ya, Hapus</button>
+                            </form>
+                        </x-slot:footer>
+                    </x-modal>
+                </div>
+                <a href="{{ route('admin.kantin.edit', $canteen->id) }}" class="btn bg-fern-700 text-white hover:bg-fern-800 shadow-sm rounded-xl w-full md:w-fit text-center">
                     Edit
                 </a>
             </x-slot:buttons>

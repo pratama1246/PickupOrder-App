@@ -154,6 +154,7 @@ function initTypewriter() {
     typeEffect();
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
     initTypewriter();
 });

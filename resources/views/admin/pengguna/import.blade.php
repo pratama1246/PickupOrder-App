@@ -8,7 +8,10 @@
         class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
         <x-breadcrumb compact :links="[['label' => 'Pengguna', 'url' => route('admin.pengguna.index')], ['label' => 'Import Pengguna']]" />
 
-        <h1 class="text-2xl font-bold text-base-content mb-6">Import Pengguna</h1>
+        <div class="mb-6 sm:mb-8">
+            <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Import Pengguna</h1>
+            <p class="text-base-content/70 text-sm sm:text-lg font-medium">Impor data pengguna secara massal menggunakan file Excel atau CSV.</p>
+        </div>
 
         <!-- Download Template Section -->
         <div
@@ -119,7 +122,7 @@
             <div x-data="{ fileName: '' }">
                 <label class="block text-sm font-bold text-base-content mb-1.5">Pilih Berkas CSV</label>
                 <label
-                    class="relative flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-base-content/25 rounded-2xl cursor-pointer hover:bg-base-content/5 hover:border-fern-600 transition-all group bg-white shadow-xs text-base-content/60">
+                    class="relative flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-base-content/25 rounded-2xl cursor-pointer hover:bg-base-content/5 hover:border-fern-600 transition-colors group bg-white shadow-xs text-base-content/60">
                     <div class="flex flex-col items-center justify-center pb-6 pt-5 text-center px-4">
                         <svg class="w-8 h-8 mb-2 text-base-content/50 group-hover:text-fern-700 transition-colors"
                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
@@ -147,11 +150,11 @@
 
             <div class="flex gap-3 pt-2">
                 <button type="submit"
-                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6 active:scale-95 transition-all">
+                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6 transition-colors">
                     Mulai Impor
                 </button>
                 <a href="{{ route('admin.pengguna.index') }}"
-                    class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6 active:scale-95 transition-all">
+                    class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6 transition-colors">
                     Batal
                 </a>
             </div>
