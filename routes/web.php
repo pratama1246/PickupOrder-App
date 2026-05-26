@@ -12,6 +12,7 @@ use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\MenuController as UserMenuController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\Vendor\DashboardController as VendorDashboardController;
+use App\Http\Controllers\Vendor\CanteenController as VendorCanteenController;
 use App\Http\Controllers\Vendor\MenuController as VendorMenuController;
 use App\Http\Controllers\Vendor\OrderController as VendorOrderController;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +74,8 @@ Route::middleware('auth')->group(function () {
 // ---------------------------------------------------------------------------
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
     Route::get('/dashboard', [VendorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/canteen/edit', [VendorCanteenController::class, 'edit'])->name('canteen.edit');
+    Route::put('/canteen', [VendorCanteenController::class, 'update'])->name('canteen.update');
     Route::patch('/canteen/toggle', [VendorDashboardController::class, 'toggleStatus'])->name('canteen.toggle');
 
     // Transaksi masuk

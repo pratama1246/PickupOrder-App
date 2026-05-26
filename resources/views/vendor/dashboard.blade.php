@@ -3,7 +3,7 @@
 @section('title', 'Dashboard - Vendor PNC')
 
 @section('content')
-    <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-6 lg:pb-0">
+    <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-10 lg:pb-0">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
@@ -11,46 +11,48 @@
                 <p class="text-base-content/70 text-sm sm:text-lg font-medium">Halo, <strong>{{ $canteen->name }}</strong>!
                     Berikut performa hari ini.</p>
             </div>
-            
-            <div x-data="{ 
-                    isOpen: {{ $canteen->is_open ? 'true' : 'false' }}, 
-                    isLoading: false,
-                    async toggleStatus() {
-                        this.isLoading = true;
-                        try {
-                            const response = await fetch('{{ route('vendor.canteen.toggle') }}', {
-                                method: 'PATCH',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Accept': 'application/json',
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ is_open: this.isOpen })
-                            });
-                            const data = await response.json();
-                            if(data.success) {
-                                this.isOpen = data.is_open;
-                                $dispatch('notify', { message: data.message, type: 'success' });
-                            }
-                        } catch (error) {
-                            console.error('Error toggling status:', error);
-                            this.isOpen = !this.isOpen;
-                            $dispatch('notify', { message: 'Gagal mengubah status kantin.', type: 'error' });
-                        } finally {
-                            this.isLoading = false;
+
+            <div x-data="{
+                isOpen: {{ $canteen->is_open ? 'true' : 'false' }},
+                isLoading: false,
+                async toggleStatus() {
+                    this.isLoading = true;
+                    try {
+                        const response = await fetch('{{ route('vendor.canteen.toggle') }}', {
+                            method: 'PATCH',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ is_open: this.isOpen })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            this.isOpen = data.is_open;
+                            $dispatch('notify', { message: data.message, type: 'success' });
                         }
+                    } catch (error) {
+                        console.error('Error toggling status:', error);
+                        this.isOpen = !this.isOpen;
+                        $dispatch('notify', { message: 'Gagal mengubah status kantin.', type: 'error' });
+                    } finally {
+                        this.isLoading = false;
                     }
-                 }" 
-                 class="bg-white rounded-xl px-4 py-3 flex sm:items-center justify-between gap-4 border border-base-content/10 shadow-sm w-full sm:w-fit shrink-0">
+                }
+            }"
+                class="bg-white rounded-xl px-4 py-3 flex sm:items-center justify-between gap-4 border border-base-content/10 shadow-sm w-full sm:w-fit shrink-0">
                 <div>
                     <p class="text-xs font-bold text-base-content/50 uppercase">Status Kantin</p>
-                    <p class="text-sm font-bold transition-colors" :class="isOpen ? 'text-emerald-700' : 'text-rose-600'" x-text="isOpen ? 'Buka' : 'Tutup'"></p>
+                    <p class="text-sm font-bold transition-colors" :class="isOpen ? 'text-emerald-700' : 'text-rose-600'"
+                        x-text="isOpen ? 'Buka' : 'Tutup'"></p>
                 </div>
                 <div class="m-0 p-0 flex items-center shrink-0">
                     <input type="checkbox" x-model="isOpen" @change="toggleStatus" :disabled="isLoading"
-                           class="toggle transition-colors duration-300"
-                           :class="isOpen ? 'bg-emerald-500 border-emerald-600 hover:bg-emerald-600' : 'bg-rose-500 border-rose-600 hover:bg-rose-600'" 
-                           title="Ubah status operasional kantin" />
+                        class="toggle transition-colors duration-300"
+                        :class="isOpen ? 'bg-emerald-500 border-emerald-600 hover:bg-emerald-600' :
+                            'bg-rose-500 border-rose-600 hover:bg-rose-600'"
+                        title="Ubah status operasional kantin" />
                 </div>
             </div>
         </div>
@@ -90,12 +92,15 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             <div class="bg-base-200 rounded-xl p-5 shadow-sm border border-base-content/5">
                 <p class="text-xs sm:text-sm font-bold text-base-content/70 mb-2">Total Pendapatan</p>
-                <p class="text-xl sm:text-2xl font-bold text-base-content">Rp {{ number_format($stats['total_pendapatan'], 0, ',', '.') }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-base-content">Rp
+                    {{ number_format($stats['total_pendapatan'], 0, ',', '.') }}</p>
             </div>
 
             <div class="bg-base-200 rounded-xl p-5 shadow-sm border border-base-content/5">
                 <p class="text-xs sm:text-sm font-bold text-base-content/70 mb-2">Menu Habis</p>
-                <p class="text-xl sm:text-2xl font-bold {{ $stats['menu_habis'] > 0 ? 'text-red-500' : 'text-base-content' }}">{{ $stats['menu_habis'] }} Menu</p>
+                <p
+                    class="text-xl sm:text-2xl font-bold {{ $stats['menu_habis'] > 0 ? 'text-red-500' : 'text-base-content' }}">
+                    {{ $stats['menu_habis'] }} Menu</p>
             </div>
         </div>
 
@@ -143,8 +148,8 @@
                             <tr>
                                 <td colspan="4" class="text-center py-8 text-base-content/50 text-xs sm:text-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="h-8 w-8 sm:h-10 sm:w-10 mx-auto text-base-content/20 mb-3"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        class="h-8 w-8 sm:h-10 sm:w-10 mx-auto text-base-content/20 mb-3" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>

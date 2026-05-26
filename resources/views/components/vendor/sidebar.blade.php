@@ -60,6 +60,7 @@
             Order
         </a>
 
+
         <a href="/vendor/menu"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
        {{ request()->is('vendor/menu*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">

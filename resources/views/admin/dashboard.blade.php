@@ -15,14 +15,15 @@
 
         <!-- Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-            <x-admin.stat-card label="Pengguna"     value="{{ $stats['total_pengguna'] }} Pengguna" />
+            <x-admin.stat-card label="Pengguna" value="{{ $stats['total_pengguna'] }} Pengguna" />
             <x-admin.stat-card label="Total Kantin" value="{{ $stats['total_kantin'] }} Kantin" />
-            <x-admin.stat-card label="Total Order"  value="{{ $stats['total_order'] }} Pesanan" />
+            <x-admin.stat-card label="Total Order" value="{{ $stats['total_order'] }} Pesanan" />
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <x-admin.stat-card label="Total Transaksi" value="Rp {{ number_format($stats['total_transaksi'], 0, ',', '.') }}" />
-            <x-admin.stat-card label="Total Menu"      value="{{ $stats['total_menu'] }} Menu" />
+            <x-admin.stat-card label="Total Transaksi"
+                value="Rp {{ number_format($stats['total_transaksi'], 0, ',', '.') }}" />
+            <x-admin.stat-card label="Total Menu" value="{{ $stats['total_menu'] }} Menu" />
         </div>
 
         <!-- Tables Row -->
@@ -79,8 +80,7 @@
                             @forelse($recentOrders ?? [] as $order)
                                 <tr class="hover:bg-base-200/30 transition-colors border-b border-base-content/5">
                                     <td class="px-4 py-3">
-                                        <span
-                                            class="font-medium text-[11px] sm:text-xs">{{ $order->order_code }}</span><br>
+                                        <span class="font-medium text-[11px] sm:text-xs">{{ $order->order_code }}</span><br>
                                         <span
                                             class="text-[10px] sm:text-xs text-base-content/50">{{ $order->created_at->diffForHumans() }}</span>
                                     </td>

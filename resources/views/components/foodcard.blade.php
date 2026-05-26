@@ -13,7 +13,7 @@
     $imageUrl = $image ? $image : asset('assets/food/Nasi Rames.jpg');
 @endphp
 
-<div class="card bg-base-100 w-full shadow-sm rounded-2xl overflow-hidden">
+<div class="card bg-base-100 w-full shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md hover:scale-[1.01] border border-base-200">
 
     <div class="flex sm:hidden gap-3 p-3">
 
@@ -49,7 +49,7 @@
                 @if(isset($action))
                     {{ $action }}
                 @else
-                    <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-lg font-bold text-xs px-3 shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
+                    <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-xl font-bold text-xs px-3 shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
                         Pesan
                     </a>
                 @endif
@@ -61,7 +61,7 @@
         <img
             src="{{ $imageUrl }}"
             alt="{{ $name }}"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
     </figure>
     <div class="hidden sm:block card-body p-4">
@@ -86,7 +86,7 @@
             @if(isset($action))
                 {{ $action }}
             @else
-                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-lg font-bold shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
+                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-2xl font-bold shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
                     Pesan
                 </a>
             @endif

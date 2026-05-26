@@ -24,50 +24,7 @@
                         <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola akun pengguna sistem.</p>
                     </div>
                     
-                    <!-- Desktop Bulk Actions -->
-                    <div x-show="selectedIds.length > 0" class="hidden md:flex items-center gap-2 bg-white border border-base-content/15 px-3 py-1.5 rounded-full shadow-sm shrink-0" style="display: none;">
-                        <span class="text-xs font-bold text-base-content/70 mr-1"><span x-text="selectedIds.length"></span> terpilih:</span>
-                        
-                        <!-- Aktifkan -->
-                        <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center" onsubmit="confirmAction(event, 'Yakin ingin mengaktifkan semua pengguna yang terpilih?');">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="action" value="activate">
-                            <template x-for="id in selectedIds" :key="id">
-                                <input type="hidden" name="ids[]" :value="id" />
-                            </template>
-                            <button type="submit" class="btn btn-xs bg-fern-100 hover:bg-fern-200 text-fern-700 border-none rounded-md font-bold px-2 py-0.5">
-                                Aktifkan
-                            </button>
-                        </form>
 
-                        <!-- Nonaktifkan -->
-                        <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center" onsubmit="confirmAction(event, 'Yakin ingin menonaktifkan semua pengguna yang terpilih?');">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="action" value="deactivate">
-                            <template x-for="id in selectedIds" :key="id">
-                                <input type="hidden" name="ids[]" :value="id" />
-                            </template>
-                            <button type="submit" class="btn btn-xs bg-orange-100 hover:bg-orange-200 text-orange-700 border-none rounded-md font-bold px-2 py-0.5">
-                                Nonaktifkan
-                            </button>
-                        </form>
-
-                        <div class="w-px h-4 bg-base-content/20 mx-1"></div>
-
-                        <!-- Hapus -->
-                        <form action="{{ route('admin.pengguna.bulkDestroy') }}" method="POST" class="m-0 p-0 flex items-center" onsubmit="confirmAction(event, 'Yakin ingin menghapus semua pengguna yang terpilih?', true);">
-                            @csrf
-                            @method('DELETE')
-                            <template x-for="id in selectedIds" :key="id">
-                                <input type="hidden" name="ids[]" :value="id" />
-                            </template>
-                            <button type="submit" class="btn btn-xs bg-red-100 hover:bg-red-200 text-red-700 border-none rounded-md font-bold px-2 py-0.5">
-                                Hapus
-                            </button>
-                        </form>
-                    </div>
                 </div>
                 
                 <!-- Action Buttons (Mobile only, Icon-only) -->
@@ -91,15 +48,16 @@
             <!-- Search & Filter Group -->
             <form method="GET" action="{{ route('admin.pengguna.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
                 <!-- Search Input -->
-                <label
-                    class="input input-bordered flex items-center gap-2 w-full md:w-64 xl:w-80 shadow-sm rounded-full border-base-content/40 focus-within:border-base-content input-md sm:pl-6 grow">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/50" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.35-4.35" />
-                    </svg>
-                    <input type="search" name="search" value="{{ request('search') }}" class="grow text-sm sm:text-base font-medium pl-1" placeholder="Cari pengguna..." />
-                </label>
+                <div class="w-full md:w-64 xl:w-80 grow relative">
+                    <label class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
+                        <input type="search" name="search" class="grow text-sm sm:text-base font-medium pl-2" placeholder="Cari pengguna..." value="{{ request('search') }}" />
+                    </label>
+                    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </button>
+                </div>
 
                 <!-- Filter Button -->
                 <button type="submit"
@@ -143,32 +101,78 @@
             </form>
         </div>
 
-        <!-- Mobile Bulk Actions Panel -->
-        <div x-show="selectedIds.length > 0" x-transition class="flex flex-col md:hidden gap-3 bg-white border border-base-content/15 px-4 py-3 rounded-xl shadow-sm w-full mb-4" style="display: none;">
-            <div class="text-xs font-bold text-base-content/70"><span x-text="selectedIds.length"></span> pengguna terpilih</div>
-            <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0" onsubmit="confirmAction(event, 'Yakin ingin mengaktifkan semua pengguna yang terpilih?');">
+        <!-- Bulk Actions Panel (Desktop & Mobile) -->
+        <div x-show="selectedIds.length > 0" x-transition class="mb-4" style="display: none;" x-cloak>
+            
+            <!-- Desktop version -->
+            <div class="hidden md:flex items-center gap-2 bg-white border border-base-content/15 px-4 py-2 rounded-full shadow-sm w-fit transition-all duration-300">
+                <span class="text-sm font-bold text-base-content/70 mr-2"><span x-text="selectedIds.length"></span> pengguna terpilih:</span>
+                
+                <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center" onsubmit="confirmAction(event, 'Yakin ingin mengaktifkan semua pengguna yang terpilih?');">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="action" value="activate">
-                    <template x-for="id in selectedIds" :key="id"><input type="hidden" name="ids[]" :value="id" /></template>
-                    <button type="submit" class="btn btn-xs bg-fern-100 hover:bg-fern-200 text-fern-700 border-none rounded-md font-bold px-3">Aktifkan</button>
+                    <template x-for="id in selectedIds" :key="id">
+                        <input type="hidden" name="ids[]" :value="id" />
+                    </template>
+                    <button type="submit" class="btn btn-sm bg-fern-100 hover:bg-fern-200 text-fern-700 border-none rounded-md font-bold px-3">
+                        Aktifkan
+                    </button>
                 </form>
 
-                <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0" onsubmit="confirmAction(event, 'Yakin ingin menonaktifkan semua pengguna yang terpilih?');">
+                <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center" onsubmit="confirmAction(event, 'Yakin ingin menonaktifkan semua pengguna yang terpilih?');">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="action" value="deactivate">
-                    <template x-for="id in selectedIds" :key="id"><input type="hidden" name="ids[]" :value="id" /></template>
-                    <button type="submit" class="btn btn-xs bg-orange-100 hover:bg-orange-200 text-orange-700 border-none rounded-md font-bold px-3">Nonaktifkan</button>
+                    <template x-for="id in selectedIds" :key="id">
+                        <input type="hidden" name="ids[]" :value="id" />
+                    </template>
+                    <button type="submit" class="btn btn-sm bg-orange-100 hover:bg-orange-200 text-orange-700 border-none rounded-md font-bold px-3">
+                        Nonaktifkan
+                    </button>
                 </form>
 
-                <form action="{{ route('admin.pengguna.bulkDestroy') }}" method="POST" class="m-0 p-0 shrink-0" onsubmit="confirmAction(event, 'Yakin ingin menghapus semua pengguna yang terpilih?', true);">
+                <div class="w-px h-5 bg-base-content/20 mx-2"></div>
+
+                <form action="{{ route('admin.pengguna.bulkDestroy') }}" method="POST" class="m-0 p-0 flex items-center" onsubmit="confirmAction(event, 'Yakin ingin menghapus semua pengguna yang terpilih?', true);">
                     @csrf
                     @method('DELETE')
-                    <template x-for="id in selectedIds" :key="id"><input type="hidden" name="ids[]" :value="id" /></template>
-                    <button type="submit" class="btn btn-xs bg-red-100 hover:bg-red-200 text-red-700 border-none rounded-md font-bold px-3">Hapus</button>
+                    <template x-for="id in selectedIds" :key="id">
+                        <input type="hidden" name="ids[]" :value="id" />
+                    </template>
+                    <button type="submit" class="btn btn-sm bg-red-100 hover:bg-red-200 text-red-700 border-none rounded-md font-bold px-3">
+                        Hapus
+                    </button>
                 </form>
+            </div>
+
+            <!-- Mobile version -->
+            <div class="flex flex-col md:hidden gap-3 bg-white border border-base-content/15 px-4 py-3 rounded-xl shadow-sm w-full transition-all duration-300">
+                <div class="text-xs font-bold text-base-content/70"><span x-text="selectedIds.length"></span> pengguna terpilih</div>
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                    <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0" onsubmit="confirmAction(event, 'Yakin ingin mengaktifkan semua pengguna yang terpilih?');">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="action" value="activate">
+                        <template x-for="id in selectedIds" :key="id"><input type="hidden" name="ids[]" :value="id" /></template>
+                        <button type="submit" class="btn btn-xs bg-fern-100 hover:bg-fern-200 text-fern-700 border-none rounded-md font-bold px-3">Aktifkan</button>
+                    </form>
+
+                    <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0" onsubmit="confirmAction(event, 'Yakin ingin menonaktifkan semua pengguna yang terpilih?');">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="action" value="deactivate">
+                        <template x-for="id in selectedIds" :key="id"><input type="hidden" name="ids[]" :value="id" /></template>
+                        <button type="submit" class="btn btn-xs bg-orange-100 hover:bg-orange-200 text-orange-700 border-none rounded-md font-bold px-3">Nonaktifkan</button>
+                    </form>
+
+                    <form action="{{ route('admin.pengguna.bulkDestroy') }}" method="POST" class="m-0 p-0 shrink-0" onsubmit="confirmAction(event, 'Yakin ingin menghapus semua pengguna yang terpilih?', true);">
+                        @csrf
+                        @method('DELETE')
+                        <template x-for="id in selectedIds" :key="id"><input type="hidden" name="ids[]" :value="id" /></template>
+                        <button type="submit" class="btn btn-xs bg-red-100 hover:bg-red-200 text-red-700 border-none rounded-md font-bold px-3">Hapus</button>
+                    </form>
+                </div>
             </div>
         </div>
 
