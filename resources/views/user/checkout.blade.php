@@ -74,6 +74,10 @@
                         <label class="block text-sm font-bold text-base-content mb-2">Tentukan Jam Pengambilan</label>
                         <input type="time" name="custom_time" x-model="customTime" class="input input-bordered w-full rounded-2xl border-base-content/20 bg-white focus:outline-none focus:border-fern-700 text-base-content" :required="selectedTime === 'custom'">
                     </div>
+
+                    @error('pickup_time')
+                        <p class="mt-3 text-sm font-medium text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Pilih Metode Pembayaran --}}
@@ -118,6 +122,10 @@
                             </div>
                         </label>
                     </div>
+
+                    @error('payment_method')
+                        <p class="mt-3 text-sm font-medium text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
             </div>
@@ -145,17 +153,17 @@
                                         :description="$item['description'] ?? null"
                                         :price="'Rp. ' . number_format($item['price'], 0, ',', '.')"
                                         :quantity="$item['quantity']"
-                                        variant="card"
+                                        variant="list"
                                     />
                                 @endforeach
                             </div>
 
-                            <textarea
-                                name="notes[{{ $canteenId }}]"
-                                rows="2"
-                                placeholder="Catatan untuk {{ $data['canteen_name'] }} (Opsional)"
-                                class="textarea textarea-bordered w-full rounded-xl text-sm font-medium border-base-content/20 bg-base-50 focus:outline-none focus:border-base-content/40 resize-none placeholder:text-base-content/40"
-                            ></textarea>
+                            @if(!empty($notes[$canteenId]))
+                                <div class="mt-2 text-xs text-base-content/70 bg-base-100 px-3 py-2 rounded-lg border border-base-content/10 flex items-start gap-2">
+                                    <span>Catatan: "{{ $notes[$canteenId] }}"</span>
+                                </div>
+                            @endif
+                            <input type="hidden" name="notes[{{ $canteenId }}]" value="{{ $notes[$canteenId] ?? '' }}">
                         </div>
                     @endforeach
                 </div>
@@ -167,11 +175,11 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <a href="/keranjang" class="btn bg-red-500 hover:bg-red-600 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-14 min-h-0 text-center flex items-center justify-center">
+                        <a href="/keranjang" class="btn bg-red-500 hover:bg-red-600 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-12 min-h-0 text-center flex items-center justify-center">
                             Batalkan
                         </a>
-                        <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-14 min-h-0 text-center flex items-center justify-center">
-                            Bayar Sekarang
+                        <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-12 min-h-0 text-center flex items-center justify-center">
+                            Konfirmasi
                         </button>
                     </div>
                 </div>

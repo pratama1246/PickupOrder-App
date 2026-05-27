@@ -47,6 +47,24 @@ class OrderController extends Controller
     }
 
     /**
+     * Proses kode pesanan dari pemindai QR atau input manual.
+     */
+    public function scan(string $code): RedirectResponse
+    {
+        $canteen = Auth::user()->canteen;
+
+        $order = Order::where('canteen_id', $canteen->id)
+            ->where('order_code', 'LIKE', '%' . strtoupper($code))
+            ->first();
+
+        if (!$order) {
+            return redirect()->route('vendor.order.index')->with('error', 'Pesanan dengan kode tersebut tidak ditemukan atau bukan milik kantin Anda.');
+        }
+
+        return redirect()->route('vendor.order.show', $order->id)->with('success', 'Pesanan ditemukan.');
+    }
+
+    /**
      * Update status pesanan oleh vendor (Ubah Status).
      * Alur maju: menunggu -> dimasak -> siap_diambil -> selesai
      */
@@ -65,7 +83,15 @@ class OrderController extends Controller
 
         abort_if(is_null($nextStatus), 422, 'Status pesanan tidak dapat diubah lagi.');
 
-        $order->update(['status' => $nextStatus]);
+        $updateData = ['status' => $nextStatus];
+
+        // Jika pesanan tunai mencapai 'selesai', tandai sebagai lunas
+        // karena pembayaran tunai diterima saat makanan diserahkan ke mahasiswa
+        if ($nextStatus === 'selesai' && $order->payment_method === 'cash') {
+            $updateData['payment_status'] = 'paid';
+        }
+
+        $order->update($updateData);
 
         return back()->with('success', "Status pesanan #{$order->order_code} diperbarui.");
     }

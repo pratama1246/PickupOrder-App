@@ -50,8 +50,8 @@
                 @endif
             </div>
             <ul tabindex="0"
-                class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-56 p-2 shadow-lg border border-base-200 text-base-content">
-                <div class="px-4 py-2.5 border-b border-base-200 mb-1">
+                class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-64 p-2 shadow-lg border border-base-200 text-base-content">
+                <div class="px-4 py-2.5 border-b border-base-200 mb-1 min-w-0">
                     <div class="text-[10px] font-bold text-fern-700 uppercase tracking-wider">Vendor</div>
                     <div class="text-sm font-bold text-base-content truncate">{{ auth()->user()->name }}</div>
                     <div class="text-xs text-base-content/50 truncate">{{ auth()->user()->email }}</div>

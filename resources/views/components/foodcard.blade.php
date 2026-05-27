@@ -49,7 +49,7 @@
                 @if(isset($action))
                     {{ $action }}
                 @else
-                    <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-xl font-bold text-xs px-3 shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
+                    <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none h-7 min-h-0 rounded-md font-bold text-xs px-3 shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
                         Pesan
                     </a>
                 @endif
@@ -77,7 +77,7 @@
 
         <p class="text-sm text-base-content/60 font-medium mt-1">{{ $canteenName }}</p>
 
-        <p class="text-sm text-base-content/70 mt-1 line-clamp-2 leading-relaxed">
+        <p class="text-sm text-base-content/70 mt-1 line-clamp-2 leading-relaxed">Pesan
             {{ $description }}
         </p>
 
@@ -86,7 +86,7 @@
             @if(isset($action))
                 {{ $action }}
             @else
-                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-2xl font-bold shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
+                <a href="{{ $actionUrl }}" class="btn bg-fern-700 text-white hover:bg-fern-800 border-none btn-sm rounded-xl font-bold shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 hover:shadow-md">
                     Pesan
                 </a>
             @endif

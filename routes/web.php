@@ -11,6 +11,7 @@ use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\MenuController as UserMenuController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\User\PaymentCallbackController;
 use App\Http\Controllers\Vendor\DashboardController as VendorDashboardController;
 use App\Http\Controllers\Vendor\CanteenController as VendorCanteenController;
 use App\Http\Controllers\Vendor\MenuController as VendorMenuController;
@@ -61,13 +62,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/keranjang/{menuId}', [CartController::class, 'destroy'])->name('cart.destroy');
 
     // Checkout
+    Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout/retry/{paymentCode}', [CheckoutController::class, 'retry'])->name('checkout.retry');
 
     // Riwayat pesanan
     Route::get('/riwayat', [UserOrderController::class, 'index'])->name('order.index');
     Route::get('/riwayat/{id}', [UserOrderController::class, 'show'])->name('order.show');
+    Route::delete('/riwayat/{id}', [UserOrderController::class, 'destroy'])->name('order.destroy');
+
+    // API endpoint untuk polling status pembayaran (dipanggil oleh JavaScript di frontend)
+    Route::get('/api/order/{id}/payment-status', [UserOrderController::class, 'paymentStatus'])->name('order.payment-status');
 });
+
+// ---------------------------------------------------------------------------
+// Midtrans Webhook - TANPA auth middleware, TANPA CSRF (dikecualikan di bootstrap/app.php)
+// ---------------------------------------------------------------------------
+Route::post('/payment/notification', [PaymentCallbackController::class, 'handle'])->name('payment.notification');
 
 // ---------------------------------------------------------------------------
 // Vendor Routes
@@ -80,6 +92,7 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
 
     // Transaksi masuk
     Route::get('/order', [VendorOrderController::class, 'index'])->name('order.index');
+    Route::get('/order/scan/{code}', [VendorOrderController::class, 'scan'])->name('order.scan');
     Route::get('/order/{id}', [VendorOrderController::class, 'show'])->name('order.show');
     Route::put('/order/{id}', [VendorOrderController::class, 'update'])->name('order.update');
     Route::delete('/order/{id}', [VendorOrderController::class, 'destroy'])->name('order.destroy');

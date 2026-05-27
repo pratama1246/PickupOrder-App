@@ -39,7 +39,7 @@
 
                     <p class="text-sm text-base-content/60 font-medium mb-1">{{ $menu->canteen->name }}</p>
                     <h2 class="text-2xl sm:text-3xl font-bold text-base-content mb-2">{{ $menu->name }}</h2>
-                    <p class="text-lg font-bold text-base-content mb-3">{{ $menu->formatted_price }}</p>
+                    <p class="text-lg font-semibold text-base-content/80 mb-3">{{ $menu->formatted_price }}</p>
 
                     <p class="text-sm text-base-content/70 font-medium leading-relaxed mb-4">
                         {{ $menu->description ?? 'Belum ada deskripsi untuk menu ini.' }}
@@ -50,7 +50,7 @@
 
                         <div class="mt-5 pt-4 border-t border-base-content/10">
                             <p class="text-sm font-bold text-base-content/60 mb-1">Total :</p>
-                            <p class="text-2xl sm:text-3xl font-extrabold text-base-content"
+                            <p class="text-2xl sm:text-3xl font-bold text-fern-700"
                                x-text="'Rp. ' + (qty * harga).toLocaleString('id-ID')">
                                 {{ $menu->formatted_price }}
                             </p>

@@ -20,6 +20,10 @@ class Order extends Model
         'pickup_time',
         'total_price',
         'notes',
+        'payment_method',
+        'payment_status',
+        'payment_code',
+        'snap_token',
     ];
 
     protected $casts = [
@@ -40,13 +44,22 @@ class Order extends Model
         });
     }
 
-    private static function generateOrderCode(): string
+    public static function generateOrderCode(): string
     {
         do {
-            $code = 'PNC-ORD-'.now()->format('Ymd').'-'.strtoupper(Str::random(4));
+            $code = 'PNC-ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
         } while (self::where('order_code', $code)->exists());
 
         return $code;
+    }
+
+    /**
+     * Dapatkan kode pengambilan (6 karakter terakhir dari order_code)
+     */
+    public function getPickupCodeAttribute(): string
+    {
+        $parts = explode('-', $this->order_code);
+        return end($parts);
     }
 
     /**
@@ -98,11 +111,37 @@ class Order extends Model
     }
 
     /**
-     * Scope: filter berdasarkan status.
+     * Label ramah pengguna untuk metode pembayaran.
      */
-    public function scopeWithStatus($query, string $status)
+    public function getPaymentMethodLabelAttribute(): string
     {
-        return $query->where('status', $status);
+        return match ($this->payment_method) {
+            'midtrans' => 'Online (QRIS / E-Wallet)',
+            'cash' => 'Bayar di Warung',
+            default => 'Bayar di Warung',
+        };
+    }
+
+    /**
+     * Label ramah pengguna untuk status pembayaran.
+     */
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return match ($this->payment_status) {
+            'pending' => 'Belum Dibayar',
+            'paid' => 'Lunas',
+            'failed' => 'Gagal',
+            'expired' => 'Kedaluwarsa',
+            default => 'Belum Dibayar',
+        };
+    }
+
+    /**
+     * Cek apakah pesanan sudah lunas.
+     */
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid';
     }
 
     /**
@@ -129,5 +168,13 @@ class Order extends Model
     public function getEstimatedTimeAttribute(): int
     {
         return $this->queue_position * 5;
+    }
+
+    /**
+     * Scope: filter berdasarkan status.
+     */
+    public function scopeWithStatus($query, string $status)
+    {
+        return $query->where('status', $status);
     }
 }

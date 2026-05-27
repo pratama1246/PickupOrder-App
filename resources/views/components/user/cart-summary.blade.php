@@ -2,6 +2,7 @@
     'canteens'    => [],
     'total'       => 0,
     'checkoutUrl' => '/checkout',
+    'isSubmit'    => false,
 ])
 
 <div {{ $attributes->merge(['class' => 'bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm lg:sticky lg:top-24']) }}>
@@ -35,9 +36,16 @@
         </p>
     </div>
 
-    <a href="{{ $checkoutUrl }}"
-       class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all">
-        Bayar Sekarang
-    </a>
+    @if($isSubmit)
+        <button type="submit" form="checkout-prepare-form"
+           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all h-12 min-h-0">
+            Bayar Sekarang
+        </button>
+    @else
+        <a href="{{ $checkoutUrl }}"
+           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center h-12 min-h-0">
+            Bayar Sekarang
+        </a>
+    @endif
 
 </div>

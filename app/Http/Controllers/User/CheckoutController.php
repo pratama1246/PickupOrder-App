@@ -5,15 +5,36 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Midtrans\Config as MidtransConfig;
+use Midtrans\Snap;
 
 class CheckoutController extends Controller
 {
     private const SESSION_KEY = 'cart';
+
+    /**
+     * Persiapkan checkout dari keranjang (menyimpan catatan ke session).
+     */
+    public function prepare(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'notes' => ['nullable', 'array'],
+            'notes.*' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        session(['checkout_notes' => $request->input('notes', [])]);
+
+        return redirect()->route('checkout.index');
+    }
 
     /**
      * Tampilkan halaman checkout (/checkout).
@@ -35,51 +56,89 @@ class CheckoutController extends Controller
         }
 
         $total = array_sum(array_column($cart, 'subtotal'));
+        $notes = session('checkout_notes', []);
 
-        return view('user.checkout', compact('grouped', 'total'));
+        return view('user.checkout', compact('grouped', 'total', 'notes'));
     }
 
     /**
-     * Proses checkout: validasi, simpan ke DB, kosongkan keranjang, redirect ke antrian.
+     * Proses checkout: validasi, simpan ke DB, kosongkan keranjang, redirect ke detail order.
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'pickup_time' => ['required', 'date', 'after:now'],
+            'pickup_time'    => ['required', 'string'],
+            'custom_time'    => ['nullable', 'required_if:pickup_time,custom', 'string', 'regex:/^\d{2}:\d{2}$/'],
             'payment_method' => ['required', 'in:qris,bayar_di_warung'],
-            'notes' => ['nullable', 'string', 'max:500'],
+            'notes'          => ['nullable', 'array'],
+            'notes.*'        => ['nullable', 'string', 'max:500'],
         ]);
 
         $cart = session(self::SESSION_KEY, []);
         abort_if(empty($cart), 422, 'Keranjang belanja kosong.');
 
-        // Kelompokkan per kantin karena satu checkout bisa banyak kantin
+        // --- Parser pickup_time ---
+        $pickupTime = $this->parsePickupTime($request->pickup_time, $request->custom_time);
+        if (! $pickupTime) {
+            return back()->withErrors(['pickup_time' => 'Waktu pengambilan tidak valid. Pastikan waktu yang dipilih belum terlewat.'])->withInput();
+        }
+
+        // --- Proteksi spam untuk metode tunai ---
+        if ($request->payment_method === 'bayar_di_warung') {
+            $hasActiveCashOrder = Order::where('user_id', Auth::id())
+                ->where('payment_method', 'cash')
+                ->where('payment_status', 'pending')
+                ->whereNotIn('status', ['selesai', 'dibatalkan'])
+                ->exists();
+
+            if ($hasActiveCashOrder) {
+                return back()->withErrors([
+                    'payment_method' => 'Anda masih memiliki pesanan dengan pembayaran di tempat yang belum selesai. Selesaikan pesanan tersebut terlebih dahulu atau gunakan pembayaran online.',
+                ])->withInput();
+            }
+        }
+
+        // Kelompokkan per kantin
         $grouped = [];
         foreach ($cart as $item) {
             $grouped[$item['canteen_id']][] = $item;
         }
 
-        $lastOrder = null;
+        $paymentMethod = $request->payment_method === 'qris' ? 'midtrans' : 'cash';
+        $notes         = $request->input('notes', []);
+        $lastOrder     = null;
 
-        DB::transaction(function () use ($grouped, $request, &$lastOrder) {
+        if ($paymentMethod === 'midtrans') {
+            return $this->processMidtransCheckout($grouped, $pickupTime, $notes, $cart);
+        }
+
+        // --- Proses pembayaran tunai ---
+        $sharedOrderCode = Order::generateOrderCode();
+
+        DB::transaction(function () use ($grouped, $pickupTime, $notes, $sharedOrderCode, &$lastOrder) {
             foreach ($grouped as $canteenId => $items) {
                 $total = array_sum(array_column($items, 'subtotal'));
 
                 $order = Order::create([
-                    'user_id' => Auth::id(),
-                    'canteen_id' => $canteenId,
-                    'status' => 'menunggu',
-                    'pickup_time' => $request->pickup_time,
-                    'total_price' => $total,
-                    'notes' => $request->notes,
+                    'user_id'        => Auth::id(),
+                    'canteen_id'     => $canteenId,
+                    'order_code'     => $sharedOrderCode,
+                    'status'         => 'menunggu',
+                    'pickup_time'    => $pickupTime,
+                    'total_price'    => $total,
+                    'notes'          => $notes[$canteenId] ?? null,
+                    'payment_method' => 'cash',
+                    'payment_status' => 'pending',
+                    'payment_code'   => null,
+                    'snap_token'     => null,
                 ]);
 
                 foreach ($items as $item) {
                     OrderItem::create([
                         'order_id' => $order->id,
-                        'menu_id' => $item['menu_id'],
-                        'qty' => $item['quantity'],
-                        'price' => $item['price'],
+                        'menu_id'  => $item['menu_id'],
+                        'qty'      => $item['quantity'],
+                        'price'    => $item['price'],
                     ]);
                 }
 
@@ -87,10 +146,235 @@ class CheckoutController extends Controller
             }
         });
 
-        // Kosongkan keranjang setelah berhasil checkout
         session()->forget(self::SESSION_KEY);
+        session()->forget('checkout_notes');
 
         return redirect()->route('order.show', $lastOrder->id)
-            ->with('success', 'Pesanan berhasil dibuat!');
+            ->with('success', 'Pesanan berhasil dibuat! Bayar saat mengambil pesanan.');
+    }
+
+    /**
+     * Retry payment: generate ulang Snap token jika user belum membayar.
+     * Mengembalikan JSON berisi snap_token baru.
+     */
+    public function retry(string $paymentCode): JsonResponse
+    {
+        // Ambil salah satu order dari grup payment_code ini
+        $order = Order::where('payment_code', $paymentCode)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Tolak jika pesanan sudah dibatalkan
+        if ($order->status === 'dibatalkan') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pembayaran tidak dapat diulang karena pesanan telah dibatalkan.',
+            ], 422);
+        }
+
+        // Tolak jika sudah lunas
+        if ($order->isPaid()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pesanan ini sudah lunas.',
+            ], 422);
+        }
+
+        // Generate Snap token baru
+        try {
+            $snapToken = $this->generateSnapToken($paymentCode, $order->user);
+
+            // Update snap_token di semua order dengan payment_code yang sama
+            Order::where('payment_code', $paymentCode)->update(['snap_token' => $snapToken]);
+
+            return response()->json([
+                'success'    => true,
+                'snap_token' => $snapToken,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans retry token error', [
+                'payment_code' => $paymentCode,
+                'error'        => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui token pembayaran. Silakan coba lagi.',
+            ], 500);
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Private Helpers
+    // -----------------------------------------------------------------------
+
+    /**
+     * Proses checkout dengan Midtrans: generate payment_code, Snap token, simpan orders.
+     */
+    private function processMidtransCheckout(array $grouped, Carbon $pickupTime, array $notes, array $cart): RedirectResponse
+    {
+        // Generate payment_code unik yang menghubungkan semua order dalam satu transaksi
+        do {
+            $paymentCode = 'PAY-'.now()->format('Ymd').'-'.strtoupper(Str::random(6));
+        } while (Order::where('payment_code', $paymentCode)->exists());
+
+        $user  = Auth::user();
+        $gross = (int) array_sum(array_column($cart, 'subtotal'));
+
+        // Bangun item_details untuk Midtrans dari seluruh item di keranjang
+        $itemDetails = [];
+        foreach ($cart as $item) {
+            $itemDetails[] = [
+                'id'       => (string) $item['menu_id'],
+                'price'    => (int) $item['price'],
+                'quantity' => (int) $item['quantity'],
+                'name'     => mb_substr($item['name'], 0, 50), // Midtrans max 50 chars
+            ];
+        }
+
+        $snapToken = null;
+
+        try {
+            $snapToken = $this->generateSnapToken($paymentCode, $user, $gross, $itemDetails);
+        } catch (\Exception $e) {
+            Log::error('Midtrans Snap token error saat checkout', [
+                'payment_code' => $paymentCode,
+                'error'        => $e->getMessage(),
+            ]);
+
+            return back()->withErrors(['payment_method' => 'Gagal terhubung ke sistem pembayaran. Silakan coba lagi atau pilih metode lain.'])->withInput();
+        }
+
+        $lastOrder = null;
+        $sharedOrderCode = Order::generateOrderCode();
+
+        DB::transaction(function () use ($grouped, $pickupTime, $notes, $paymentCode, $snapToken, $sharedOrderCode, &$lastOrder) {
+            foreach ($grouped as $canteenId => $items) {
+                $total = array_sum(array_column($items, 'subtotal'));
+
+                $order = Order::create([
+                    'user_id'        => Auth::id(),
+                    'canteen_id'     => $canteenId,
+                    'order_code'     => $sharedOrderCode,
+                    'status'         => 'menunggu',
+                    'pickup_time'    => $pickupTime,
+                    'total_price'    => $total,
+                    'notes'          => $notes[$canteenId] ?? null,
+                    'payment_method' => 'midtrans',
+                    'payment_status' => 'pending',
+                    'payment_code'   => $paymentCode,
+                    'snap_token'     => $snapToken,
+                ]);
+
+                foreach ($items as $item) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'menu_id'  => $item['menu_id'],
+                        'qty'      => $item['quantity'],
+                        'price'    => $item['price'],
+                    ]);
+                }
+
+                $lastOrder = $order;
+            }
+        });
+
+        session()->forget(self::SESSION_KEY);
+        session()->forget('checkout_notes');
+
+        return redirect()->route('order.show', $lastOrder->id)
+            ->with('success', 'Pesanan dibuat! Selesaikan pembayaran untuk melanjutkan.');
+    }
+
+    /**
+     * Generate Snap token dari Midtrans.
+     * Dipakai oleh store() dan retry().
+     */
+    private function generateSnapToken(string $paymentCode, $user, ?int $gross = null, array $itemDetails = []): string
+    {
+        // Inisialisasi konfigurasi Midtrans dari config/services.php
+        MidtransConfig::$serverKey    = config('services.midtrans.server_key');
+        MidtransConfig::$isProduction = config('services.midtrans.is_production');
+        MidtransConfig::$isSanitized  = config('services.midtrans.is_sanitized');
+        MidtransConfig::$is3ds        = config('services.midtrans.is_3ds');
+
+        // Jika gross dan itemDetails tidak diberikan (skenario retry),
+        // hitung ulang dari orders yang ada di DB
+        if ($gross === null) {
+            $orders = Order::where('payment_code', $paymentCode)->get();
+            $gross  = (int) $orders->sum('total_price');
+
+            foreach ($orders as $ord) {
+                foreach ($ord->items as $item) {
+                    $itemDetails[] = [
+                        'id'       => (string) $item->menu_id,
+                        'price'    => (int) $item->price,
+                        'quantity' => (int) $item->qty,
+                        'name'     => mb_substr($item->menu->name ?? 'Menu', 0, 50),
+                    ];
+                }
+            }
+        }
+
+        $params = [
+            'transaction_details' => [
+                'order_id'     => $paymentCode,
+                'gross_amount' => $gross,
+            ],
+            'item_details'    => $itemDetails,
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email'      => $user->email ?? ($user->nim.'@mhs.pnc.ac.id'),
+                'phone'      => '-',
+            ],
+            // Batas waktu pembayaran: 30 menit dari sekarang
+            'expiry' => [
+                'start_time' => now()->format('Y-m-d H:i:s O'),
+                'unit'       => 'minute',
+                'duration'   => 30,
+            ],
+        ];
+
+        return Snap::getSnapToken($params);
+    }
+
+    /**
+     * Parse nilai pickup_time dari radio button ke Carbon datetime yang valid.
+     * Mengembalikan null jika waktu sudah terlewat.
+     */
+    private function parsePickupTime(string $pickupTime, ?string $customTime): ?Carbon
+    {
+        $now  = Carbon::now();
+        $date = $now->toDateString(); // YYYY-MM-DD hari ini
+
+        if ($pickupTime === 'now') {
+            // "Sekarang" = 15 menit dari saat ini
+            return $now->copy()->addMinutes(15);
+        }
+
+        if ($pickupTime === 'custom') {
+            if (! $customTime) {
+                return null;
+            }
+            $parsed = Carbon::createFromFormat('Y-m-d H:i', $date.' '.$customTime);
+            // Tolak jika waktu sudah lewat (berikan toleransi 1 menit)
+            if ($parsed->lessThan($now->copy()->subMinute())) {
+                return null;
+            }
+
+            return $parsed;
+        }
+
+        // Slot waktu preset: "09.20", "11.30", dst.
+        // Ubah titik ke titik dua agar bisa di-parse sebagai H:i
+        $timeString = str_replace('.', ':', $pickupTime);
+        $parsed     = Carbon::createFromFormat('Y-m-d H:i', $date.' '.$timeString);
+
+        // Tolak jika waktu preset sudah lewat hari ini
+        if ($parsed->lessThan($now->copy()->subMinute())) {
+            return null;
+        }
+
+        return $parsed;
     }
 }

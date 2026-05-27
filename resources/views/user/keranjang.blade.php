@@ -22,12 +22,13 @@
     </section>
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
+        
+        <form id="checkout-prepare-form" action="{{ route('checkout.prepare') }}" method="POST" class="hidden">
+            @csrf
+        </form>
+
         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-
             <div class="w-full lg:flex-1 min-w-0 space-y-5">
-                
-
-
                 @forelse ($grouped as $canteenId => $data)
                     <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
 
@@ -50,10 +51,12 @@
                         </div>
 
                         <textarea
+                            name="notes[{{ $canteenId }}]"
+                            form="checkout-prepare-form"
                             rows="2"
                             placeholder="Catatan untuk kantin {{ $data['canteen_name'] }} (Opsional)"
                             class="textarea textarea-bordered w-full rounded-2xl text-sm font-medium border-base-content/20 bg-white focus:outline-none focus:border-base-content/40 resize-none placeholder:text-base-content/40"
-                        ></textarea>
+                        >{{ session('checkout_notes')[$canteenId] ?? '' }}</textarea>
 
                     </div>
                 @empty
@@ -68,7 +71,6 @@
                         </a>
                     </div>
                 @endforelse
-
             </div>
 
             @if(count($grouped) > 0)
@@ -76,11 +78,10 @@
                     <x-user.cart-summary
                         :canteens="$grouped"
                         :total="$total"
-                        checkoutUrl="/checkout"
+                        isSubmit="true"
                     />
                 </div>
             @endif
-
         </div>
     </section>
 
