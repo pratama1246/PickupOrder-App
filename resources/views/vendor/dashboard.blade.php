@@ -3,7 +3,7 @@
 @section('title', 'Dashboard - Vendor PNC')
 
 @section('content')
-    <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-24 lg:pb-28">
+    <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-10 lg:pb-0">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
