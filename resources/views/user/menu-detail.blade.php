@@ -7,6 +7,7 @@
 
     <x-breadcrumb
         class="pt-8 pb-4"
+        maxWidth="max-w-7xl"
         :links="[
             ['label' => 'Beranda', 'url' => '/'],
             ['label' => $menu->canteen->name, 'url' => route('canteen.show', $menu->canteen_id)],
@@ -15,14 +16,14 @@
     />
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
-        <div class="max-w-8xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Detail Menu</h1>
             <p class="text-base-content/70 text-sm sm:text-base font-medium">Lihat dulu menu yang mau dipesan</p>
         </div>
     </section>
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
-        <div class="max-w-8xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
 
             <div class="w-full lg:max-w-sm xl:max-w-md shrink-0">
                 <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 shadow-sm">

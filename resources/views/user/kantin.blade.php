@@ -5,14 +5,14 @@
 @section('content')
 <main class="min-h-screen bg-base-100 pb-12">
     
-    <x-breadcrumb :links="[
+    <x-breadcrumb maxWidth="max-w-7xl" :links="[
         ['label' => 'Beranda', 'url' => '/'],
         ['label' => 'Kantin', 'url' => '/pesan'],
         ['label' => $canteen->name]
     ]" />
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-8">
-        <div class="max-w-8xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             <div class="relative w-full aspect-3/4 sm:aspect-video rounded-3xl overflow-hidden shadow-lg border border-base-content/10 bg-base-200">
                 <img src="{{ $canteen->image ? asset('storage/' . $canteen->image) : 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80' }}" 
                      onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($canteen->name) }}&background=random'"
@@ -58,7 +58,7 @@
     </section>
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 mb-8">
-        <div class="max-w-8xl mx-auto flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
             
             <div class="flex items-center gap-3">
                 <span class="text-sm sm:text-base font-bold text-base-content/70 hidden sm:inline">Filter By:</span>
@@ -84,7 +84,7 @@
     </section>
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 mb-12">
-        <div class="max-w-8xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 @forelse ($canteen->menus as $menu)
                     <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$canteen->name" :description="$menu->description"

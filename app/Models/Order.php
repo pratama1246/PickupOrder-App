@@ -104,4 +104,30 @@ class Order extends Model
     {
         return $query->where('status', $status);
     }
+
+    /**
+     * Hitung posisi antrian saat ini di kantin.
+     */
+    public function getQueuePositionAttribute(): int
+    {
+        if (!in_array($this->status, ['menunggu', 'dimasak'])) {
+            return 0;
+        }
+
+        // Hitung order di kantin yang sama, dengan status 'menunggu' atau 'dimasak', yang dibuat sebelum order ini
+        $count = self::where('canteen_id', $this->canteen_id)
+            ->whereIn('status', ['menunggu', 'dimasak'])
+            ->where('id', '<', $this->id)
+            ->count();
+
+        return $count + 1;
+    }
+
+    /**
+     * Hitung estimasi waktu berdasarkan antrian (asumsi 5 menit per pesanan).
+     */
+    public function getEstimatedTimeAttribute(): int
+    {
+        return $this->queue_position * 5;
+    }
 }

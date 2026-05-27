@@ -13,9 +13,9 @@
     $imageUrl = $image ? $image : asset('assets/food/Nasi Rames.jpg');
 @endphp
 
-<div class="card bg-base-100 w-full shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md hover:scale-[1.01] border border-base-200">
+<div class="card bg-base-100 w-full h-full flex flex-col shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md hover:scale-[1.01] border border-base-200">
 
-    <div class="flex sm:hidden gap-3 p-3">
+    <div class="flex sm:hidden gap-3 p-3 h-full">
 
         <div class="w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-base-200">
             <img
@@ -64,7 +64,7 @@
             class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
     </figure>
-    <div class="hidden sm:block card-body p-4">
+    <div class="hidden sm:flex flex-col flex-1 card-body p-4">
         <div class="flex justify-between items-start gap-2">
             <h2 class="font-bold text-base text-base-content leading-tight line-clamp-2">{{ $name }}</h2>
             <div class="flex items-center gap-0.5 bg-base-200 px-2 py-1 rounded-lg shrink-0">
@@ -81,7 +81,7 @@
             {{ $description }}
         </p>
 
-        <div class="flex justify-between items-center mt-3">
+        <div class="flex justify-between items-center mt-auto pt-3">
             <span class="font-bold text-lg text-base-content">{{ $price }}</span>
             @if(isset($action))
                 {{ $action }}

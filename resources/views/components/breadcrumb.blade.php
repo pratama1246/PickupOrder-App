@@ -1,10 +1,11 @@
 @props([
     'links' => [],
     'compact' => false,
+    'maxWidth' => 'max-w-8xl',
 ])
 
 <section {{ $attributes->merge(['class' => $compact ? 'pt-0 pb-4' : 'px-4 sm:px-10 md:px-16 lg:px-24 pt-8 pb-4']) }}>
-    <div class="max-w-8xl mx-auto flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm font-bold">
+    <div class="{{ $maxWidth }} mx-auto flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm font-bold">
         @foreach($links as $link)
             @if(!$loop->last)
                 <a href="{{ $link['url'] ?? '#' }}" class="text-base-content/50 hover:text-base-content transition-colors">

@@ -7,6 +7,7 @@
 
     <x-breadcrumb
         class="pt-8 pb-4"
+        maxWidth="max-w-7xl"
         :links="[
             ['label' => 'Beranda', 'url' => '/'],
             ['label' => 'Keranjang Belanja', 'url' => '/keranjang'],
@@ -15,7 +16,7 @@
     />
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
-        <div class="max-w-8xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Checkout Pesanan</h1>
             <p class="text-base-content/70 text-sm sm:text-base font-medium">Selesaikan pembayaran untuk melanjutkan pesananmu</p>
         </div>
@@ -23,7 +24,7 @@
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
         {{-- Form that wraps everything, ready for submission to payment gateway or backend --}}
-        <form action="{{ route('checkout.store') }}" method="POST" class="max-w-8xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+        <form action="{{ route('checkout.store') }}" method="POST" class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
             @csrf
 
             {{-- Kolom Kiri --}}

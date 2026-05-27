@@ -7,6 +7,7 @@
 
     <x-breadcrumb
         class="pt-8 pb-4"
+        maxWidth="max-w-7xl"
         :links="[
             ['label' => 'Beranda', 'url' => '/'],
             ['label' => 'Keranjang Belanja']
@@ -14,14 +15,14 @@
     />
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
-        <div class="max-w-8xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Keranjang Belanja</h1>
             <p class="text-base-content/70 text-sm sm:text-base font-medium">Silahkan periksa detail pesanan Anda</p>
         </div>
     </section>
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
-        <div class="max-w-8xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
 
             <div class="w-full lg:flex-1 min-w-0 space-y-5">
                 
