@@ -1,12 +1,4 @@
-<aside class="w-72 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
-    <!-- Header Sidebar (Tinggi disamakan dengan navbar) -->
-    <div class="h-16 sm:h-20 shrink-0 flex items-center px-6 gap-3">
-        <div class="bg-fern-700 text-white font-bold text-xs sm:text-sm px-2 py-1 rounded-md tracking-wide shrink-0">
-            LOGO
-        </div>
-        <span class="text-white/90 font-bold text-sm sm:text-base tracking-wide whitespace-nowrap">Admin Dashboard</span>
-    </div>
-    
+<aside class="w-64 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
     <nav class="flex-1 px-3 py-4 space-y-1">
         
         <a href="/admin/dashboard"

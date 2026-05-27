@@ -1,9 +1,9 @@
-<header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between lg:justify-end px-4 sm:px-6 shrink-0 z-50 shadow-md">
-    <div class="flex items-center gap-3 sm:gap-4 lg:hidden">
-        <div class="bg-fern-700 text-white font-bold text-xs px-2 py-1 rounded-md tracking-wide shrink-0">
+<header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between px-4 sm:px-6 shrink-0 z-50 shadow-md">
+    <div class="flex items-center gap-3 sm:gap-4">
+        <div class="bg-fern-700 text-white font-bold text-lg px-3 py-1 rounded-lg tracking-wide shrink-0">
             LOGO
         </div>
-        <span class="text-white/90 font-bold text-sm sm:text-base">Admin <span class="max-[380px]:hidden">Dashboard</span></span>
+        <span class="text-white/90 font-bold text-base sm:text-lg tracking-wide">Admin <span class="max-[380px]:hidden">Dashboard</span></span>
     </div>
 
     <div class="flex items-center gap-3">

@@ -10,13 +10,14 @@
     @stack('styles')
 </head>
 
-<body class="bg-base-100 h-screen overflow-hidden">
+<body class="bg-base-100 h-screen overflow-hidden flex flex-col">
 
-    <div class="drawer lg:drawer-open h-screen overflow-hidden">
+    <x-admin.navbar />
+
+    <div class="drawer lg:drawer-open flex-1 overflow-hidden">
         <input id="admin-drawer" type="checkbox" class="drawer-toggle" />
 
         <div class="drawer-content flex flex-col h-full overflow-hidden">
-            <x-admin.navbar />
 
             <main class="flex-1 overflow-y-auto bg-base-100 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8">
                 @yield('content')
@@ -26,7 +27,7 @@
 
         </div>
 
-        <div class="drawer-side z-50 h-full">
+        <div class="drawer-side z-40 h-full">
             <label for="admin-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
             <x-admin.sidebar />
         </div>

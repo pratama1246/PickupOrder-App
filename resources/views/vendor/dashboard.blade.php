@@ -120,7 +120,7 @@
         </div>
 
         <!-- Queue Status -->
-        <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6">
             <div class="bg-base-100 rounded-2xl p-4 shadow-sm border border-base-200 text-center">
                 <p class="text-xs sm:text-sm font-bold text-base-content/60 mb-1">Menunggu</p>
                 <p class="text-xl sm:text-2xl font-extrabold text-fern-600">{{ $stats['pesanan_baru'] }}</p>
@@ -129,7 +129,7 @@
                 <p class="text-xs sm:text-sm font-bold text-base-content/60 mb-1">Dimasak</p>
                 <p class="text-xl sm:text-2xl font-extrabold text-fern-600">{{ $stats['sedang_dimasak'] }}</p>
             </div>
-            <div class="bg-base-100 rounded-2xl p-4 shadow-sm border border-base-200 text-center">
+            <div class="col-span-2 md:col-span-1 bg-base-100 rounded-2xl p-4 shadow-sm border border-base-200 text-center">
                 <p class="text-xs sm:text-sm font-bold text-base-content/60 mb-1">Siap Pickup</p>
                 <p class="text-xl sm:text-2xl font-extrabold text-fern-600">{{ $stats['siap_pickup'] }}</p>
             </div>
