@@ -62,10 +62,16 @@
             <x-stat-card label="Total Kantin" value="{{ number_format($stats['total_kantin'], 0, ',', '.') }}"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.63-.252-1.235-.7-1.68l-7.2-7.2a2.38 2.38 0 0 0-3.36 0L3.05 8.129a2.38 2.38 0 0 0-.7 1.68v11.191m15.64 0h-3.64m0 0V12.75a2.25 2.25 0 0 0-2.25-2.25h-3a2.25 2.25 0 0 0-2.25 2.25V21m0 0H2.36M15 15h.008v.008H15V15Zm0 2.25h.008v.008H15v-.008Zm-2.25-2.25h.008v.008H12.75V15Zm0 2.25h.008v.008H12.75v-.008Z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                        <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+                        <path d="M2 7h20" />
+                        <path d="M22 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
+                        <path d="M18 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
+                        <path d="M14 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
+                        <path d="M10 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
+                        <path d="M6 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
                     </svg>
                 </x-slot:icon>
             </x-stat-card>
