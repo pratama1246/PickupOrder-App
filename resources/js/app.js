@@ -1,7 +1,16 @@
 import axios from 'axios';
+import Alpine from 'alpinejs';
+import ApexCharts from 'apexcharts';
 
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+window.Alpine = Alpine;
+window.ApexCharts = ApexCharts;
+
+document.addEventListener('DOMContentLoaded', () => {
+    Alpine.start();
+});
 
 // Cropper.js instance variable
 let cropperInstance = null;

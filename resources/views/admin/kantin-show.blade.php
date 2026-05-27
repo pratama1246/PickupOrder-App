@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto space-y-6 pb-10 lg:pb-0" x-data="{ activeTab: 'menu' }" x-cloak>
+<div class="max-w-8xl mx-auto space-y-6 pb-10 lg:pb-0" x-data="{ activeTab: 'menu' }" x-cloak>
     
     <!-- 1. Header Actions & Breadcrumb -->
     <a href="{{ route('admin.kantin.index') }}" class="btn btn-sm btn-ghost gap-1 px-2 mb-2 text-base-content/70 hover:bg-base-200 transition-colors w-fit flex items-center">

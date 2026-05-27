@@ -35,21 +35,55 @@ class DashboardController extends Controller
 
         abort_if(is_null($canteen), 403, 'Akun vendor ini belum memiliki kantin terdaftar.');
 
+        $todayStart = now()->startOfDay();
+        $yesterdayStart = now()->subDay()->startOfDay();
+        $yesterdayEnd = now()->subDay()->endOfDay();
+
+        $todayRevenue = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->where('created_at', '>=', $todayStart)->sum('total_price');
+        $yesterdayRevenue = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])->sum('total_price');
+        $revenueGrowth = $yesterdayRevenue > 0 ? (($todayRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100 : ($todayRevenue > 0 ? 100 : 0);
+
+        $todayOrders = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->where('created_at', '>=', $todayStart)->count();
+        $yesterdayOrders = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])->count();
+        $ordersGrowth = $yesterdayOrders > 0 ? (($todayOrders - $yesterdayOrders) / $yesterdayOrders) * 100 : ($todayOrders > 0 ? 100 : 0);
+
+        $aovToday = $todayOrders > 0 ? $todayRevenue / $todayOrders : 0;
+
+        $totalToday = Order::where('canteen_id', $canteen->id)->where('created_at', '>=', $todayStart)->count();
+        $completionRate = $totalToday > 0 ? ($todayOrders / $totalToday) * 100 : 0;
+
         $stats = [
+            'pendapatan_hari_ini' => $todayRevenue,
+            'pendapatan_growth' => round($revenueGrowth, 1),
+            'pesanan_hari_ini' => $todayOrders,
+            'pesanan_growth' => round($ordersGrowth, 1),
+            'aov_hari_ini' => $aovToday,
+            'completion_rate' => round($completionRate, 1),
+            // Keeping active ones for the queue view
             'pesanan_baru' => Order::where('canteen_id', $canteen->id)->where('status', 'menunggu')->count(),
             'sedang_dimasak' => Order::where('canteen_id', $canteen->id)->where('status', 'dimasak')->count(),
             'siap_pickup' => Order::where('canteen_id', $canteen->id)->where('status', 'siap_diambil')->count(),
-            'total_pendapatan' => Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->sum('total_price'),
-            'menu_habis' => $canteen->menus()->where(function ($q) {
-                $q->where('stock', 0)->orWhere('is_available', false);
+            'menu_habis' => \App\Models\Menu::where('canteen_id', $canteen->id)->where(function ($query) {
+                $query->where('stock', '<=', 0)->orWhere('is_available', false);
             })->count(),
         ];
 
-        // 1. Canteen Revenue Trend (Last 7 Days)
+        // 1. Canteen Revenue & Order Trend (Last 7 Days)
+        $currentStart = now()->subDays(6)->startOfDay();
+        
         $revenueTrendRaw = Order::where('canteen_id', $canteen->id)
             ->where('status', 'selesai')
-            ->where('created_at', '>=', now()->subDays(6)->startOfDay())
+            ->where('created_at', '>=', $currentStart)
             ->selectRaw('DATE(created_at) as date, SUM(total_price) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('total', 'date')
+            ->toArray();
+
+        $ordersTrendRaw = Order::where('canteen_id', $canteen->id)
+            ->where('status', 'selesai')
+            ->where('created_at', '>=', $currentStart)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
             ->groupBy('date')
             ->orderBy('date')
             ->pluck('total', 'date')
@@ -57,10 +91,12 @@ class DashboardController extends Controller
 
         $trendDates = [];
         $trendRevenues = [];
+        $trendOrders = [];
         for ($i = 6; $i >= 0; $i--) {
             $dateStr = now()->subDays($i)->format('Y-m-d');
             $trendDates[] = now()->subDays($i)->translatedFormat('d M');
             $trendRevenues[] = (float) ($revenueTrendRaw[$dateStr] ?? 0);
+            $trendOrders[] = (int) ($ordersTrendRaw[$dateStr] ?? 0);
         }
 
         // 2. Order Status Distribution (Donut Chart)
@@ -110,6 +146,7 @@ class DashboardController extends Controller
             'stats',
             'trendDates',
             'trendRevenues',
+            'trendOrders',
             'statusLabels',
             'statusSeries',
             'topMenuLabels',
