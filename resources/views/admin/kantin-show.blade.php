@@ -120,10 +120,10 @@
 
     <!-- 3. Stat Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <x-admin.stat-card label="Total Menu" value="{{ $canteen->menus_count }} Menu" />
-        <x-admin.stat-card label="Total Pesanan" value="{{ $canteen->orders_count }} Pesanan" />
-        <x-admin.stat-card label="Pesanan Selesai" value="{{ $canteen->completed_orders_count }} Pesanan" valueColor="text-emerald-600" />
-        <x-admin.stat-card label="Total Pendapatan" value="Rp{{ number_format($canteen->total_revenue ?? 0, 0, ',', '.') }}" valueColor="text-fern-700" />
+        <x-stat-card label="Total Menu" value="{{ $canteen->menus_count }} Menu" />
+        <x-stat-card label="Total Pesanan" value="{{ $canteen->orders_count }} Pesanan" />
+        <x-stat-card label="Pesanan Selesai" value="{{ $canteen->completed_orders_count }} Pesanan" valueColor="text-emerald-600" />
+        <x-stat-card label="Total Pendapatan" value="Rp{{ number_format($canteen->total_revenue ?? 0, 0, ',', '.') }}" valueColor="text-fern-700" />
     </div>
 
     <!-- 4. Tabbed Content (Menus & Orders) -->

@@ -4,13 +4,14 @@
     'growth' => null,
     'subtext' => null,
     'iconBg' => 'bg-emerald-50 text-fern-700',
+    'valueColor' => 'text-base-content',
 ])
 
 <div class="bg-base-100 rounded-3xl p-5 shadow-sm border border-base-200 flex flex-col justify-between">
     <div class="flex justify-between items-start mb-4">
         <div>
-            <h3 class="text-sm font-bold text-base-content/60">{{ $label }}</h3>
-            <p class="text-3xl font-extrabold text-base-content mt-1">{{ $value }}</p>
+            <h3 class="text-sm font-medium text-base-content/60">{{ $label }}</h3>
+            <p class="text-3xl font-bold mt-1 {{ $valueColor }}">{{ $value }}</p>
         </div>
         @if(isset($icon))
             <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 {{ $iconBg }}">

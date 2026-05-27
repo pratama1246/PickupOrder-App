@@ -15,7 +15,7 @@
 
         <!-- Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <x-admin.stat-card label="Total Pendapatan" value="Rp{{ number_format($stats['total_pendapatan'], 0, ',', '.') }}"
+            <x-stat-card label="Total Pendapatan" value="Rp{{ number_format($stats['total_pendapatan'], 0, ',', '.') }}"
                 :growth="$stats['pendapatan_growth']" subtext="vs 7 hari lalu" iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -24,9 +24,9 @@
                             d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Volume Transaksi" value="{{ number_format($stats['volume_transaksi'], 0, ',', '.') }}"
+            <x-stat-card label="Volume Transaksi" value="{{ number_format($stats['volume_transaksi'], 0, ',', '.') }}"
                 :growth="$stats['transaksi_growth']" subtext="vs 7 hari lalu" iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -35,9 +35,9 @@
                             d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Rata-rata Nilai Pesanan" value="Rp{{ number_format($stats['aov'], 0, ',', '.') }}"
+            <x-stat-card label="Rata-rata Nilai Pesanan" value="Rp{{ number_format($stats['aov'], 0, ',', '.') }}"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -46,9 +46,9 @@
                             d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Total Pengguna" value="{{ number_format($stats['total_pengguna'], 0, ',', '.') }}"
+            <x-stat-card label="Total Pengguna" value="{{ number_format($stats['total_pengguna'], 0, ',', '.') }}"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -57,9 +57,9 @@
                             d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Total Kantin" value="{{ number_format($stats['total_kantin'], 0, ',', '.') }}"
+            <x-stat-card label="Total Kantin" value="{{ number_format($stats['total_kantin'], 0, ',', '.') }}"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -68,9 +68,9 @@
                             d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.63-.252-1.235-.7-1.68l-7.2-7.2a2.38 2.38 0 0 0-3.36 0L3.05 8.129a2.38 2.38 0 0 0-.7 1.68v11.191m15.64 0h-3.64m0 0V12.75a2.25 2.25 0 0 0-2.25-2.25h-3a2.25 2.25 0 0 0-2.25 2.25V21m0 0H2.36M15 15h.008v.008H15V15Zm0 2.25h.008v.008H15v-.008Zm-2.25-2.25h.008v.008H12.75V15Zm0 2.25h.008v.008H12.75v-.008Z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Total Menu" value="{{ number_format($stats['total_menu'], 0, ',', '.') }}"
+            <x-stat-card label="Total Menu" value="{{ number_format($stats['total_menu'], 0, ',', '.') }}"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -79,7 +79,7 @@
                             d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
         </div>
 
         <!-- Charts Row -->

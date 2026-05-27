@@ -73,7 +73,7 @@
 
         <!-- Daily Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            <x-admin.stat-card label="Pendapatan Hari Ini"
+            <x-stat-card label="Pendapatan Hari Ini"
                 value="Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}" :growth="$stats['pendapatan_growth']"
                 subtext="vs kemarin" iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
@@ -83,9 +83,9 @@
                             d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Pesanan Hari Ini" value="{{ $stats['pesanan_hari_ini'] }}" :growth="$stats['pesanan_growth']"
+            <x-stat-card label="Pesanan Hari Ini" value="{{ $stats['pesanan_hari_ini'] }}" :growth="$stats['pesanan_growth']"
                 subtext="vs kemarin" iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -94,9 +94,9 @@
                             d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Rata-rata Nilai Pesanan"
+            <x-stat-card label="Rata-rata Nilai Pesanan"
                 value="Rp{{ number_format($stats['aov_hari_ini'], 0, ',', '.') }}" iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -105,9 +105,9 @@
                             d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
 
-            <x-admin.stat-card label="Tingkat Penyelesaian" value="{{ $stats['completion_rate'] }}%"
+            <x-stat-card label="Tingkat Penyelesaian" value="{{ $stats['completion_rate'] }}%"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -116,7 +116,7 @@
                             d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </x-slot:icon>
-            </x-admin.stat-card>
+            </x-stat-card>
         </div>
 
         <!-- Queue Status -->
