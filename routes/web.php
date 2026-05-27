@@ -71,6 +71,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/riwayat', [UserOrderController::class, 'index'])->name('order.index');
     Route::get('/riwayat/{id}', [UserOrderController::class, 'show'])->name('order.show');
     Route::delete('/riwayat/{id}', [UserOrderController::class, 'destroy'])->name('order.destroy');
+    Route::delete('/riwayat/group/{paymentCode}', [UserOrderController::class, 'cancelGroup'])->name('order.cancel-group');
+    Route::post('/riwayat/{id}/review', [\App\Http\Controllers\User\ReviewController::class, 'store'])->name('order.review');
 
     // API endpoint untuk polling status pembayaran (dipanggil oleh JavaScript di frontend)
     Route::get('/api/order/{id}/payment-status', [UserOrderController::class, 'paymentStatus'])->name('order.payment-status');
@@ -99,6 +101,9 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
 
     // Manajemen menu (resource)
     Route::resource('menu', VendorMenuController::class);
+
+    // Laporan Penjualan
+    Route::get('/laporan', [\App\Http\Controllers\Vendor\ReportController::class, 'index'])->name('laporan.index');
 });
 
 // ---------------------------------------------------------------------------

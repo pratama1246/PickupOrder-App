@@ -27,7 +27,7 @@ class CheckoutController extends Controller
     public function prepare(Request $request): RedirectResponse
     {
         $request->validate([
-            'notes' => ['nullable', 'array'],
+            'notes'   => ['nullable', 'array'],
             'notes.*' => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -62,9 +62,10 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Proses checkout: validasi, simpan ke DB, kosongkan keranjang, redirect ke detail order.
+     * Proses checkout: validasi, simpan ke DB, kosongkan keranjang.
+     * Mendukung request AJAX (wantsJson) maupun request biasa.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'pickup_time'    => ['required', 'string'],
@@ -75,12 +76,22 @@ class CheckoutController extends Controller
         ]);
 
         $cart = session(self::SESSION_KEY, []);
-        abort_if(empty($cart), 422, 'Keranjang belanja kosong.');
+
+        if (empty($cart)) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Keranjang belanja kosong.'], 422);
+            }
+            abort(422, 'Keranjang belanja kosong.');
+        }
 
         // --- Parser pickup_time ---
         $pickupTime = $this->parsePickupTime($request->pickup_time, $request->custom_time);
         if (! $pickupTime) {
-            return back()->withErrors(['pickup_time' => 'Waktu pengambilan tidak valid. Pastikan waktu yang dipilih belum terlewat.'])->withInput();
+            $errorMsg = 'Waktu pengambilan tidak valid. Pastikan waktu yang dipilih belum terlewat.';
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'errors' => ['pickup_time' => [$errorMsg]]], 422);
+            }
+            return back()->withErrors(['pickup_time' => $errorMsg])->withInput();
         }
 
         // --- Proteksi spam untuk metode tunai ---
@@ -92,9 +103,11 @@ class CheckoutController extends Controller
                 ->exists();
 
             if ($hasActiveCashOrder) {
-                return back()->withErrors([
-                    'payment_method' => 'Anda masih memiliki pesanan dengan pembayaran di tempat yang belum selesai. Selesaikan pesanan tersebut terlebih dahulu atau gunakan pembayaran online.',
-                ])->withInput();
+                $errorMsg = 'Anda masih memiliki pesanan dengan pembayaran di tempat yang belum selesai. Selesaikan pesanan tersebut terlebih dahulu atau gunakan pembayaran online.';
+                if ($request->wantsJson()) {
+                    return response()->json(['success' => false, 'errors' => ['payment_method' => [$errorMsg]]], 422);
+                }
+                return back()->withErrors(['payment_method' => $errorMsg])->withInput();
             }
         }
 
@@ -106,14 +119,14 @@ class CheckoutController extends Controller
 
         $paymentMethod = $request->payment_method === 'qris' ? 'midtrans' : 'cash';
         $notes         = $request->input('notes', []);
-        $lastOrder     = null;
 
         if ($paymentMethod === 'midtrans') {
-            return $this->processMidtransCheckout($grouped, $pickupTime, $notes, $cart);
+            return $this->processMidtransCheckout($request, $grouped, $pickupTime, $notes, $cart);
         }
 
         // --- Proses pembayaran tunai ---
         $sharedOrderCode = Order::generateOrderCode();
+        $lastOrder       = null;
 
         DB::transaction(function () use ($grouped, $pickupTime, $notes, $sharedOrderCode, &$lastOrder) {
             foreach ($grouped as $canteenId => $items) {
@@ -149,7 +162,15 @@ class CheckoutController extends Controller
         session()->forget(self::SESSION_KEY);
         session()->forget('checkout_notes');
 
-        return redirect()->route('order.show', $lastOrder->id)
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success'  => true,
+                'redirect' => route('order.index'),
+                'message'  => 'Pesanan berhasil dibuat! Silakan bayar saat mengambil pesanan.',
+            ]);
+        }
+
+        return redirect()->route('order.index')
             ->with('success', 'Pesanan berhasil dibuat! Bayar saat mengambil pesanan.');
     }
 
@@ -210,8 +231,9 @@ class CheckoutController extends Controller
 
     /**
      * Proses checkout dengan Midtrans: generate payment_code, Snap token, simpan orders.
+     * Mendukung request AJAX (wantsJson) untuk menampilkan Snap popup di halaman checkout.
      */
-    private function processMidtransCheckout(array $grouped, Carbon $pickupTime, array $notes, array $cart): RedirectResponse
+    private function processMidtransCheckout(Request $request, array $grouped, Carbon $pickupTime, array $notes, array $cart)
     {
         // Generate payment_code unik yang menghubungkan semua order dalam satu transaksi
         do {
@@ -242,11 +264,17 @@ class CheckoutController extends Controller
                 'error'        => $e->getMessage(),
             ]);
 
-            return back()->withErrors(['payment_method' => 'Gagal terhubung ke sistem pembayaran. Silakan coba lagi atau pilih metode lain.'])->withInput();
+            $errorMsg = 'Gagal terhubung ke sistem pembayaran. Silakan coba lagi atau pilih metode lain.';
+
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $errorMsg], 422);
+            }
+
+            return back()->withErrors(['payment_method' => $errorMsg])->withInput();
         }
 
-        $lastOrder = null;
         $sharedOrderCode = Order::generateOrderCode();
+        $lastOrder       = null;
 
         DB::transaction(function () use ($grouped, $pickupTime, $notes, $paymentCode, $snapToken, $sharedOrderCode, &$lastOrder) {
             foreach ($grouped as $canteenId => $items) {
@@ -282,13 +310,24 @@ class CheckoutController extends Controller
         session()->forget(self::SESSION_KEY);
         session()->forget('checkout_notes');
 
-        return redirect()->route('order.show', $lastOrder->id)
+        // Jika request via AJAX: kembalikan snap_token ke JS agar popup Midtrans
+        // muncul langsung di atas halaman checkout (tidak ada redirect sebelum bayar)
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success'    => true,
+                'snap_token' => $snapToken,
+                'redirect'   => route('order.index'),
+                'message'    => 'Pesanan berhasil dibuat! Silakan selesaikan pembayaran.',
+            ]);
+        }
+
+        return redirect()->route('order.index')
             ->with('success', 'Pesanan dibuat! Selesaikan pembayaran untuk melanjutkan.');
     }
 
     /**
      * Generate Snap token dari Midtrans.
-     * Dipakai oleh store() dan retry().
+     * Dipakai oleh processMidtransCheckout() dan retry().
      */
     private function generateSnapToken(string $paymentCode, $user, ?int $gross = null, array $itemDetails = []): string
     {
@@ -321,7 +360,7 @@ class CheckoutController extends Controller
                 'order_id'     => $paymentCode,
                 'gross_amount' => $gross,
             ],
-            'item_details'    => $itemDetails,
+            'item_details'     => $itemDetails,
             'customer_details' => [
                 'first_name' => $user->name,
                 'email'      => $user->email ?? ($user->nim.'@mhs.pnc.ac.id'),

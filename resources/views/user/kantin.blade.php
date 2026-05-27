@@ -88,7 +88,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 @forelse ($canteen->menus as $menu)
                     <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$canteen->name" :description="$menu->description"
-                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" rating="4.8" :actionUrl="route('menu.show', ['canteenId' => $canteen->id, 'id' => $menu->id])" />
+                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :actionUrl="route('menu.show', ['canteenId' => $canteen->id, 'id' => $menu->id])" />
                 @empty
                     <div class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
                         <p class="text-base-content/60 font-medium">Belum ada menu di kantin ini.</p>

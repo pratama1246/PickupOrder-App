@@ -71,7 +71,7 @@
                     :description="$menu->description"
                     :price="$menu->formatted_price"
                     :image="$menu->image ? asset('storage/' . $menu->image) : null"
-                    rating="4.8"
+                    :rating="number_format($menu->average_rating, 1)"
                     actionUrl="#"
                 >
                     <x-slot:action>

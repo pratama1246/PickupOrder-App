@@ -23,8 +23,8 @@
     </section>
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
-        {{-- Form that wraps everything, ready for submission to payment gateway or backend --}}
-        <form action="{{ route('checkout.store') }}" method="POST" class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+        {{-- Form dengan id agar bisa dicegat oleh JS AJAX --}}
+        <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST" class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
             @csrf
 
             {{-- Kolom Kiri --}}
@@ -75,6 +75,7 @@
                         <input type="time" name="custom_time" x-model="customTime" class="input input-bordered w-full rounded-2xl border-base-content/20 bg-white focus:outline-none focus:border-fern-700 text-base-content" :required="selectedTime === 'custom'">
                     </div>
 
+                    <div id="error-pickup_time" class="mt-3 text-sm font-medium text-red-600 hidden"></div>
                     @error('pickup_time')
                         <p class="mt-3 text-sm font-medium text-red-600">{{ $message }}</p>
                     @enderror
@@ -85,7 +86,7 @@
                     <h2 class="text-lg sm:text-xl font-bold text-base-content mb-5">Pilih Metode Pembayaran</h2>
                     
                     <div class="space-y-4">
-                        {{-- Online Payment (Ready for Midtrans) --}}
+                        {{-- Online Payment (Midtrans) --}}
                         <label class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-[:checked]:bg-fern-50/50 has-[:checked]:border-fern-700">
                             <input type="radio" name="payment_method" value="qris" class="radio radio-success radio-sm" checked>
                             <div class="flex-1">
@@ -123,6 +124,7 @@
                         </label>
                     </div>
 
+                    <div id="error-payment_method" class="mt-3 text-sm font-medium text-red-600 hidden"></div>
                     @error('payment_method')
                         <p class="mt-3 text-sm font-medium text-red-600">{{ $message }}</p>
                     @enderror
@@ -145,7 +147,7 @@
                                 <span class="text-xs font-bold text-base-content/60">{{ count($data['items']) }} Pesanan</span>
                             </div>
 
-                            <div class="space-y-1 mb-4">
+                            <div class="space-y-1 mb-2">
                                 @foreach ($data['items'] as $item)
                                     <x-user.order-item
                                         :image="$item['image'] ? asset('storage/' . $item['image']) : asset('assets/food/' . strtolower(str_replace(' ', '-', $item['name']))) . '.jpg'"
@@ -158,9 +160,13 @@
                                 @endforeach
                             </div>
 
+                            {{-- Catatan dari session keranjang --}}
                             @if(!empty($notes[$canteenId]))
                                 <div class="mt-2 text-xs text-base-content/70 bg-base-100 px-3 py-2 rounded-lg border border-base-content/10 flex items-start gap-2">
-                                    <span>Catatan: "{{ $notes[$canteenId] }}"</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 mt-0.5 text-base-content/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                    </svg>
+                                    <span class="italic">Catatan: "{{ $notes[$canteenId] }}"</span>
                                 </div>
                             @endif
                             <input type="hidden" name="notes[{{ $canteenId }}]" value="{{ $notes[$canteenId] ?? '' }}">
@@ -178,7 +184,7 @@
                         <a href="/keranjang" class="btn bg-red-500 hover:bg-red-600 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-12 min-h-0 text-center flex items-center justify-center">
                             Batalkan
                         </a>
-                        <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-12 min-h-0 text-center flex items-center justify-center">
+                        <button id="checkout-submit-btn" type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-12 min-h-0 text-center flex items-center justify-center">
                             Konfirmasi
                         </button>
                     </div>
@@ -190,4 +196,105 @@
     </section>
 
 </main>
+
+{{-- Midtrans Snap JS -- hanya dimuat di halaman checkout --}}
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+<script>
+    (function () {
+        const form      = document.getElementById('checkout-form');
+        const submitBtn = document.getElementById('checkout-submit-btn');
+
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Loading state
+            submitBtn.disabled     = true;
+            submitBtn.innerHTML    = '<span class="loading loading-spinner loading-xs mr-1"></span> Memproses...';
+
+            // Bersihkan pesan error sebelumnya
+            document.querySelectorAll('[id^="error-"]').forEach(el => el.classList.add('hidden'));
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method:  'POST',
+                body:    formData,
+                headers: {
+                    'Accept':           'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(function (res) {
+                if (!res.ok) {
+                    return res.json().then(function (err) { throw err; });
+                }
+                return res.json();
+            })
+            .then(function (data) {
+                if (!data.success) {
+                    showError(data.message || 'Terjadi kesalahan. Silakan coba lagi.');
+                    resetBtn();
+                    return;
+                }
+
+                if (data.snap_token) {
+                    // Pembayaran Online: tampilkan popup Midtrans Snap di atas halaman checkout
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: function () {
+                            window.location.href = data.redirect;
+                        },
+                        onPending: function () {
+                            // Pesanan tersimpan, user bisa bayar nanti dari riwayat
+                            window.location.href = data.redirect;
+                        },
+                        onError: function () {
+                            window.location.href = data.redirect;
+                        },
+                        onClose: function () {
+                            // User menutup popup tanpa bayar - pesanan tetap tersimpan (status: pending)
+                            // Arahkan ke riwayat agar bisa bayar ulang dari sana
+                            window.location.href = data.redirect;
+                        },
+                    });
+                } else {
+                    // Pembayaran Cash: langsung redirect ke riwayat
+                    window.location.href = data.redirect;
+                }
+            })
+            .catch(function (err) {
+                console.error('Checkout error:', err);
+
+                // Tampilkan error validasi per field jika ada
+                if (err && err.errors) {
+                    Object.keys(err.errors).forEach(function (field) {
+                        const el = document.getElementById('error-' + field);
+                        if (el) {
+                            el.textContent = err.errors[field][0];
+                            el.classList.remove('hidden');
+                        }
+                    });
+                } else {
+                    showError((err && err.message) || 'Terjadi kesalahan saat memproses pesanan.');
+                }
+
+                resetBtn();
+            });
+        });
+
+        function resetBtn() {
+            submitBtn.disabled  = false;
+            submitBtn.innerHTML = 'Konfirmasi';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error-payment_method');
+            if (el) {
+                el.textContent = msg;
+                el.classList.remove('hidden');
+            }
+        }
+    })();
+</script>
 @endsection

@@ -26,6 +26,9 @@ class MenuController extends Controller
             ->take(6)
             ->get();
 
-        return view('user.menu-detail', compact('menu', 'otherMenus'));
+        // Mengambil daftar ulasan beserta user pengulas (maksimal 20 terbaru)
+        $reviews = $menu->reviews()->with('user')->latest()->take(20)->get();
+
+        return view('user.menu-detail', compact('menu', 'otherMenus', 'reviews'));
     }
 }

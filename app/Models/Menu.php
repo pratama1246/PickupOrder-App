@@ -35,12 +35,33 @@ class Menu extends Model
         return $this->belongsTo(Canteen::class);
     }
 
-    /**
-     * Semua item pesanan yang mengacu pada menu ini.
-     */
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Semua ulasan untuk menu ini.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Menghitung rata-rata rating menu.
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        return (float) $this->reviews()->avg('rating') ?: 0.0;
+    }
+
+    /**
+     * Menghitung total ulasan menu.
+     */
+    public function getTotalReviewsAttribute(): int
+    {
+        return $this->reviews()->count();
     }
 
     /**

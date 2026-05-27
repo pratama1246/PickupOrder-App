@@ -72,7 +72,106 @@
                 @endif
             </div>
 
-            <div class="w-full overflow-x-auto pb-8 mb-8">
+            <!-- Stepper untuk Mobile (Vertical) -->
+            <div class="block md:hidden pb-8 mb-8">
+                <div class="relative flex flex-col gap-6 pl-6">
+                    <!-- Vertical Connecting Line -->
+                    <div class="absolute top-6 bottom-6 left-[46px] w-1 bg-gray-300 z-0">
+                        <div class="w-full bg-fern-700 transition-all duration-500" style="height: {{ $step > 1 ? ($step - 1) * 20 : 0 }}%"></div>
+                    </div>
+
+                    <!-- Step 1: Belum Dibayar -->
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 1 ? ($step > 1 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm sm:text-base {{ $step >= 1 ? 'text-base-content' : 'text-base-content/50' }}">Belum Dibayar</p>
+                            @if($step == 1)
+                                <span class="text-xs text-fern-700 font-semibold bg-fern-50 px-2.5 py-1 rounded-full mt-1 inline-block border border-fern-200">Selesaikan pembayaran</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Menunggu Konfirmasi -->
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 2 ? ($step > 2 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm sm:text-base {{ $step >= 2 ? 'text-base-content' : 'text-base-content/50' }}">Menunggu Konfirmasi</p>
+                            @if($step == 2)
+                                <span class="text-xs text-fern-700 font-semibold bg-fern-50 px-2.5 py-1 rounded-full mt-1 inline-block border border-fern-200">Menunggu persetujuan kantin</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Dalam Antrian -->
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 3 ? ($step > 3 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm sm:text-base {{ $step >= 3 ? 'text-base-content' : 'text-base-content/50' }}">Dalam Antrian</p>
+                            @if($step == 3)
+                                <span class="text-xs text-fern-700 font-semibold bg-fern-50 px-2.5 py-1 rounded-full mt-1 inline-block border border-fern-200">Antrean ke-{{ $order->queue_position }}</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Sedang Dimasak -->
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 4 ? ($step > 4 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm sm:text-base {{ $step >= 4 ? 'text-base-content' : 'text-base-content/50' }}">Sedang Dimasak</p>
+                            @if($step == 4)
+                                <span class="text-xs text-fern-700 font-semibold bg-fern-50 px-2.5 py-1 rounded-full mt-1 inline-block border border-fern-200">Makanan sedang disiapkan</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Siap Diambil -->
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 5 ? ($step > 5 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm sm:text-base {{ $step >= 5 ? 'text-base-content' : 'text-base-content/50' }}">Siap Diambil</p>
+                            @if($step == 5)
+                                <span class="text-xs text-fern-700 font-semibold bg-fern-50 px-2.5 py-1 rounded-full mt-1 inline-block border border-fern-200">Silakan ambil di kantin</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Step 6: Selesai -->
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 6 ? 'bg-fern-700 text-white' : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm sm:text-base {{ $step >= 6 ? 'text-base-content' : 'text-base-content/50' }}">Selesai</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stepper untuk Desktop (Horizontal Scrollable) -->
+            <div class="hidden md:block w-full overflow-x-auto pb-8 mb-8">
                 <div class="relative flex justify-between items-start w-full min-w-[800px] max-w-5xl mx-auto pt-6 px-4">
                     
                     <!-- Connecting Lines (behind circles) -->
@@ -151,27 +250,22 @@
                 <!-- Kiri: Detail Items dan Banner Pembayaran -->
                 <div class="w-full lg:flex-1 min-w-0 space-y-6">
                     
-                    {{-- Banner Bayar Sekarang (hanya untuk Midtrans yang masih pending) --}}
+                    {{-- Informasi: Pesanan pending diarahkan ke halaman Riwayat untuk membayar --}}
                     @if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
-                        <div
-                            id="payment-banner"
-                            class="bg-amber-50 border border-amber-300 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm"
-                        >
+                        <div class="bg-amber-50 border border-amber-300 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
                             <div>
                                 <p class="font-bold text-amber-800 text-sm mb-1">Pembayaran belum selesai</p>
-                                <p class="text-amber-700 text-xs font-medium">Klik tombol untuk melanjutkan pembayaran melalui Midtrans. Token berlaku 30 menit.</p>
+                                <p class="text-amber-700 text-xs font-medium">Selesaikan pembayaran dari halaman Riwayat Pesanan untuk melanjutkan semua pesanan dalam transaksi ini.</p>
                             </div>
-                            <button
-                                id="pay-btn"
-                                onclick="openSnap()"
+                            <a
+                                href="{{ route('order.index') }}"
                                 class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold shadow-md active:scale-95 transition-all shrink-0 h-12 min-h-0 px-4 sm:px-6"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                 </svg>
-                                <span class="hidden sm:block">Bayar Sekarang</span>
-                                <span class="block sm:hidden">Bayar</span>
-                            </button>
+                                Ke Riwayat
+                            </a>
                         </div>
                     @endif
 
@@ -248,7 +342,8 @@
 
                 <!-- Kanan: Ringkasan & Aksi -->
                 <div class="w-full lg:w-80 xl:w-96 shrink-0">
-                    <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 shadow-sm sticky top-24">
+                    <div class="space-y-6 sticky top-24">
+                        <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 shadow-sm">
                         
                         @if($step == 5)
                         <!-- QR Code Section -->
@@ -274,13 +369,24 @@
                             </div>
                         </div>
 
-                         <button 
-                            class="btn w-full h-12 min-h-0 rounded-xl font-bold text-base transition-all 
-                            {{ $step == 5 ? 'bg-fern-700 hover:bg-fern-800 text-white shadow-md active:scale-95' : 'bg-gray-300 text-gray-500 cursor-not-allowed border-none' }}"
-                            {{ $step != 5 ? 'disabled' : '' }}
-                        >
-                            {{ $step == 5 ? 'Ambil Sekarang' : ($step == 6 ? 'Selesai' : 'Belum Siap') }}
-                        </button>
+                        @if ($step == 6 && $order->reviews->isEmpty())
+                            <button 
+                                type="button"
+                                onclick="document.getElementById('review_modal').showModal()"
+                                class="btn bg-amber-500 hover:bg-amber-600 text-white border-none w-full h-12 min-h-0 rounded-xl font-bold text-base shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" /></svg>
+                                Beri Ulasan
+                            </button>
+                        @else
+                            <button 
+                                class="btn w-full h-12 min-h-0 rounded-xl font-bold text-base transition-all 
+                                {{ $step == 5 ? 'bg-fern-700 hover:bg-fern-800 text-white shadow-md active:scale-95' : 'bg-gray-300 text-gray-500 cursor-not-allowed border-none' }}"
+                                {{ $step != 5 ? 'disabled' : '' }}
+                            >
+                                {{ $step == 5 ? 'Ambil Sekarang' : ($step == 6 ? 'Selesai' : 'Belum Siap') }}
+                            </button>
+                        @endif
 
                         @if ($order->payment_status === 'pending' && $order->status === 'menunggu')
                             <div class="mt-3">
@@ -307,10 +413,74 @@
                             </div>
                         @endif
                     </div>
+
+                    @if ($step == 6 && $order->reviews->isNotEmpty())
+                        <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 shadow-sm">
+                            <h3 class="font-bold text-base-content mb-4 text-sm flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-fern-700"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l4.5-6.3z" clip-rule="evenodd" /></svg>
+                                Ulasan Anda
+                            </h3>
+                            <div class="space-y-3">
+                                @foreach($order->reviews as $review)
+                                <div class="bg-white rounded-2xl p-4 border border-base-content/10">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-bold text-sm text-base-content line-clamp-1">{{ $review->menu->name ?? 'Menu' }}</p>
+                                        <div class="flex items-center gap-1 bg-vanilla-custard-50 px-2 py-0.5 rounded-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                            <span class="font-bold text-xs text-base-content">{{ $review->rating }}</span>
+                                        </div>
+                                    </div>
+                                    @if($review->comment)
+                                        <p class="text-xs text-base-content/80 mt-1.5 leading-relaxed">{{ $review->comment }}</p>
+                                    @endif
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+    @if ($step == 6 && $order->reviews->isEmpty())
+        <x-modal id="review_modal" title="Beri Penilaian & Ulasan">
+            <form action="{{ route('order.review', $order->id) }}" method="POST">
+                @csrf
+                <div class="space-y-6">
+                    @foreach ($order->items as $index => $item)
+                        @if($item->menu)
+                        <div class="border border-base-content/10 rounded-2xl p-4 bg-vanilla-custard-50 shadow-sm">
+                            <input type="hidden" name="reviews[{{ $index }}][menu_id]" value="{{ $item->menu_id }}">
+                            <div class="flex items-center gap-3 mb-3">
+                                <img src="{{ asset('storage/' . $item->menu->image) }}" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'" class="w-12 h-12 rounded-lg object-cover" alt="{{ $item->menu->name }}">
+                                <div>
+                                    <p class="font-bold text-base-content">{{ $item->menu->name }}</p>
+                                    <p class="text-xs text-base-content/70">Berikan rating untuk menu ini</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Star Rating -->
+                            <div class="rating rating-md mb-3">
+                                <input type="radio" name="reviews[{{ $index }}][rating]" value="1" class="mask mask-star-2 bg-amber-400" />
+                                <input type="radio" name="reviews[{{ $index }}][rating]" value="2" class="mask mask-star-2 bg-amber-400" />
+                                <input type="radio" name="reviews[{{ $index }}][rating]" value="3" class="mask mask-star-2 bg-amber-400" />
+                                <input type="radio" name="reviews[{{ $index }}][rating]" value="4" class="mask mask-star-2 bg-amber-400" />
+                                <input type="radio" name="reviews[{{ $index }}][rating]" value="5" class="mask mask-star-2 bg-amber-400" checked />
+                            </div>
+
+                            <textarea name="reviews[{{ $index }}][comment]" class="textarea textarea-bordered w-full rounded-xl bg-white focus:outline-fern-700" placeholder="Tulis ulasan Anda (opsional)..." rows="2"></textarea>
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" class="btn btn-ghost rounded-xl font-bold" onclick="document.getElementById('review_modal').close()">Batal</button>
+                    <button type="submit" class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold shadow-md active:scale-95 transition-all">Kirim Ulasan</button>
+                </div>
+            </form>
+        </x-modal>
+    @endif
 </main>
 @endsection
 
@@ -335,112 +505,5 @@
 </script>
 @endif
 
-@if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
-{{-- Load Midtrans Snap JS hanya jika pesanan Midtrans yang masih pending --}}
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
-<script>
-    const snapToken     = "{{ $order->snap_token }}";
-    const orderId       = {{ $order->id }};
-    const retryUrl      = "{{ route('checkout.retry', $order->payment_code) }}";
-    const csrfToken     = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-    const pollUrl       = "{{ route('order.payment-status', $order->id) }}";
-    const redirectUrl   = "{{ route('order.show', $order->id) }}";
 
-    let pollingInterval = null;
-
-    /**
-     * Buka popup Snap Midtrans menggunakan snap_token yang ada.
-     * Jika token sudah expired, minta token baru dari server dulu.
-     */
-    function openSnap() {
-        if (! snapToken) {
-            fetchNewTokenAndPay();
-            return;
-        }
-        payWithToken(snapToken);
-    }
-
-    function payWithToken(token) {
-        window.snap.pay(token, {
-            onSuccess: function(result) {
-                // Pembayaran sukses di sisi klien, refresh untuk update status
-                stopPolling();
-                window.location.reload();
-            },
-            onPending: function(result) {
-                // Masih menunggu konfirmasi (misalnya VA belum ditransfer)
-                // Polling di background sudah berjalan, tidak perlu aksi manual
-            },
-            onError: function(result) {
-                console.error('Snap error:', result);
-            },
-            onClose: function() {
-                // User menutup popup tanpa membayar, polling tetap berjalan
-            }
-        });
-    }
-
-    /**
-     * Minta Snap token baru dari server jika token sudah expired.
-     */
-    function fetchNewTokenAndPay() {
-        fetch(retryUrl, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success && data.snap_token) {
-                payWithToken(data.snap_token);
-            } else {
-                alert(data.message ?? 'Gagal memperbarui token pembayaran.');
-            }
-        })
-        .catch(() => alert('Terjadi kesalahan jaringan. Silakan coba lagi.'));
-    }
-
-    /**
-     * Polling status pembayaran setiap 5 detik.
-     * Jika status berubah menjadi 'paid', hentikan polling dan reload halaman.
-     */
-    function startPolling() {
-        pollingInterval = setInterval(function() {
-            fetch(pollUrl, {
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.is_paid) {
-                    stopPolling();
-                    window.location.reload();
-                }
-                // Jika status order dibatalkan, hentikan polling
-                if (data.status === 'dibatalkan') {
-                    stopPolling();
-                    window.location.reload();
-                }
-            })
-            .catch(() => {
-                // Abaikan error jaringan sementara, coba lagi di interval berikutnya
-            });
-        }, 5000);
-    }
-
-    function stopPolling() {
-        if (pollingInterval) {
-            clearInterval(pollingInterval);
-            pollingInterval = null;
-        }
-    }
-
-    // Mulai polling saat halaman dimuat
-    startPolling();
-
-    // Hentikan polling saat tab/halaman ditutup untuk menghemat resource
-    window.addEventListener('beforeunload', stopPolling);
-</script>
-@endif
 @endpush

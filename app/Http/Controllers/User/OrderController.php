@@ -12,22 +12,41 @@ class OrderController extends Controller
 {
     /**
      * Daftar riwayat pesanan mahasiswa (/riwayat).
-     * Mendukung filter berdasarkan status badge.
+     * Pesanan online yang masih pending dikelompokkan per payment_code (1 kontainer).
+     * Pesanan lainnya (sudah lunas atau tunai) ditampilkan per-item.
      */
     public function index(Request $request): View
     {
+        $userId = Auth::id();
+
+        // Ambil semua pesanan online yang masih pending milik user ini
+        // Kelompokkan per payment_code agar tampil sebagai 1 kontainer di riwayat
+        $pendingOnlineGroups = Order::with(['canteen', 'items.menu'])
+            ->where('user_id', $userId)
+            ->where('payment_method', 'midtrans')
+            ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['dibatalkan'])
+            ->orderByDesc('created_at')
+            ->get()
+            ->groupBy('payment_code');
+
+        // Ambil pesanan selain pending online (tunai atau sudah dibayar)
         $query = Order::with(['canteen', 'items.menu'])
-            ->where('user_id', Auth::id())
+            ->where('user_id', $userId)
+            ->where(function ($q) {
+                $q->where('payment_method', '!=', 'midtrans')
+                  ->orWhere('payment_status', '!=', 'pending');
+            })
             ->latest();
 
-        // Filter berdasarkan status label UI (Menunggu, Diproses, Selesai, Dibatalkan)
+        // Filter berdasarkan status label UI
         if ($request->filled('status')) {
             $dbStatuses = match ($request->status) {
-                'Menunggu' => ['menunggu'],
-                'Diproses' => ['dimasak', 'siap_diambil'],
-                'Selesai' => ['selesai'],
+                'Menunggu'   => ['menunggu'],
+                'Diproses'   => ['dimasak', 'siap_diambil'],
+                'Selesai'    => ['selesai'],
                 'Dibatalkan' => ['dibatalkan'],
-                default => [],
+                default      => [],
             };
             if (! empty($dbStatuses)) {
                 $query->whereIn('status', $dbStatuses);
@@ -36,7 +55,7 @@ class OrderController extends Controller
 
         $orders = $query->paginate(10)->withQueryString();
 
-        return view('user.riwayat', compact('orders'));
+        return view('user.riwayat', compact('orders', 'pendingOnlineGroups'));
     }
 
     /**
@@ -44,7 +63,7 @@ class OrderController extends Controller
      */
     public function show(int $id): View
     {
-        $order = Order::with(['canteen', 'items.menu'])
+        $order = Order::with(['canteen', 'items.menu', 'reviews.menu'])
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
@@ -54,7 +73,6 @@ class OrderController extends Controller
     /**
      * API endpoint untuk polling status pembayaran dari frontend JavaScript.
      * GET /api/order/{id}/payment-status
-     * Hanya mengembalikan status, tidak me-render view.
      */
     public function paymentStatus(int $id): \Illuminate\Http\JsonResponse
     {
@@ -68,8 +86,8 @@ class OrderController extends Controller
     }
 
     /**
-     * Batalkan pesanan oleh mahasiswa.
-     * Hanya diizinkan jika belum dibayar (payment_status == 'pending') dan status masih 'menunggu'.
+     * Batalkan satu pesanan oleh mahasiswa.
+     * Hanya diizinkan jika belum dibayar (payment_status == 'pending') dan status 'menunggu'.
      */
     public function destroy(int $id): \Illuminate\Http\RedirectResponse
     {
@@ -84,11 +102,37 @@ class OrderController extends Controller
         }
 
         $order->update([
-            'status' => 'dibatalkan',
+            'status'         => 'dibatalkan',
             'payment_status' => 'failed',
         ]);
 
         return redirect()->route('order.index')->with('success', 'Pesanan #' . $order->order_code . ' berhasil dibatalkan.');
+    }
+
+    /**
+     * Batalkan seluruh grup transaksi berdasarkan payment_code.
+     * Digunakan ketika user menekan "Batalkan Semua" pada kontainer grouped pending order.
+     */
+    public function cancelGroup(string $paymentCode): \Illuminate\Http\RedirectResponse
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->where('payment_code', $paymentCode)
+            ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['dibatalkan'])
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return redirect()->route('order.index')->with('error', 'Transaksi tidak ditemukan atau sudah dibatalkan.');
+        }
+
+        foreach ($orders as $order) {
+            $order->update([
+                'status'         => 'dibatalkan',
+                'payment_status' => 'failed',
+            ]);
+        }
+
+        return redirect()->route('order.index')->with('success', 'Seluruh transaksi dengan kode ' . $paymentCode . ' berhasil dibatalkan.');
     }
 
 }

@@ -46,19 +46,92 @@
     <section class="px-4 sm:px-10 md:px-16 lg:px-24">
         <div class="max-w-7xl mx-auto">
             <div class="max-w-4xl space-y-6">
-            @forelse ($orders as $order)
-                <x-user.order-card :order="$order" />
-            @empty
-                <div class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
-                    <p class="text-base-content/60 font-medium">Belum ada riwayat pesanan.</p>
-                </div>
-            @endforelse
 
-            <div class="pt-4">
-                {{ $orders->links() }}
-            </div>
+                {{-- BAGIAN 1: Transaksi online yang BELUM DIBAYAR (dikelompokkan per payment_code) --}}
+                @if ($pendingOnlineGroups->isNotEmpty())
+                    @foreach ($pendingOnlineGroups as $paymentCode => $group)
+                        <x-user.grouped-order-card :group="$group" />
+                    @endforeach
+                @endif
+
+                {{-- BAGIAN 2: Pesanan lainnya (tunai atau sudah dibayar) --}}
+                @forelse ($orders as $order)
+                    <x-user.order-card :order="$order" />
+                @empty
+                    @if ($pendingOnlineGroups->isEmpty())
+                        <div class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
+                            <p class="text-base-content/60 font-medium">Belum ada riwayat pesanan.</p>
+                        </div>
+                    @endif
+                @endforelse
+
+                <div class="pt-4">
+                    {{ $orders->links() }}
+                </div>
             </div>
         </div>
     </section>
 </main>
 @endsection
+
+@push('scripts')
+{{-- Load Midtrans Snap JS jika ada pending online group --}}
+@if ($pendingOnlineGroups->isNotEmpty())
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+<script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+    /**
+     * Buka popup Snap Midtrans dari halaman riwayat.
+     * snapToken: token dari pesanan pertama dalam grup.
+     * retryUrl: URL untuk mendapatkan token baru jika expired.
+     */
+    function openSnapGroup(snapToken, retryUrl, csrf) {
+        const token = csrf || csrfToken;
+
+        if (!snapToken) {
+            fetchNewGroupToken(retryUrl, token);
+            return;
+        }
+        payWithGroupToken(snapToken, retryUrl, token);
+    }
+
+    function payWithGroupToken(token, retryUrl, csrf) {
+        window.snap.pay(token, {
+            onSuccess: function(result) {
+                window.location.reload();
+            },
+            onPending: function(result) {
+                // VA belum ditransfer, biarkan polling server-side (Midtrans webhook)
+            },
+            onError: function(result) {
+                console.error('Snap error:', result);
+            },
+            onClose: function() {
+                // User tutup popup, tidak perlu aksi
+            }
+        });
+    }
+
+    function fetchNewGroupToken(retryUrl, csrf) {
+        fetch(retryUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.snap_token) {
+                payWithGroupToken(data.snap_token, retryUrl, csrf);
+            } else {
+                alert(data.message ?? 'Gagal memperbarui token pembayaran. Silakan coba lagi.');
+            }
+        })
+        .catch(() => alert('Terjadi kesalahan jaringan. Silakan coba lagi.'));
+    }
+</script>
+@endif
+@endpush
+

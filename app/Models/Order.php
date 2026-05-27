@@ -87,6 +87,14 @@ class Order extends Model
     }
 
     /**
+     * Ulasan yang diberikan untuk pesanan ini.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
      * Pemetaan status DB ke label UI untuk <x-status-badge>.
      * Status DB: menunggu, dimasak, siap_diambil, selesai, dibatalkan
      * Status badge: Menunggu, Diproses, Selesai, Dibatalkan
