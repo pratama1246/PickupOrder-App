@@ -57,7 +57,6 @@
                     <div class="text-xs text-base-content/50 truncate">{{ auth()->user()->email }}</div>
                 </div>
                 <li><a href="{{ route('home') }}" class="font-medium">Halaman Utama</a></li>
-                <li><a href="{{ route('vendor.laporan.index') }}" class="font-medium">Laporan Penjualan</a></li>
                 <li><a href="{{ route('vendor.canteen.edit') }}" class="font-medium">Pengaturan Kantin</a></li>
                 <li><a href="{{ route('profile.edit') }}" class="font-medium">Pengaturan Akun</a></li>
                 <li class="border-t border-base-200 my-1"></li>
