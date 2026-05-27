@@ -52,13 +52,30 @@
       </div>
       <ul tabindex="0" class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-56 p-2 shadow-lg border border-base-200">
         @auth
+        <div class="px-4 py-2.5 border-b border-base-200 mb-1">
+            <div class="text-[10px] font-bold text-fern-700 uppercase tracking-wider">
+                @if(auth()->user()->isAdmin())
+                    Administrator
+                @elseif(auth()->user()->isVendor())
+                    Vendor
+                @else
+                    Mahasiswa
+                @endif
+            </div>
+            <div class="text-sm font-bold text-base-content truncate">{{ auth()->user()->name }}</div>
+            <div class="text-xs text-base-content/50 truncate">{{ auth()->user()->email }}</div>
+        </div>
+        @endauth
+
+        @auth
           @if(auth()->user()->isAdmin())
             <li><a href="{{ route('admin.dashboard') }}" class="font-medium">Dashboard Admin</a></li>
           @elseif(auth()->user()->isVendor())
             <li><a href="{{ route('vendor.dashboard') }}" class="font-medium">Dashboard Kantin</a></li>
           @endif
         @endauth
-        <li><a href="{{ route('profile.edit') }}" class="font-medium">Profil dan Pengaturan</a></li>
+        <li><a href="{{ route('profile.edit') }}" class="font-medium">Pengaturan Akun</a></li>
+        <li class="border-t border-base-200 my-1"></li>
         <li>
           <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-error font-medium">Keluar</a>
           <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
