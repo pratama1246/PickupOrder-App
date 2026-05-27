@@ -13,7 +13,7 @@
 
     <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-8">
         <div class="max-w-8xl mx-auto">
-            <div class="relative w-full aspect-3/4 sm:aspect-video rounded-3xl overflow-hidden shadow-lg border border-base-content/10 bg-base-200">
+            <div class="relative w-full aspect-3/4 sm:aspect-auto sm:h-[400px] md:h-[450px] rounded-3xl overflow-hidden shadow-lg border border-base-content/10 bg-base-200">
                 <img src="{{ $canteen->image ? asset('storage/' . $canteen->image) : 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80' }}" 
                      onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($canteen->name) }}&background=random'"
                      alt="{{ $canteen->name }}" 
