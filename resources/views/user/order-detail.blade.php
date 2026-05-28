@@ -269,8 +269,8 @@
                         </div>
                     @endif
 
-                    <div class="mb-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div class="bg-white border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-content/10 pb-4 mb-4">
                             <div>
                                 <h3 class="text-base sm:text-lg font-bold text-base-content mb-1">No. Order : {{ $order->order_code }}</h3>
                                 <p class="font-bold text-xl sm:text-2xl text-base-content">{{ $order->canteen->name }}</p>
@@ -289,13 +289,13 @@
                             </div>
                             <x-status-badge :status="$order->status_label" />
                         </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 pt-6 border-t border-base-content/10">
-                            <div class="bg-white rounded-2xl p-4 border border-base-content/10 shadow-sm">
+ 
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-base-100 rounded-2xl p-4 border border-base-content/10 shadow-sm">
                                 <p class="text-xs text-base-content/50 uppercase font-bold mb-1">Metode Pembayaran</p>
                                 <p class="font-bold text-base-content text-sm">{{ $order->payment_method_label }}</p>
                             </div>
-                            <div class="bg-white rounded-2xl p-4 border border-base-content/10 shadow-sm">
+                            <div class="bg-base-100 rounded-2xl p-4 border border-base-content/10 shadow-sm">
                                 <p class="text-xs text-base-content/50 uppercase font-bold mb-1">Status Pembayaran</p>
                                 @php
                                     $payBadgeClass = match($order->payment_status) {
@@ -444,12 +444,18 @@
         </div>
     </section>
     @if ($step == 6 && $order->reviews->isEmpty())
-        <x-modal id="review_modal" title="Beri Penilaian & Ulasan">
+        <x-modal id="review_modal" title="Beri Penilaian & Ulasan" :showFooter="false">
             <form action="{{ route('order.review', $order->id) }}" method="POST">
                 @csrf
                 <div class="space-y-6">
                     @foreach ($order->items as $index => $item)
                         @if($item->menu)
+                        @php
+                            $menuName = $item->menu->name ?? 'Menu';
+                            $menuImage = $item->menu && $item->menu->image 
+                                ? asset('storage/' . $item->menu->image) 
+                                : 'https://ui-avatars.com/api/?name=' . urlencode($menuName) . '&background=random';
+                        @endphp
                         <div class="mb-4">
                             <input type="hidden" name="reviews[{{ $index }}][menu_id]" value="{{ $item->menu_id }}">
                             <div class="flex items-center gap-3 mb-3">
@@ -457,7 +463,11 @@
                                     <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
                                         <span class="loading loading-bars loading-xs"></span>
                                     </div>
-                                    <img src="{{ asset('storage/' . $item->menu->image) }}" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'" class="w-full h-full object-cover relative z-10" alt="{{ $item->menu->name }}">
+                                    <img src="{{ $menuImage }}" 
+                                         onload="this.previousElementSibling?.remove()"
+                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($menuName) }}&background=random'; this.onerror=null;" 
+                                         class="w-full h-full object-cover relative z-10" 
+                                         alt="{{ $menuName }}">
                                 </div>
                                 <div>
                                     <p class="font-bold text-base-content">{{ $item->menu->name }}</p>
@@ -474,7 +484,15 @@
                                 <input type="radio" name="reviews[{{ $index }}][rating]" value="5" class="mask mask-star-2 bg-amber-400" checked />
                             </div>
 
-                            <textarea name="reviews[{{ $index }}][comment]" class="textarea textarea-bordered w-full rounded-xl bg-white focus:outline-fern-700" placeholder="Tulis ulasan Anda (opsional)..." rows="2"></textarea>
+                            <textarea name="reviews[{{ $index }}][comment]" class="textarea textarea-bordered w-full rounded-xl bg-white focus:outline-fern-700 resize-none" placeholder="Tulis ulasan Anda (opsional)..." rows="2"></textarea>
+                            
+                            <!-- Toggle Anonim -->
+                            <div class="mt-3">
+                                <label class="label cursor-pointer p-0 gap-3 justify-start inline-flex">
+                                    <input type="checkbox" name="reviews[{{ $index }}][is_anonymous]" value="1" class="checkbox checkbox-sm checkbox-success rounded-md" />
+                                    <span class="label-text text-xs sm:text-sm font-medium text-base-content/80">Sembunyikan nama</span>
+                                </label>
+                            </div>
                         </div>
                         @endif
                     @endforeach

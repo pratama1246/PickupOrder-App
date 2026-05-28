@@ -255,11 +255,11 @@
                 <div class="space-y-3 max-h-48 overflow-y-auto pr-1">
                     @forelse($recentReviews as $review)
                         <div class="flex items-start gap-3 p-3 bg-base-200/40 rounded-2xl">
-                            <img src="{{ $review->user->avatar ? asset('storage/'.$review->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($review->user->name).'&background=random&size=40' }}"
-                                 class="w-8 h-8 rounded-full object-cover shrink-0" alt="{{ $review->user->name }}">
+                            <img src="{{ $review->reviewer_avatar }}"
+                                 class="w-8 h-8 rounded-full object-cover shrink-0" alt="{{ $review->reviewer_name }}">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between gap-2">
-                                    <p class="text-xs font-bold text-base-content truncate">{{ $review->user->name }}</p>
+                                    <p class="text-xs font-bold text-base-content truncate">{{ $review->reviewer_name }}</p>
                                     <div class="flex items-center gap-0.5 shrink-0">
                                         @for($s = 1; $s <= 5; $s++)
                                             <svg class="w-3 h-3 {{ $s <= $review->rating ? 'text-amber-400' : 'text-base-content/20' }}" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>

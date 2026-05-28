@@ -5,6 +5,7 @@
     'type' => 'default', // 'default' | 'success' | 'warning' | 'error' | 'info'
     'clickOutside' => true,
     'showClose' => true,
+    'showFooter' => true,
     'modalClass' => 'max-w-md',
 ])
 
@@ -44,7 +45,7 @@
             <div class="modal-action mt-6 flex flex-row justify-end items-center gap-2">
                 {{ $footer }}
             </div>
-        @else
+        @elseif($showFooter)
             <div class="modal-action mt-6 flex flex-row justify-end">
                 <button type="button" onclick="document.getElementById('{{ $id }}').close()" class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-xl px-5 text-sm font-bold transition-colors">
                     Tutup

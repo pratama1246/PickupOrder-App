@@ -22,7 +22,7 @@
     @php
         $cartCount = count(session('cart', []));
     @endphp
-    <a href="/keranjang" class="btn btn-ghost btn-circle hover:bg-transparent">
+    <a href="/keranjang" class="btn btn-ghost btn-circle hover:bg-transparent" id="navbar-cart-btn">
       <div class="indicator">
 
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">

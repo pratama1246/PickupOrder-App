@@ -21,7 +21,72 @@
         </div>
     </section>
 
-    <section class="px-3 sm:px-10 md:px-16 lg:px-24">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24" id="cart-container"
+             x-data="{
+                 items: {
+                     @foreach($grouped as $canteenId => $data)
+                         @foreach($data['items'] as $item)
+                             '{{ $item['menu_id'] }}': {
+                                 qty: {{ $item['quantity'] }},
+                                 price: {{ $item['price'] }},
+                                 canteenId: {{ $item['canteen_id'] }}
+                             },
+                         @endforeach
+                     @endforeach
+                 },
+                 updateTimeout: null,
+                 changeQty(itemId, amount) {
+                     let item = this.items[itemId];
+                     if (!item) return;
+                     let newQty = item.qty + amount;
+                     if (newQty < 1) newQty = 1;
+                     if (newQty > 20) newQty = 20;
+                     if (newQty === item.qty) return;
+
+                     item.qty = newQty;
+
+                     // Sync ke backend di latar belakang (debounced)
+                     clearTimeout(this.updateTimeout);
+                     this.updateTimeout = setTimeout(() => {
+                         this.syncWithBackend(itemId, item.qty);
+                     }, 400);
+                 },
+                 async syncWithBackend(itemId, qty) {
+                     const formData = new FormData();
+                     formData.append('_token', '{{ csrf_token() }}');
+                     formData.append('_method', 'PUT');
+                     formData.append('quantity', qty);
+
+                     try {
+                         await fetch(`/keranjang/${itemId}`, {
+                             method: 'POST',
+                             body: formData,
+                             headers: {
+                                 'X-Requested-With': 'XMLHttpRequest',
+                                 'Accept': 'application/json'
+                             }
+                         });
+                     } catch (err) {
+                         console.error('Gagal melakukan sync kuantitas ke backend:', err);
+                     }
+                 },
+                 getCanteenTotal(canteenId) {
+                     let total = 0;
+                     for (let id in this.items) {
+                         if (this.items[id].canteenId === canteenId) {
+                             total += this.items[id].qty * this.items[id].price;
+                         }
+                     }
+                     return total;
+                 },
+                 getGrandTotal() {
+                     let total = 0;
+                     for (let id in this.items) {
+                         total += this.items[id].qty * this.items[id].price;
+                     }
+                     return total;
+                 }
+             }">
         
         <form id="checkout-prepare-form" action="{{ route('checkout.prepare') }}" method="POST" class="hidden">
             @csrf
@@ -86,4 +151,105 @@
     </section>
 
 </main>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const cartContainer = document.getElementById('cart-container');
+    if (!cartContainer) return;
+
+    // Helper untuk me-refresh DOM keranjang dan navbar secara asinkron
+    async function refreshCartDOM() {
+        try {
+            const pageRes = await fetch(window.location.href, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const html = await pageRes.text();
+            
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Swap kontainer keranjang utama
+            const newCartContainer = doc.getElementById('cart-container');
+            if (newCartContainer) {
+                cartContainer.innerHTML = newCartContainer.innerHTML;
+            }
+            
+            // Swap tombol keranjang di navbar agar badge quantity ter-update
+            const navbarCartBtn = document.getElementById('navbar-cart-btn');
+            const newNavbarCartBtn = doc.getElementById('navbar-cart-btn');
+            if (navbarCartBtn && newNavbarCartBtn) {
+                navbarCartBtn.innerHTML = newNavbarCartBtn.innerHTML;
+            }
+        } catch (err) {
+            console.error('Gagal memperbarui tampilan keranjang:', err);
+        }
+    }
+
+
+
+    // Delegate submit event untuk all forms inside cart-container (misal tombol Hapus)
+    cartContainer.addEventListener('submit', async (e) => {
+        const form = e.target;
+        
+        // Hanya cegah form delete (DELETE) dari cart-item
+        const methodInput = form.querySelector('input[name="_method"]');
+        if (!methodInput || methodInput.value !== 'DELETE') {
+            return;
+        }
+
+        e.preventDefault();
+
+        // Cari tombol submit yang memicu event
+        const submitBtn = e.submitter || form.querySelector('button[type="submit"]');
+        let originalContent = '';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            originalContent = submitBtn.innerHTML;
+            
+            // Cek jika tombolnya bulat / icon button (lebar sama dengan tinggi dan kecil)
+            const isCircleBtn = submitBtn.classList.contains('btn-circle') || 
+                               submitBtn.classList.contains('rounded-full') || 
+                               (submitBtn.offsetWidth > 0 && submitBtn.offsetWidth === submitBtn.offsetHeight && submitBtn.offsetWidth < 50);
+            
+            submitBtn.innerHTML = '';
+            const spinner = document.createElement('span');
+            spinner.className = isCircleBtn ? 'loading loading-spinner loading-xs text-base-content' : 'loading loading-bars loading-xs';
+            submitBtn.appendChild(spinner);
+        }
+
+        try {
+            const action = form.action;
+            const formData = new FormData(form);
+            
+            const response = await fetch(action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                await refreshCartDOM();
+            } else {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalContent;
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalContent;
+            }
+        }
+    });
+});
+</script>
+@endpush
 @endsection

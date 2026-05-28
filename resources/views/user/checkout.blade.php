@@ -211,7 +211,7 @@
 
             // Loading state
             submitBtn.disabled     = true;
-            submitBtn.innerHTML    = '<span class="loading loading-spinner loading-xs mr-1"></span> Memproses...';
+            submitBtn.innerHTML    = '<span class="loading loading-bars loading-md"></span>';
 
             // Bersihkan pesan error sebelumnya
             document.querySelectorAll('[id^="error-"]').forEach(el => el.classList.add('hidden'));

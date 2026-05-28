@@ -26,7 +26,8 @@ class ReviewController extends Controller
             'reviews'             => ['required', 'array'],
             'reviews.*.menu_id'   => ['required', 'exists:menus,id'],
             'reviews.*.rating'    => ['required', 'integer', 'min:1', 'max:5'],
-            'reviews.*.comment'   => ['nullable', 'string', 'max:500'],
+            'reviews.*.comment'      => ['nullable', 'string', 'max:500'],
+            'reviews.*.is_anonymous' => ['nullable', 'boolean'],
         ]);
 
         // Simpan ulasan untuk setiap menu
@@ -38,8 +39,9 @@ class ReviewController extends Controller
                     'menu_id'  => $reviewData['menu_id'],
                 ],
                 [
-                    'rating'  => $reviewData['rating'],
-                    'comment' => $reviewData['comment'] ?? null,
+                    'rating'       => $reviewData['rating'],
+                    'comment'      => $reviewData['comment'] ?? null,
+                    'is_anonymous' => isset($reviewData['is_anonymous']) ? (bool) $reviewData['is_anonymous'] : false,
                 ]
             );
         }

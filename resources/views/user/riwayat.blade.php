@@ -3,7 +3,42 @@
 @section('title', 'Riwayat Pesanan - PNC')
 
 @section('content')
-<main class="min-h-screen bg-base-100 pb-12" x-data="{ selectedStatus: 'Semua Status', searchQuery: '' }">
+<main class="min-h-screen bg-base-100 pb-12" 
+      x-data="{ 
+          selectedStatus: 'Semua Status', 
+          searchQuery: '',
+          items: [
+              @foreach ($pendingOnlineGroups as $paymentCode => $group)
+                  @php
+                      $firstOrder = $group->first();
+                      $statusStr = 'Menunggu';
+                      $searchStr = strtolower(($firstOrder->canteen->name ?? '') . ' ' . $firstOrder->order_code);
+                  @endphp
+                  { id: 'group-{{ $paymentCode }}', status: '{{ $statusStr }}', search: '{{ addslashes($searchStr) }}' },
+              @endforeach
+              @foreach ($orders as $order)
+                  @php
+                      $statusText = match ($order->status) {
+                          'menunggu' => 'Menunggu',
+                          'dimasak' => 'Dimasak',
+                          'siap_diambil' => 'Siap Diambil',
+                          'selesai' => 'Selesai',
+                          'dibatalkan' => 'Dibatalkan',
+                          default => 'Menunggu',
+                      };
+                      $searchStr = strtolower(($order->canteen->name ?? '') . ' ' . $order->order_code);
+                  @endphp
+                  { id: 'order-{{ $order->id }}', status: '{{ $statusText }}', search: '{{ addslashes($searchStr) }}' },
+              @endforeach
+          ],
+          get hasVisibleItems() {
+              return this.items.some(item => {
+                  const statusMatch = this.selectedStatus === 'Semua Status' || item.status === this.selectedStatus;
+                  const searchMatch = this.searchQuery === '' || item.search.includes(this.searchQuery.toLowerCase());
+                  return statusMatch && searchMatch;
+              });
+          }
+      }">
     
     <x-breadcrumb 
         class="pt-8 pb-4"
@@ -66,7 +101,7 @@
                 @endif
 
                 {{-- BAGIAN 2: Pesanan lainnya (tunai atau sudah dibayar) --}}
-                @forelse ($orders as $order)
+                @foreach ($orders as $order)
                     @php
                         $statusText = match ($order->status) {
                             'menunggu' => 'Menunggu',
@@ -81,13 +116,17 @@
                     <div x-show="(selectedStatus === 'Semua Status' || '{{ $statusText }}' === selectedStatus) && ('{{ addslashes($searchStr) }}'.includes(searchQuery.toLowerCase()) || searchQuery === '')" x-transition>
                         <x-user.order-card :order="$order" />
                     </div>
-                @empty
-                    @if ($pendingOnlineGroups->isEmpty())
-                        <div class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
-                            <p class="text-base-content/60 font-medium">Belum ada riwayat pesanan.</p>
-                        </div>
-                    @endif
-                @endforelse
+                @endforeach
+
+                {{-- Placeholder jika benar-benar belum memiliki riwayat pesanan --}}
+                <div x-show="items.length === 0" class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
+                    <p class="text-base-content/60 font-medium">Belum ada riwayat pesanan.</p>
+                </div>
+
+                {{-- Placeholder jika hasil filter atau pencarian tidak ditemukan --}}
+                <div x-show="items.length > 0 && !hasVisibleItems" x-cloak class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
+                    <p class="text-base-content/60 font-medium">Tidak ditemukan pesanan dengan status atau kata kunci tersebut.</p>
+                </div>
 
                 <div class="pt-4">
                     {{ $orders->links() }}

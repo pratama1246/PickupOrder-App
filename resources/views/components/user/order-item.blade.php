@@ -34,7 +34,8 @@
             <span class="loading loading-bars loading-sm"></span>
         </div>
         <img src="{{ $image }}" 
-             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'" 
+             onload="this.previousElementSibling?.remove()"
+             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'; this.onerror=null;" 
              alt="{{ $name }}" 
              class="w-full h-full object-cover relative z-10">
     </div>
@@ -43,7 +44,7 @@
             {{ $name }} @if($quantity > 1) (x{{ $quantity }}) @endif
         </h4>
         @if($description)
-            <p class="text-xs text-base-content/60 leading-tight mt-1 font-medium">{{ $description }}</p>
+            <p class="text-xs text-base-content/60 leading-tight mt-1 font-medium line-clamp-1">{{ $description }}</p>
         @endif
         <p class="{{ $priceClasses }} mt-1">{{ $price }}</p>
     </div>

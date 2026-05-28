@@ -15,9 +15,9 @@
 
 <div class="card bg-base-100 w-full h-full flex flex-col shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md hover:scale-[1.01] border border-base-200">
 
-    <div class="flex sm:hidden gap-3 p-3 h-full">
+    <div class="flex sm:hidden gap-4 p-4 h-full">
 
-        <div class="w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-base-200 relative">
+        <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0 bg-base-200 relative">
             <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
                 <span class="loading loading-bars loading-md"></span>
             </div>
@@ -44,7 +44,7 @@
 
                 <p class="text-xs text-base-content/55 font-medium mb-1 line-clamp-1">{{ $canteenName }}</p>
 
-                <p class="text-xs text-base-content/65 leading-snug line-clamp-2">
+                <p class="text-xs text-base-content/65 leading-snug line-clamp-1">
                     {{ $description }}
                 </p>
             </div>

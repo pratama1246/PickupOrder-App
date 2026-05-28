@@ -16,6 +16,7 @@ class Review extends Model
         'order_id',
         'rating',
         'comment',
+        'is_anonymous',
     ];
 
     /**
@@ -40,5 +41,39 @@ class Review extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /**
+     * Nama pengguna (disamarkan jika is_anonymous true)
+     */
+    public function getReviewerNameAttribute()
+    {
+        if (!$this->user) return 'Anonim';
+        
+        $name = $this->user->name;
+        if ($this->is_anonymous) {
+            $length = mb_strlen($name);
+            if ($length <= 2) {
+                return $name[0] . '*';
+            }
+            $firstChar = mb_substr($name, 0, 1);
+            $lastChar = mb_substr($name, -1);
+            return $firstChar . str_repeat('*', $length - 2) . $lastChar;
+        }
+        return $name;
+    }
+
+    /**
+     * Avatar pengguna (anonim jika is_anonymous true)
+     */
+    public function getReviewerAvatarAttribute()
+    {
+        if ($this->is_anonymous || !$this->user) {
+            return 'https://ui-avatars.com/api/?name=Anonim&background=random&color=fff';
+        }
+        
+        return $this->user->avatar 
+            ? asset('storage/' . $this->user->avatar) 
+            : 'https://ui-avatars.com/api/?name=' . urlencode($this->user->name) . '&background=random';
     }
 }

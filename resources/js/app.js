@@ -177,18 +177,31 @@ document.addEventListener('submit', (e) => {
     if (submitBtn) {
         // Tunda sebentar agar proses submit form standar tetap berjalan sebelum tombol dinonaktifkan
         setTimeout(() => {
+            // 1. Nonaktifkan tombol submit utama & tampilkan loading
             submitBtn.disabled = true;
             if (!submitBtn.querySelector('.loading')) {
-                const isCircleBtn = submitBtn.classList.contains('btn-circle');
-                const svgIcon = submitBtn.querySelector('svg');
+                const isCircleBtn = submitBtn.classList.contains('btn-circle') || 
+                                   submitBtn.classList.contains('rounded-full') || 
+                                   (submitBtn.offsetWidth > 0 && submitBtn.offsetWidth === submitBtn.offsetHeight && submitBtn.offsetWidth < 50);
                 
-                if (isCircleBtn && svgIcon) {
-                    svgIcon.classList.add('hidden');
-                }
-                
+                submitBtn.innerHTML = '';
                 const spinner = document.createElement('span');
-                spinner.className = isCircleBtn ? 'loading loading-spinner loading-xs' : 'loading loading-bars loading-xs mr-2';
-                submitBtn.prepend(spinner);
+                spinner.className = isCircleBtn ? 'loading loading-spinner loading-xs text-base-content' : 'loading loading-bars loading-md';
+                submitBtn.appendChild(spinner);
+            }
+
+            // 2. Nonaktifkan tombol-tombol lain yang berjejer (sibling) di grup/modal yang sama
+            const groupContainer = form.closest('.modal-action, dialog, .modal, .flex, .grid, .modal-box') || form.parentElement;
+            
+            if (groupContainer) {
+                groupContainer.querySelectorAll('button, a.btn, input[type="button"], input[type="submit"]').forEach(otherBtn => {
+                    if (otherBtn !== submitBtn) {
+                        otherBtn.classList.add('btn-disabled', 'pointer-events-none', 'opacity-50');
+                        if (otherBtn.tagName === 'BUTTON' || otherBtn.tagName === 'INPUT') {
+                            otherBtn.disabled = true;
+                        }
+                    }
+                });
             }
         }, 50);
     }

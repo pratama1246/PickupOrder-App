@@ -12,18 +12,18 @@
                     Sistem Pickup Order PNC
                 </span>
 
-                <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-3 text-base-content">
+                <h1 class="text-4xl sm:text-5xl font-bold leading-tight text-base-content">
                     Laper Abis
                     <br class="block sm:hidden" />
                     <span id="typing-text" class="text-emerald-400">Nugas?</span>
                 </h1>
 
                 <h2
-                    class="text-xl md:text-3xl lg:text-4xl font-semibold mb-5 text-base-content leading-relaxed md:leading-normal">
+                    class="text-xl sm:text-3xl font-semibold mb-3 text-base-content leading-relaxed">
                     Langsung Order Makanan
                     <br class="block md:hidden" />
                     <span
-                        class="inline-block bg-emerald-400 text-white px-3 py-1.5 sm:py-1 rounded-lg text-lg md:text-3xl lg:text-4xl font-semibold mt-2 md:mt-0 md:ml-1 shadow-sm">
+                        class="inline-block bg-emerald-400 text-white px-6 py-1.5 sm:py-1 rounded-lg text-lg md:text-3xl font-semibold mt-2 md:mt-0 md:ml-1 shadow-sm">
                         Tanpa Perlu Ke Kantin
                     </span>
                 </h2>
@@ -85,7 +85,7 @@
     <section class="px-3 sm:px-10 md:px-16 lg:px-24 pb-4">
         <div class="max-w-8xl mx-auto">
             <div class="mb-4 text-center sm:text-left">
-                <h2 class="text-xl sm:text-2xl font-extrabold text-base-content">Pilih Kategori</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-base-content">Pilih Kategori</h2>
             </div>
             @php
                 $catConfig = [

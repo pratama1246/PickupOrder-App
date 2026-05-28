@@ -10,7 +10,7 @@
     <h3 class="text-lg sm:text-xl font-bold text-base-content mb-5">Ringkasan Belanja</h3>
 
     <div class="space-y-3 mb-5">
-        @forelse($canteens as $canteen)
+        @forelse($canteens as $canteenId => $canteen)
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-2 min-w-0">
                     <span class="w-1.5 h-1.5 rounded-full bg-base-content/40 shrink-0"></span>
@@ -18,8 +18,9 @@
                         {{ $canteen['canteen_name'] }} (<span>{{ count($canteen['items']) }}</span> Item)
                     </span>
                 </div>
-                <span class="text-sm font-bold text-base-content whitespace-nowrap shrink-0">
-                    Rp. <span>{{ number_format(array_sum(array_column($canteen['items'], 'subtotal')), 0, ',', '.') }}</span>
+                <span class="text-sm font-bold text-base-content whitespace-nowrap shrink-0"
+                      x-text="'Rp. ' + getCanteenTotal({{ $canteenId }}).toLocaleString('id-ID')">
+                    Rp. {{ number_format(array_sum(array_column($canteen['items'], 'subtotal')), 0, ',', '.') }}
                 </span>
             </div>
         @empty
@@ -31,19 +32,22 @@
 
     <div class="mb-6">
         <p class="text-sm font-bold text-base-content/60 mb-1">Total</p>
-        <p class="text-2xl sm:text-3xl font-extrabold text-base-content">
-            Rp. <span>{{ number_format($total, 0, ',', '.') }}</span>,00
+        <p class="text-2xl sm:text-3xl font-extrabold text-base-content"
+           x-text="'Rp. ' + getGrandTotal().toLocaleString('id-ID') + ',00'">
+            Rp. {{ number_format($total, 0, ',', '.') }},00
         </p>
     </div>
 
     @if($isSubmit)
         <button type="submit" form="checkout-prepare-form"
-           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all h-12 min-h-0">
+           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all h-12 min-h-0"
+           :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
             Bayar Sekarang
         </button>
     @else
         <a href="{{ $checkoutUrl }}"
-           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center h-12 min-h-0">
+           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center h-12 min-h-0"
+           :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
             Bayar Sekarang
         </a>
     @endif

@@ -54,6 +54,7 @@ class CartController extends Controller
                 'menu_id' => $menu->id,
                 'name' => $menu->name,
                 'image' => $menu->image,
+                'description' => $menu->description,
                 'price' => (float) $menu->price,
                 'canteen_id' => $menu->canteen_id,
                 'canteen_name' => $menu->canteen->name,
@@ -154,6 +155,7 @@ class CartController extends Controller
 
             $cart[$menuId]['name'] = $menu->name;
             $cart[$menuId]['image'] = $menu->image;
+            $cart[$menuId]['description'] = $menu->description;
             $cart[$menuId]['price'] = (float) $menu->price;
             $cart[$menuId]['canteen_id'] = $menu->canteen_id;
             $cart[$menuId]['canteen_name'] = $menu->canteen->name;

@@ -110,11 +110,11 @@
                                     <div class="flex items-center gap-3">
                                         <div class="avatar">
                                             <div class="w-10 h-10 rounded-full ring ring-fern-100 ring-offset-base-100 ring-offset-2">
-                                                <img src="{{ $review->user->avatar ? asset('storage/' . $review->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($review->user->name).'&background=random' }}" />
+                                                <img src="{{ $review->reviewer_avatar }}" />
                                             </div>
                                         </div>
                                         <div>
-                                            <h4 class="font-bold text-sm sm:text-base text-base-content">{{ $review->user->name }}</h4>
+                                            <h4 class="font-bold text-sm sm:text-base text-base-content">{{ $review->reviewer_name }}</h4>
                                             <p class="text-xs text-base-content/50">{{ $review->created_at->diffForHumans() }}</p>
                                         </div>
                                     </div>
