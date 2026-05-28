@@ -14,7 +14,7 @@
         <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <!-- Form Cari/Input Manual 6 Digit -->
             <div class="relative w-full sm:w-64">
-                <input type="text" id="manual_code_input" placeholder="6 Digit Kode (cth: AB12CD)" class="input bg-white border-base-content/20 rounded-xl w-full font-bold uppercase tracking-widest text-center shadow-sm" maxlength="6">
+                <input type="text" id="manual_code_input" placeholder="6 digit kode (cth: AB12CD)" class="input bg-white border-base-content/20 rounded-xl w-full font-bold uppercase tracking-widest pl-4 pr-16 shadow-sm placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-sm text-left" maxlength="6">
                 <button type="button" onclick="searchManualCode()" class="absolute right-2 top-2 bottom-2 bg-fern-700 hover:bg-fern-800 text-white px-3 rounded-lg text-xs font-bold transition-colors">
                     Cari
                 </button>

@@ -31,10 +31,10 @@
 
                     <img src="{{ $canteen->image ? asset('storage/' . $canteen->image) : 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80' }}"
                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($canteen->name) }}&background=random'"
-                        alt="{{ $canteen->name }}" class="absolute inset-0 w-full h-full object-cover z-10">
+                        alt="{{ $canteen->name }}" class="absolute inset-0 w-full h-full object-cover">
 
                     <div
-                        class="absolute inset-0 bg-linear-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-6 sm:p-10 md:p-14">
+                        class="absolute inset-0 bg-linear-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-6 sm:p-10 md:p-14 z-20">
                         <div class="max-w-4xl text-white">
                             <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                                 @if ($canteen->is_open)

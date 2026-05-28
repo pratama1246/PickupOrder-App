@@ -55,12 +55,12 @@
                 <span class="loading loading-bars loading-lg"></span>
             </div>
             @if($canteen->image)
-                <img src="{{ asset('storage/' . $canteen->image) }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover relative z-10" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'"/>
+                <img src="{{ asset('storage/' . $canteen->image) }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover relative" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'"/>
             @else
-                <img src="{{ asset('assets/food/es teh.jpg') }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover opacity-80 relative z-10" />
+                <img src="{{ asset('assets/food/es teh.jpg') }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover opacity-80 relative" />
             @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden"></div>
-            <div class="absolute bottom-4 left-4 md:hidden">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden z-20"></div>
+            <div class="absolute bottom-4 left-4 md:hidden z-20">
                 @if($canteen->is_open)
                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 shadow-sm border border-emerald-200">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Buka
