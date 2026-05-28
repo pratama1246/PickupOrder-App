@@ -108,7 +108,7 @@
                             <div class="flex items-center gap-3">
                                 <div class="avatar print:hidden">
                                     <div class="mask mask-squircle w-10 h-10">
-                                        <img src="{{ $item->menu && $item->menu->image ? asset('storage/' . $item->menu->image) : asset('assets/food/es teh.jpg') }}" alt="{{ $item->menu->name ?? 'Menu Dihapus' }}" />
+                                        <img src="{{ $item->menu && $item->menu->image ? asset('storage/' . $item->menu->image) : 'https://ui-avatars.com/api/?name=' . urlencode(optional($item->menu)->name ?? 'Menu') . '&background=random' }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(optional($item->menu)->name ?? 'Menu') }}&background=random'" alt="{{ optional($item->menu)->name ?? 'Menu Dihapus' }}" />
                                     </div>
                                 </div>
                                 <div>
