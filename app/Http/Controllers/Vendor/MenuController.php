@@ -54,6 +54,7 @@ class MenuController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
+            'category' => ['nullable', 'string', 'in:Nasi,Ayam,Sayur,Minuman,Makanan,Cemilan'],
             'description' => ['nullable', 'string', 'max:500'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
@@ -97,6 +98,7 @@ class MenuController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
+            'category' => ['nullable', 'string', 'in:Nasi,Ayam,Sayur,Minuman,Makanan,Cemilan'],
             'description' => ['nullable', 'string', 'max:500'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],

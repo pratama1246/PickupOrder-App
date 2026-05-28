@@ -10,18 +10,23 @@
 ])
 
 @php
-    $imageUrl = $image ? $image : asset('assets/food/Nasi Rames.jpg');
+    $imageUrl = $image ? $image : "https://ui-avatars.com/api/?name=".urlencode($name)."&background=random";
 @endphp
 
 <div class="card bg-base-100 w-full h-full flex flex-col shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md hover:scale-[1.01] border border-base-200">
 
     <div class="flex sm:hidden gap-3 p-3 h-full">
 
-        <div class="w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-base-200">
+        <div class="w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-base-200 relative">
+            <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+                <span class="loading loading-bars loading-md"></span>
+            </div>
             <img
                 src="{{ $imageUrl }}"
                 alt="{{ $name }}"
-                class="w-full h-full object-cover"
+                loading="lazy"
+                onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'"
+                class="w-full h-full object-cover relative z-10"
             />
         </div>
 
@@ -57,11 +62,16 @@
         </div>
     </div>
 
-    <figure class="hidden sm:block overflow-hidden w-full aspect-video">
+    <figure class="hidden sm:block overflow-hidden w-full aspect-video bg-base-200 relative">
+        <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+            <span class="loading loading-bars loading-lg"></span>
+        </div>
         <img
             src="{{ $imageUrl }}"
             alt="{{ $name }}"
-            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            loading="lazy"
+            onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'"
+            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105 relative z-10"
         />
     </figure>
     <div class="hidden sm:flex flex-col flex-1 card-body p-4">

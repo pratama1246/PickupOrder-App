@@ -28,6 +28,8 @@ class HomeController extends Controller
             ->whereHas('canteen', function ($query) {
                 $query->where('is_open', true);
             })
+            ->with(['canteen'])
+            ->withAvg('reviews', 'rating')
             ->withCount('orderItems')
             ->orderByDesc('order_items_count')
             ->take(8)

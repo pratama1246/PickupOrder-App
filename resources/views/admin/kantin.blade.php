@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div id="canteens-container" x-data="initLiveSearch('#canteens-results')">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <!-- Title & Action Buttons Group (Mobile: Title + Icons on one row) -->
         <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
@@ -27,11 +28,11 @@
         <!-- Search & Filter Group -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
             <!-- Search Input -->
-            <form action="" method="GET" class="w-full md:w-64 xl:w-80 grow relative">
+            <form action="" method="GET" @submit.prevent class="w-full md:w-64 xl:w-80 grow relative">
                 <label class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
-                    <input type="search" name="search" class="grow text-sm sm:text-base font-medium pl-2" placeholder="Cari kantin..." value="{{ request('search') }}" />
+                    <input type="search" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-2" placeholder="Cari kantin..." />
                 </label>
-                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center">
+                <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                     </svg>
@@ -63,7 +64,8 @@
         </div>
     </div>
  
-    <div class="space-y-4 max-w-4xl pb-10 lg:pb-0">
+    <div id="canteens-results">
+        <div class="space-y-4 max-w-4xl pb-10 lg:pb-0">
         @forelse ($canteens as $canteen)
             <div class="bg-white rounded-xl shadow-sm border border-base-200">
                 <x-canteencard :id="$canteen->id" :name="$canteen->name" :image="$canteen->image ? asset('storage/' . $canteen->image) : null" :description="$canteen->description" :menuCount="$canteen->menus_count"
@@ -78,7 +80,10 @@
         <div class="pt-4">
             {{ $canteens->links() }}
         </div>
+        </div>
     </div>
 
+
+</div>
 
 @endsection

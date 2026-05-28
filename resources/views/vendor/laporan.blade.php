@@ -20,7 +20,7 @@
     </div>
 
     <!-- Date Range Filter -->
-    <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 shadow-sm print:hidden">
+    <div class="mb-6 print:hidden">
         <form method="GET" action="{{ route('vendor.laporan.index') }}" class="flex flex-col sm:flex-row items-end gap-4">
             <div class="w-full sm:w-auto">
                 <label class="block text-sm font-bold text-base-content mb-1.5">Dari Tanggal</label>

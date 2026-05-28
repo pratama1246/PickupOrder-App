@@ -9,6 +9,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\Laravel\Facades\Image;
 
 class CanteenController extends Controller
 {
@@ -102,7 +104,12 @@ class CanteenController extends Controller
         $validated['user_id'] = $user->id;
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('canteens', 'public');
+            $filename = uniqid('canteen_').'.webp';
+            $image = Image::decode($request->file('image'));
+            $image->scale(width: 1200);
+            $webp = $image->encode(new WebpEncoder(quality: 75));
+            Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
+            $validated['image'] = 'canteens/'.$filename;
         }
 
         Canteen::create($validated);
@@ -139,7 +146,12 @@ class CanteenController extends Controller
             if ($canteen->image) {
                 Storage::disk('public')->delete($canteen->image);
             }
-            $validated['image'] = $request->file('image')->store('canteens', 'public');
+            $filename = uniqid('canteen_').'.webp';
+            $image = Image::decode($request->file('image'));
+            $image->scale(width: 1200);
+            $webp = $image->encode(new WebpEncoder(quality: 75));
+            Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
+            $validated['image'] = 'canteens/'.$filename;
         }
 
         $canteen->update($validated);

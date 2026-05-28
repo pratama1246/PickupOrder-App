@@ -13,6 +13,7 @@ class Menu extends Model
 
     protected $fillable = [
         'canteen_id',
+        'category',
         'name',
         'description',
         'price',
@@ -53,6 +54,9 @@ class Menu extends Model
      */
     public function getAverageRatingAttribute(): float
     {
+        if (array_key_exists('reviews_avg_rating', $this->attributes)) {
+            return (float) $this->attributes['reviews_avg_rating'] ?: 0.0;
+        }
         return (float) $this->reviews()->avg('rating') ?: 0.0;
     }
 

@@ -15,25 +15,28 @@
         ]"
     />
 
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24 pb-6">
         <div class="max-w-7xl mx-auto">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Detail Menu</h1>
             <p class="text-base-content/70 text-sm sm:text-base font-medium">Lihat dulu menu yang mau dipesan</p>
         </div>
     </section>
 
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24">
         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
 
             <div class="w-full lg:max-w-sm xl:max-w-md shrink-0">
                 <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 shadow-sm">
 
-                    <div class="w-full aspect-square rounded-2xl overflow-hidden mb-5 bg-base-200">
+                    <div class="w-full aspect-square rounded-2xl overflow-hidden mb-5 bg-base-200 relative">
+                        <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+                            <span class="loading loading-bars loading-lg"></span>
+                        </div>
                         <img
                             src="{{ $menu->image ? asset('storage/' . $menu->image) : asset('assets/food/Nasi Rames.jpg') }}"
                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->name) }}&background=random'"
                             alt="{{ $menu->name }}"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full object-cover relative z-10"
                         />
                     </div>
 

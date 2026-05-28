@@ -4,7 +4,8 @@
 
 @section('content')
 
-    <div class="max-w-8xl mx-auto pb-10 lg:pb-0" x-data="{
+    <div class="max-w-8xl mx-auto pb-10 lg:pb-0" id="users-container" x-data="{
+        ...initLiveSearch('#users-container'),
         selectedIds: [],
         allIds: @js($users->pluck('id')->toArray()),
         toggleAll() {
@@ -46,13 +47,13 @@
             </div>
 
             <!-- Search & Filter Group -->
-            <form method="GET" action="{{ route('admin.pengguna.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            <form method="GET" action="{{ route('admin.pengguna.index') }}" @submit.prevent class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
                 <!-- Search Input -->
                 <div class="w-full md:w-64 xl:w-80 grow relative">
                     <label class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
-                        <input type="search" name="search" class="grow text-sm sm:text-base font-medium pl-2" placeholder="Cari pengguna..." value="{{ request('search') }}" />
+                        <input type="search" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-2" placeholder="Cari pengguna..." />
                     </label>
-                    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center">
+                    <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>

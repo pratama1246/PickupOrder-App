@@ -14,14 +14,14 @@
         ]"
     />
 
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24 pb-6">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24 pb-6">
         <div class="max-w-7xl mx-auto">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Keranjang Belanja</h1>
             <p class="text-base-content/70 text-sm sm:text-base font-medium">Silahkan periksa detail pesanan Anda</p>
         </div>
     </section>
 
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24">
         
         <form id="checkout-prepare-form" action="{{ route('checkout.prepare') }}" method="POST" class="hidden">
             @csrf

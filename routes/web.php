@@ -23,11 +23,11 @@ use Illuminate\Support\Facades\Route;
 // ---------------------------------------------------------------------------
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     // Lupa password
     Route::get('/lupa-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
-    Route::post('/lupa-password', [AuthController::class, 'forgotPassword'])->name('password.request.submit');
+    Route::post('/lupa-password', [AuthController::class, 'forgotPassword'])->name('password.request.submit')->middleware('throttle:3,1');
 });
 
 Route::middleware('auth')->group(function () {
@@ -57,14 +57,14 @@ Route::middleware('auth')->group(function () {
 
     // Keranjang belanja
     Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/keranjang', [CartController::class, 'store'])->name('cart.store');
+    Route::post('/keranjang', [CartController::class, 'store'])->name('cart.store')->middleware('throttle:30,1');
     Route::put('/keranjang/{menuId}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/keranjang/{menuId}', [CartController::class, 'destroy'])->name('cart.destroy');
 
     // Checkout
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store')->middleware('throttle:10,1');
     Route::post('/checkout/retry/{paymentCode}', [CheckoutController::class, 'retry'])->name('checkout.retry');
 
     // Riwayat pesanan
@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/riwayat/{id}', [UserOrderController::class, 'show'])->name('order.show');
     Route::delete('/riwayat/{id}', [UserOrderController::class, 'destroy'])->name('order.destroy');
     Route::delete('/riwayat/group/{paymentCode}', [UserOrderController::class, 'cancelGroup'])->name('order.cancel-group');
-    Route::post('/riwayat/{id}/review', [\App\Http\Controllers\User\ReviewController::class, 'store'])->name('order.review');
+    Route::post('/riwayat/{id}/review', [\App\Http\Controllers\User\ReviewController::class, 'store'])->name('order.review')->middleware('throttle:10,1');
 
     // API endpoint untuk polling status pembayaran (dipanggil oleh JavaScript di frontend)
     Route::get('/api/order/{id}/payment-status', [UserOrderController::class, 'paymentStatus'])->name('order.payment-status');

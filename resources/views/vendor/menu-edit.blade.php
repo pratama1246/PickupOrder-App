@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
+<div class="max-w-2xl w-full mb-10 lg:mb-0">
     <x-breadcrumb
         compact
         :links="[
@@ -27,6 +27,20 @@
             <input type="text" name="name" value="{{ old('name', $menu->name) }}" placeholder="Masukkan nama menu (contoh: Nasi Rames)" required
                    class="input input-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium" />
             @error('name')
+                <p class="text-error text-xs mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm font-bold text-base-content mb-1.5">Kategori Menu</label>
+            <select name="category"
+                    class="select select-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium">
+                <option value="" disabled selected>Pilih Kategori</option>
+                <option value="Makanan" {{ old('category', $menu->category) == 'Makanan' ? 'selected' : '' }}>Makanan</option>
+                <option value="Minuman" {{ old('category', $menu->category) == 'Minuman' ? 'selected' : '' }}>Minuman</option>
+                <option value="Camilan" {{ old('category', $menu->category) == 'Camilan' ? 'selected' : '' }}>Camilan</option>
+            </select>
+            @error('category')
                 <p class="text-error text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>

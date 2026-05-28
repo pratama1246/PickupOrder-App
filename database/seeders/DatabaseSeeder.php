@@ -62,6 +62,7 @@ class DatabaseSeeder extends Seeder
         // Seed Menus for Canteen 1
         $menus1 = collect([
             Menu::updateOrCreate(['canteen_id' => $canteen1->id, 'name' => 'Nasi Goreng Spesial'], [
+                'category' => 'Nasi',
                 'description' => 'Nasi goreng dengan telur mata sapi, kerupuk, dan suwiran ayam.',
                 'price' => 12000.00,
                 'image' => 'assets/food/nasigoreng.jpg',
@@ -69,6 +70,7 @@ class DatabaseSeeder extends Seeder
                 'is_available' => true,
             ]),
             Menu::updateOrCreate(['canteen_id' => $canteen1->id, 'name' => 'Ayam Geprek Sambal Korek'], [
+                'category' => 'Ayam',
                 'description' => 'Ayam goreng krispi digeprek dengan cabai rawit pedas mantap.',
                 'price' => 15000.00,
                 'image' => 'assets/food/ayamgeprek.jpg',
@@ -76,6 +78,7 @@ class DatabaseSeeder extends Seeder
                 'is_available' => true,
             ]),
             Menu::updateOrCreate(['canteen_id' => $canteen1->id, 'name' => 'Es Teh Manis Selasih'], [
+                'category' => 'Minuman',
                 'description' => 'Minuman segar teh manis dingin dengan tambahan biji selasih.',
                 'price' => 3000.00,
                 'image' => 'assets/food/esteh.jpg',
@@ -111,6 +114,7 @@ class DatabaseSeeder extends Seeder
         // Seed Menus for Canteen 2
         $menus2 = collect([
             Menu::updateOrCreate(['canteen_id' => $canteen2->id, 'name' => 'Mie Iblis Level 3'], [
+                'category' => 'Makanan',
                 'description' => 'Mie pedas manis dengan toping ayam tabur dan pangsit.',
                 'price' => 11000.00,
                 'image' => 'assets/food/nasigoreng.jpg',
@@ -118,6 +122,7 @@ class DatabaseSeeder extends Seeder
                 'is_available' => true,
             ]),
             Menu::updateOrCreate(['canteen_id' => $canteen2->id, 'name' => 'Dimsum Udang Rambutan'], [
+                'category' => 'Makanan',
                 'description' => 'Dimsum gurih isi udang dibalut kulit renyah.',
                 'price' => 9500.00,
                 'image' => 'assets/food/ayamgeprek.jpg',
@@ -125,6 +130,7 @@ class DatabaseSeeder extends Seeder
                 'is_available' => true,
             ]),
             Menu::updateOrCreate(['canteen_id' => $canteen2->id, 'name' => 'Lemon Tea Ice'], [
+                'category' => 'Minuman',
                 'description' => 'Es teh lemon segar.',
                 'price' => 4500.00,
                 'image' => 'assets/food/esteh.jpg',

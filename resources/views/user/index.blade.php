@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Hero Section Container -->
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24 py-8 md:py-10">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24 py-8 md:py-10">
         <div class="max-w-8xl mx-auto flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-10">
 
             <div class="flex-1 w-full text-center lg:text-left">
@@ -38,7 +38,7 @@
                 <form action="{{ route('canteen.index') }}" method="GET" class="w-full max-w-md mx-auto lg:mx-0 mb-8">
                     <div class="relative w-full">
                         <label class="input input-bordered flex items-center w-full shadow-sm rounded-3xl input-md pr-12">
-                            <input type="search" name="search" class="grow text-sm sm:text-base font-medium pl-2"
+                            <input type="search" name="search" class="grow text-sm sm:text-base pl-2"
                                 placeholder="Cari menu atau kantin..." />
                         </label>
                         <button type="submit"
@@ -81,7 +81,7 @@
     </section>
 
     <!-- Langkah Mudah Memesan Section -->
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24 py-10">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24 py-10">
         <div class="max-w-8xl mx-auto">
             <div class="mb-8 text-center">
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-base-content">Cara Pesan Makanan</h2>
@@ -137,7 +137,7 @@
     </section>
 
     <!-- Menu Populer Section -->
-    <section id="menu-populer" class="px-4 sm:px-10 md:px-16 lg:px-24 py-8">
+    <section id="menu-populer" class="px-3 sm:px-10 md:px-16 lg:px-24 py-8">
         <div class="max-w-8xl mx-auto">
 
             <div class="mb-8 text-center sm:text-left">
@@ -161,7 +161,7 @@
     </section>
 
     <!-- Pilih Kantin Section -->
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24 py-8 mb-10">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24 py-8 mb-10">
         <div class="max-w-8xl mx-auto">
 
             <div class="mb-8 text-center sm:text-left">

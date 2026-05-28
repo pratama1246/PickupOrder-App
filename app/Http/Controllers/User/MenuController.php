@@ -14,7 +14,7 @@ class MenuController extends Controller
      */
     public function show(int $canteenId, int $id): View
     {
-        $menu = Menu::with('canteen')->findOrFail($id);
+        $menu = Menu::with('canteen')->withAvg('reviews', 'rating')->findOrFail($id);
 
         // Pastikan menu memang milik kantin yang diminta
         abort_if($menu->canteen_id !== $canteenId, 404);
@@ -23,6 +23,8 @@ class MenuController extends Controller
         $otherMenus = Menu::where('canteen_id', $canteenId)
             ->where('id', '!=', $id)
             ->where('is_available', true)
+            ->with(['canteen'])
+            ->withAvg('reviews', 'rating')
             ->take(6)
             ->get();
 

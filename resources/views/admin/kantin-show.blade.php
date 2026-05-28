@@ -51,10 +51,13 @@
     <div class="bg-white rounded-3xl shadow-sm border border-base-200 overflow-hidden flex flex-col md:flex-row">
         <!-- Image Section -->
         <div class="w-full md:w-1/3 h-48 md:h-auto relative bg-base-200">
+            <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+                <span class="loading loading-bars loading-lg"></span>
+            </div>
             @if($canteen->image)
-                <img src="{{ asset('storage/' . $canteen->image) }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'"/>
+                <img src="{{ asset('storage/' . $canteen->image) }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover relative z-10" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'"/>
             @else
-                <img src="{{ asset('assets/food/es teh.jpg') }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover opacity-80" />
+                <img src="{{ asset('assets/food/es teh.jpg') }}" alt="{{ $canteen->name }}" class="w-full h-full object-cover opacity-80 relative z-10" />
             @endif
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden"></div>
             <div class="absolute bottom-4 left-4 md:hidden">

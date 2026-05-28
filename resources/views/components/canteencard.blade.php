@@ -11,12 +11,15 @@
 ])
 
 @php
-    $imagePath = $image ? $image : asset('assets/food/es teh.jpg');
+    $imagePath = $image ? $image : "https://ui-avatars.com/api/?name=".urlencode($name)."&background=random";
 @endphp
 
 <div class="card bg-base-100 rounded-3xl shadow-sm p-0 md:p-6 flex flex-col md:flex-row gap-0 md:gap-6 transition-all duration-300 hover:shadow-md border border-base-200">
-    <figure class="w-auto md:w-56 h-48 md:h-auto overflow-hidden rounded-t-3xl md:rounded-2xl shrink-0">
-        <img src="{{ $imagePath }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="{{ $name }}" />
+    <figure class="w-auto md:w-56 h-48 md:h-auto overflow-hidden rounded-t-3xl md:rounded-2xl shrink-0 bg-base-200 relative">
+        <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+            <span class="loading loading-bars loading-lg"></span>
+        </div>
+        <img src="{{ $imagePath }}" loading="lazy" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105 relative z-10" alt="{{ $name }}" />
     </figure>
     <div class="flex flex-col flex-1 card-body p-6 md:p-2">
         <h2 class="card-title font-bold text-lg md:text-xl text-base-content mb-1">

@@ -167,3 +167,159 @@ function initTypewriter() {
 document.addEventListener("DOMContentLoaded", () => {
     initTypewriter();
 });
+
+// Global Vanilla JS submit interceptor untuk mencegah double click dan menampilkan loading-bars
+document.addEventListener('submit', (e) => {
+    const form = e.target;
+    if (form.hasAttribute('@submit.prevent')) return;
+
+    const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+    if (submitBtn) {
+        // Tunda sebentar agar proses submit form standar tetap berjalan sebelum tombol dinonaktifkan
+        setTimeout(() => {
+            submitBtn.disabled = true;
+            if (!submitBtn.querySelector('.loading')) {
+                const isCircleBtn = submitBtn.classList.contains('btn-circle');
+                const svgIcon = submitBtn.querySelector('svg');
+                
+                if (isCircleBtn && svgIcon) {
+                    svgIcon.classList.add('hidden');
+                }
+                
+                const spinner = document.createElement('span');
+                spinner.className = isCircleBtn ? 'loading loading-spinner loading-xs' : 'loading loading-bars loading-xs mr-2';
+                submitBtn.prepend(spinner);
+            }
+        }, 50);
+    }
+});
+
+// Active link click interceptor untuk mencegah full reload di halaman yang sama (Scroll to top)
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (link && link.href) {
+        try {
+            const targetUrl = new URL(link.href);
+            // Cek apakah url tujuan persis sama dengan url saat ini (path dan paramnya)
+            if (targetUrl.origin === window.location.origin && targetUrl.pathname === window.location.pathname) {
+                if (targetUrl.search === window.location.search && targetUrl.hash === window.location.hash) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        } catch (err) {
+            // Abaikan URL eksternal atau href invalid
+        }
+    }
+});
+
+// Helper AJAX Live Search dengan Alpine.js dan skeleton transisi DaisyUI
+window.initLiveSearch = function(targetSelector) {
+    return {
+        keyword: new URLSearchParams(window.location.search).get('search') || '',
+        category: new URLSearchParams(window.location.search).get('category') || '',
+        canteen: new URLSearchParams(window.location.search).get('canteen') || '',
+        timeout: null,
+        loading: false,
+        init() {
+            this.$watch('keyword', value => this.triggerSearch());
+            this.$watch('category', value => this.triggerSearch());
+            this.$watch('canteen', value => this.triggerSearch());
+            
+            // Handle pagination clicks within the target container
+            const container = document.querySelector(targetSelector);
+            if (container) {
+                container.addEventListener('click', (e) => {
+                    const link = e.target.closest('a');
+                    if (link && link.href && link.closest('.pagination, nav[role="navigation"]')) {
+                        e.preventDefault();
+                        this.fetchData(link.href);
+                    }
+                });
+            }
+        },
+        triggerSearch() {
+            clearTimeout(this.timeout);
+            // Beri jeda 500ms agar user selesai mengetik sebelum mulai fetch (debounce)
+            this.timeout = setTimeout(() => this.fetchData(), 500);
+        },
+        fetchData(url = null) {
+            this.loading = true;
+            
+            const target = document.querySelector(targetSelector);
+            if (target) {
+                target.classList.add('transition-all', 'duration-200', 'ease-out');
+            }
+
+            let completed = false;
+            let showSkeletonTimeout = null;
+
+            if (target && !url) {
+                // Tampilkan skeleton hanya jika koneksi lambat (lebih dari 150ms) untuk mencegah flicker cepat
+                showSkeletonTimeout = setTimeout(() => {
+                    if (!completed) {
+                        target.classList.add('opacity-0', 'scale-95', 'transform');
+                        setTimeout(() => {
+                            if (!completed) {
+                                target.innerHTML = `
+                                    <div class="flex justify-center items-center py-24 w-full">
+                                        <span class="loading loading-bars loading-lg text-fern-700"></span>
+                                    </div>
+                                `;
+                                target.classList.remove('opacity-0', 'scale-95');
+                            }
+                        }, 200);
+                    }
+                }, 150);
+            }
+
+            let fetchUrl = url;
+            if (!fetchUrl) {
+                const params = new URLSearchParams();
+                if (this.keyword) params.append('search', this.keyword);
+                if (this.category) params.append('category', this.category);
+                if (this.canteen) params.append('canteen', this.canteen);
+                const queryString = params.toString();
+                fetchUrl = window.location.pathname + (queryString ? '?' + queryString : '');
+            }
+            
+            // Update browser URL (tanpa reload) agar status pencarian tersimpan jika halaman di-refresh
+            if (!url) {
+                window.history.pushState({}, '', fetchUrl);
+            }
+
+            fetch(fetchUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.text())
+            .then(html => {
+                completed = true;
+                clearTimeout(showSkeletonTimeout);
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.querySelector(targetSelector);
+                if (target && newContent) {
+                    // Animasi memudar & menyusut keluar sebelum menukar konten baru
+                    target.classList.add('opacity-0', 'scale-95', 'transform');
+                    setTimeout(() => {
+                        target.innerHTML = newContent.innerHTML;
+                        target.classList.remove('opacity-0', 'scale-95');
+                    }, 200);
+                }
+            })
+            .catch(() => {
+                completed = true;
+                clearTimeout(showSkeletonTimeout);
+                if (target) {
+                    target.classList.remove('opacity-0', 'scale-95');
+                }
+            })
+            .finally(() => {
+                this.loading = false;
+            });
+        }
+    };
+};

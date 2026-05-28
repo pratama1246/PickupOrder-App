@@ -29,11 +29,14 @@
 @endphp
 
 <div class="{{ $wrapperClasses }} flex items-center gap-3 sm:gap-4">
-    <div class="{{ $imageSizeClasses }} bg-base-200 overflow-hidden shrink-0 shadow-sm border border-base-content/5">
+    <div class="{{ $imageSizeClasses }} bg-base-200 overflow-hidden shrink-0 shadow-sm border border-base-content/5 relative">
+        <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+            <span class="loading loading-bars loading-sm"></span>
+        </div>
         <img src="{{ $image }}" 
              onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'" 
              alt="{{ $name }}" 
-             class="w-full h-full object-cover">
+             class="w-full h-full object-cover relative z-10">
     </div>
     <div class="flex-1 min-w-0">
         <h4 class="{{ $titleClasses }} text-base-content leading-tight">

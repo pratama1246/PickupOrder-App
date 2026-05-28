@@ -45,7 +45,7 @@
         }
     @endphp
 
-    <section class="px-4 sm:px-10 md:px-16 lg:px-24">
+    <section class="px-3 sm:px-10 md:px-16 lg:px-24">
         <div class="max-w-7xl mx-auto">
             
             @if(!$isBatal)
@@ -65,7 +65,7 @@
                     </p>
                 </div>
                 @if($step > 1 && $step <= 4)
-                <div class="md:text-right bg-vanilla-custard-50 px-4 py-2 rounded-xl border border-vanilla-custard-200">
+                <div class="md:text-right px-4 py-2">
                     <p class="text-sm font-medium text-base-content/70">Estimasi Waktu</p>
                     <p class="text-lg font-bold text-fern-700">{{ $order->estimated_time }} Menit</p>
                 </div>
@@ -269,7 +269,7 @@
                         </div>
                     @endif
 
-                    <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-4 sm:p-6 shadow-sm">
+                    <div class="mb-6">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                             <div>
                                 <h3 class="text-base sm:text-lg font-bold text-base-content mb-1">No. Order : {{ $order->order_code }}</h3>
@@ -343,7 +343,7 @@
                 <!-- Kanan: Ringkasan & Aksi -->
                 <div class="w-full lg:w-80 xl:w-96 shrink-0">
                     <div class="space-y-6 sticky top-24">
-                        <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 shadow-sm">
+                        <div class="mb-8">
                         
                         @if($step == 5)
                         <!-- QR Code Section -->
@@ -415,7 +415,7 @@
                     </div>
 
                     @if ($step == 6 && $order->reviews->isNotEmpty())
-                        <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 shadow-sm">
+                        <div class="mt-8">
                             <h3 class="font-bold text-base-content mb-4 text-sm flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-fern-700"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l4.5-6.3z" clip-rule="evenodd" /></svg>
                                 Ulasan Anda
@@ -450,10 +450,15 @@
                 <div class="space-y-6">
                     @foreach ($order->items as $index => $item)
                         @if($item->menu)
-                        <div class="border border-base-content/10 rounded-2xl p-4 bg-vanilla-custard-50 shadow-sm">
+                        <div class="mb-4">
                             <input type="hidden" name="reviews[{{ $index }}][menu_id]" value="{{ $item->menu_id }}">
                             <div class="flex items-center gap-3 mb-3">
-                                <img src="{{ asset('storage/' . $item->menu->image) }}" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'" class="w-12 h-12 rounded-lg object-cover" alt="{{ $item->menu->name }}">
+                                <div class="w-12 h-12 rounded-lg bg-base-200 overflow-hidden shrink-0 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+                                        <span class="loading loading-bars loading-xs"></span>
+                                    </div>
+                                    <img src="{{ asset('storage/' . $item->menu->image) }}" onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'" class="w-full h-full object-cover relative z-10" alt="{{ $item->menu->name }}">
+                                </div>
                                 <div>
                                     <p class="font-bold text-base-content">{{ $item->menu->name }}</p>
                                     <p class="text-xs text-base-content/70">Berikan rating untuk menu ini</p>

@@ -15,18 +15,61 @@ class CanteenController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Canteen::with(['menus' => function ($q) {
+        $query = Canteen::with(['menus' => function ($q) use ($request) {
             $q->where('is_available', true)->where('stock', '>', 0);
-        }])->withCount('availableMenus');
+            if ($request->filled('category')) {
+                $q->where('category', $request->category);
+            }
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $q->where(function($q3) use ($search) {
+                    $q3->where('name', 'like', "%{$search}%")
+                       ->orWhere('description', 'like', "%{$search}%")
+                       ->orWhereHas('canteen', function($q4) use ($search) {
+                           $q4->where('name', 'like', "%{$search}%")
+                              ->orWhere('description', 'like', "%{$search}%");
+                       });
+                });
+            }
+        }])->withCount(['availableMenus' => function ($q) use ($request) {
+            if ($request->filled('category')) {
+                $q->where('category', $request->category);
+            }
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $q->where(function($q3) use ($search) {
+                    $q3->where('name', 'like', "%{$search}%")
+                       ->orWhere('description', 'like', "%{$search}%")
+                       ->orWhereHas('canteen', function($q4) use ($search) {
+                           $q4->where('name', 'like', "%{$search}%")
+                              ->orWhere('description', 'like', "%{$search}%");
+                       });
+                });
+            }
+        }]);
 
-        // Pencarian berdasarkan nama kantin atau nama menu
+        // Pencarian berdasarkan nama/deskripsi kantin atau nama/deskripsi menu
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                    ->orWhereHas('menus', function ($q2) use ($search) {
-                        $q2->where('name', 'like', "%{$search}%");
-                    });
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('menus', function ($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%")
+                         ->orWhere('description', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter kantin spesifik
+        if ($request->filled('canteen')) {
+            $query->where('id', $request->canteen);
+        }
+
+        // Filter kategori spesifik
+        if ($request->filled('category')) {
+            $query->whereHas('availableMenus', function ($q) use ($request) {
+                $q->where('category', $request->category);
             });
         }
 
@@ -36,8 +79,11 @@ class CanteenController extends Controller
         }
 
         $canteens = $query->latest()->paginate(9)->withQueryString();
+        
+        $categories = \App\Models\Menu::select('category')->distinct()->whereNotNull('category')->pluck('category');
+        $allCanteens = \App\Models\Canteen::where('is_open', true)->select('id', 'name')->get();
 
-        return view('user.pesanan', compact('canteens'));
+        return view('user.pesanan', compact('canteens', 'categories', 'allCanteens'));
     }
 
     /**
