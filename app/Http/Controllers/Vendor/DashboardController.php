@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Vendor;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -133,7 +135,37 @@ class DashboardController extends Controller
             $topMenuSeries[] = (int) $item->total_qty;
         }
 
-        // 4. Active Orders Feed
+        // 4. Statistik Rating & Ulasan Kantin
+        $avgRating = Review::whereHas('menu', function ($q) use ($canteen) {
+            $q->where('canteen_id', $canteen->id);
+        })->avg('rating') ?? 0;
+
+        $totalReviews = Review::whereHas('menu', function ($q) use ($canteen) {
+            $q->where('canteen_id', $canteen->id);
+        })->count();
+
+        $recentReviews = Review::whereHas('menu', function ($q) use ($canteen) {
+            $q->where('canteen_id', $canteen->id);
+        })->with(['user:id,name,avatar', 'menu:id,name'])
+          ->latest()
+          ->take(5)
+          ->get();
+
+        // 5. Distribusi Penjualan per Kategori
+        $categoryDistRaw = OrderItem::whereHas('order', function ($q) use ($canteen) {
+                $q->where('canteen_id', $canteen->id)->where('status', 'selesai');
+            })
+            ->join('menus', 'order_items.menu_id', '=', 'menus.id')
+            ->selectRaw('menus.category, SUM(order_items.qty) as total_qty')
+            ->whereNotNull('menus.category')
+            ->where('menus.category', '!=', '')
+            ->groupBy('menus.category')
+            ->get();
+
+        $categoryLabels = $categoryDistRaw->pluck('category')->toArray();
+        $categorySeries = $categoryDistRaw->pluck('total_qty')->map(fn ($v) => (int) $v)->toArray();
+
+        // 6. Active Orders Feed
         $activeOrders = Order::with('user:id,name')
             ->where('canteen_id', $canteen->id)
             ->whereIn('status', ['menunggu', 'dimasak', 'siap_diambil'])
@@ -142,7 +174,7 @@ class DashboardController extends Controller
             ->get();
 
         return view('vendor.dashboard', compact(
-            'canteen', 
+            'canteen',
             'stats',
             'trendDates',
             'trendRevenues',
@@ -151,7 +183,12 @@ class DashboardController extends Controller
             'statusSeries',
             'topMenuLabels',
             'topMenuSeries',
-            'activeOrders'
+            'activeOrders',
+            'avgRating',
+            'totalReviews',
+            'recentReviews',
+            'categoryLabels',
+            'categorySeries'
         ));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\Carbon;
@@ -43,6 +44,8 @@ class CheckoutController extends Controller
     public function index(): View
     {
         $cart = session(self::SESSION_KEY, []);
+        $cart = $this->syncCartWithMenus($cart);
+        session([self::SESSION_KEY => $cart]);
 
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Keranjang belanja kosong.');
@@ -75,7 +78,8 @@ class CheckoutController extends Controller
             'notes.*'        => ['nullable', 'string', 'max:500'],
         ]);
 
-        $cart = session(self::SESSION_KEY, []);
+        $cart = $this->syncCartWithMenus(session(self::SESSION_KEY, []));
+        session([self::SESSION_KEY => $cart]);
 
         if (empty($cart)) {
             if ($request->wantsJson()) {
@@ -415,5 +419,38 @@ class CheckoutController extends Controller
         }
 
         return $parsed;
+    }
+
+    /**
+     * Sinkronkan harga keranjang dengan data menu terbaru sebelum checkout.
+     */
+    private function syncCartWithMenus(array $cart): array
+    {
+        if (empty($cart)) {
+            return $cart;
+        }
+
+        $menus = Menu::with('canteen')
+            ->whereIn('id', array_keys($cart))
+            ->get()
+            ->keyBy('id');
+
+        foreach ($cart as $menuId => $item) {
+            $menu = $menus->get($menuId);
+
+            if (! $menu || ! $menu->isInStock()) {
+                unset($cart[$menuId]);
+                continue;
+            }
+
+            $cart[$menuId]['name'] = $menu->name;
+            $cart[$menuId]['image'] = $menu->image;
+            $cart[$menuId]['price'] = (float) $menu->price;
+            $cart[$menuId]['canteen_id'] = $menu->canteen_id;
+            $cart[$menuId]['canteen_name'] = $menu->canteen->name;
+            $cart[$menuId]['subtotal'] = $cart[$menuId]['price'] * $cart[$menuId]['quantity'];
+        }
+
+        return $cart;
     }
 }

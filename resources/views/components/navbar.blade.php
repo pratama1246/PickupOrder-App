@@ -72,6 +72,7 @@
             <li><a href="{{ route('admin.dashboard') }}" class="font-medium">Dashboard Admin</a></li>
           @elseif(auth()->user()->isVendor())
             <li><a href="{{ route('vendor.dashboard') }}" class="font-medium">Dashboard Kantin</a></li>
+            <li><a href="{{ route('vendor.canteen.edit') }}" class="font-medium">Pengaturan Kantin</a></li>
           @endif
         @endauth
         <li><a href="{{ route('profile.edit') }}" class="font-medium">Pengaturan Akun</a></li>

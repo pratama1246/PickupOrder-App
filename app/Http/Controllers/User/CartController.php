@@ -19,6 +19,10 @@ class CartController extends Controller
     public function index(): View
     {
         $cart = session(self::SESSION_KEY, []);
+        $cart = $this->syncCartWithMenus($cart);
+
+        session([self::SESSION_KEY => $cart]);
+
         $grouped = $this->groupByCanteen($cart);
         $total = array_sum(array_column($cart, 'subtotal'));
 
@@ -124,5 +128,38 @@ class CartController extends Controller
         }
 
         return $grouped;
+    }
+
+    /**
+     * Sinkronkan data keranjang dengan harga menu terbaru.
+     */
+    private function syncCartWithMenus(array $cart): array
+    {
+        if (empty($cart)) {
+            return $cart;
+        }
+
+        $menus = Menu::with('canteen')
+            ->whereIn('id', array_keys($cart))
+            ->get()
+            ->keyBy('id');
+
+        foreach ($cart as $menuId => $item) {
+            $menu = $menus->get($menuId);
+
+            if (! $menu) {
+                unset($cart[$menuId]);
+                continue;
+            }
+
+            $cart[$menuId]['name'] = $menu->name;
+            $cart[$menuId]['image'] = $menu->image;
+            $cart[$menuId]['price'] = (float) $menu->price;
+            $cart[$menuId]['canteen_id'] = $menu->canteen_id;
+            $cart[$menuId]['canteen_name'] = $menu->canteen->name;
+            $cart[$menuId]['subtotal'] = $cart[$menuId]['price'] * $cart[$menuId]['quantity'];
+        }
+
+        return $cart;
     }
 }

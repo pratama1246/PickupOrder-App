@@ -152,9 +152,11 @@
 
         <!-- Status & Active Orders -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
+            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
                 <h2 class="text-base font-bold text-base-content mb-4">Distribusi Status Pesanan</h2>
-                <div id="statusChart" class="w-full h-[300px]"></div>
+                <div class="flex-1 flex items-center justify-center min-h-[300px]">
+                    <div id="statusChart" class="w-full"></div>
+                </div>
             </div>
 
             <!-- Active Orders Table -->
@@ -166,9 +168,9 @@
                         class="text-xs sm:text-sm text-fern-600 hover:text-fern-700 font-medium px-3 py-1.5 bg-fern-50 rounded-lg hover:bg-fern-100 transition-colors">Lihat
                         Semua</a>
                 </div>
-                <div class="overflow-x-auto flex-1 p-0">
-                    <table class="table table-sm w-full min-w-[500px]">
-                        <thead class="bg-base-200/50 text-xs">
+                <div class="overflow-auto flex-1 max-h-[310px] p-0">
+                    <table class="table table-sm w-full min-w-[500px] table-pin-rows">
+                        <thead class="bg-base-200 text-xs">
                             <tr>
                                 <th class="font-medium text-base-content/70 py-3 px-4">Order Code & Waktu</th>
                                 <th class="font-medium text-base-content/70 py-3 px-4">Mahasiswa</th>
@@ -216,8 +218,82 @@
                 </div>
             </div>
         </div>
+
+        <!-- Rating & Distribusi Kategori -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
+
+            <!-- Rating Kantin -->
+            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
+                <h2 class="text-base font-bold text-base-content mb-4">Performa Ulasan</h2>
+                <div class="flex items-center gap-6 mb-5">
+                    <div class="text-center shrink-0">
+                        <p class="text-5xl font-bold text-fern-700">{{ $avgRating > 0 ? number_format($avgRating, 1) : '5.0' }}</p>
+                        <div class="flex items-center justify-center gap-0.5 mt-1">
+                            @for($i = 1; $i <= 5; $i++)
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 {{ $i <= round($avgRating ?: 5) ? 'text-amber-400' : 'text-base-content/20' }}" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            @endfor
+                        </div>
+                        <p class="text-xs text-base-content/50 mt-1 font-medium">{{ $totalReviews }} ulasan</p>
+                    </div>
+                    <div class="flex-1 min-w-0 space-y-2">
+                        @foreach([5,4,3,2,1] as $star)
+                            @php $pct = $totalReviews > 0 ? (int) (\App\Models\Review::whereHas('menu', fn($q) => $q->where('canteen_id', $canteen->id))->where('rating', $star)->count() / $totalReviews * 100) : 0; @endphp
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-base-content/60 w-3">{{ $star }}</span>
+                                <div class="flex-1 bg-base-200 rounded-full h-2 overflow-hidden">
+                                    <div class="h-full bg-amber-400 rounded-full transition-all" style="width: {{ $pct }}%"></div>
+                                </div>
+                                <span class="text-xs text-base-content/50 w-7 text-right">{{ $pct }}%</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Recent Reviews -->
+                <div class="space-y-3 max-h-48 overflow-y-auto pr-1">
+                    @forelse($recentReviews as $review)
+                        <div class="flex items-start gap-3 p-3 bg-base-200/40 rounded-2xl">
+                            <img src="{{ $review->user->avatar ? asset('storage/'.$review->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($review->user->name).'&background=random&size=40' }}"
+                                 class="w-8 h-8 rounded-full object-cover shrink-0" alt="{{ $review->user->name }}">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-xs font-bold text-base-content truncate">{{ $review->user->name }}</p>
+                                    <div class="flex items-center gap-0.5 shrink-0">
+                                        @for($s = 1; $s <= 5; $s++)
+                                            <svg class="w-3 h-3 {{ $s <= $review->rating ? 'text-amber-400' : 'text-base-content/20' }}" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <p class="text-[11px] text-base-content/50 font-medium">{{ $review->menu->name ?? '-' }}</p>
+                                @if($review->comment)
+                                    <p class="text-xs text-base-content/70 mt-0.5 line-clamp-1">{{ $review->comment }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-xs text-base-content/50 text-center py-4 font-medium">Belum ada ulasan.</p>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Distribusi Kategori Penjualan -->
+            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
+                <h2 class="text-base font-bold text-base-content mb-4">Distribusi Penjualan per Kategori</h2>
+                @if(count($categoryLabels) > 0)
+                    <div id="categoryChart" class="w-full h-[300px]"></div>
+                @else
+                    <div class="flex items-center justify-center h-[300px] text-base-content/40">
+                        <p class="text-sm font-medium">Belum ada data penjualan per kategori.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
     </div>
 @endsection
+
 
 @push('scripts')
 
@@ -330,7 +406,7 @@
                 labels: @json($statusLabels),
                 chart: {
                     type: 'donut',
-                    height: 300,
+                    height: 320,
                     fontFamily: 'Poppins, sans-serif'
                 },
                 colors: ['#f59e0b', '#3b82f6', '#10b981', '#4d9959', '#ef4444'],
@@ -346,6 +422,23 @@
             };
             const statusChart = new ApexCharts(document.querySelector("#statusChart"), statusOptions);
             statusChart.render();
+
+            // Category Distribution Chart
+            @if(count($categoryLabels) > 0)
+            const categoryOptions = {
+                series: @json($categorySeries),
+                labels: @json($categoryLabels),
+                chart: { type: 'donut', height: 300, fontFamily: 'Poppins, sans-serif' },
+                colors: ['#f97316', '#0ea5e9', '#f59e0b', '#4d9959', '#a855f7'],
+                stroke: { width: 0 },
+                dataLabels: { enabled: true, formatter: (val) => Math.round(val) + '%' },
+                legend: { position: 'bottom' },
+                tooltip: { y: { formatter: (val) => val + ' porsi' } }
+            };
+            const categoryChart = new ApexCharts(document.querySelector("#categoryChart"), categoryOptions);
+            categoryChart.render();
+            @endif
         });
     </script>
 @endpush
+

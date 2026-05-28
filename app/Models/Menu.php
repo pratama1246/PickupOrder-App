@@ -50,14 +50,16 @@ class Menu extends Model
     }
 
     /**
-     * Menghitung rata-rata rating menu.
+     * Rata-rata rating menu. Default 5.0 jika belum ada ulasan.
      */
     public function getAverageRatingAttribute(): float
     {
         if (array_key_exists('reviews_avg_rating', $this->attributes)) {
-            return (float) $this->attributes['reviews_avg_rating'] ?: 0.0;
+            $val = (float) $this->attributes['reviews_avg_rating'];
+            return $val > 0 ? $val : 5.0;
         }
-        return (float) $this->reviews()->avg('rating') ?: 0.0;
+        $avg = (float) $this->reviews()->avg('rating');
+        return $avg > 0 ? $avg : 5.0;
     }
 
     /**

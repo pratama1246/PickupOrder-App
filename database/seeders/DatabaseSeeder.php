@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
             Menu::updateOrCreate(['canteen_id' => $canteen1->id, 'name' => 'Nasi Goreng Spesial'], [
                 'category' => 'Nasi',
                 'description' => 'Nasi goreng dengan telur mata sapi, kerupuk, dan suwiran ayam.',
-                'price' => 12000.00,
+                'price' => 11999.00,
                 'image' => 'assets/food/nasigoreng.jpg',
                 'stock' => 50,
                 'is_available' => true,

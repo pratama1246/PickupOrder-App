@@ -35,6 +35,17 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
-        return view('user.index', compact('canteens', 'popularMenus'));
+        // Kategori untuk slider shortcut di beranda
+        $categories = Menu::select('category')
+            ->distinct()
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->where('is_available', true)
+            ->where('stock', '>', 0)
+            ->pluck('category')
+            ->sort()
+            ->values();
+
+        return view('user.index', compact('canteens', 'popularMenus', 'categories'));
     }
 }

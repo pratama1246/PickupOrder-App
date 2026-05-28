@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Canteen;
 use App\Models\Menu;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\View\View;
 
@@ -125,6 +127,26 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // 6. Distribusi Penjualan per Kategori (Platform-wide)
+        $categoryDistRaw = OrderItem::whereHas('order', function ($q) {
+                $q->where('status', 'selesai');
+            })
+            ->join('menus', 'order_items.menu_id', '=', 'menus.id')
+            ->selectRaw('menus.category, SUM(order_items.qty) as total_qty')
+            ->whereNotNull('menus.category')
+            ->where('menus.category', '!=', '')
+            ->groupBy('menus.category')
+            ->get();
+
+        $categoryLabels = $categoryDistRaw->pluck('category')->toArray();
+        $categorySeries = $categoryDistRaw->pluck('total_qty')->map(fn ($v) => (int) $v)->toArray();
+
+        // 7. Rata-rata rating & total ulasan platform
+        $platformAvgRating = round((float) (Review::avg('rating') ?? 0), 1);
+        $totalReviews      = Review::count();
+        $stats['avg_rating']    = $platformAvgRating;
+        $stats['total_ulasan']  = $totalReviews;
+
         return view('admin.dashboard', compact(
             'stats',
             'trendDates',
@@ -137,7 +159,9 @@ class DashboardController extends Controller
             'topCanteenSeries',
             'topMenuLabels',
             'topMenuSeries',
-            'recentOrders'
+            'recentOrders',
+            'categoryLabels',
+            'categorySeries'
         ));
     }
 }
