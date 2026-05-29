@@ -12,17 +12,17 @@
                     Sistem Pickup Order PNC
                 </span>
 
-                <h1 class="text-4xl sm:text-5xl font-bold leading-tight text-base-content">
+                <h1 class="text-4xl sm:text-5xl font-bold leading-tight text-base-content mb-1">
                     Laper Abis
-                    <br class="block sm:hidden" />
+                    <br />
                     <span id="typing-text" class="text-emerald-400">Nugas?</span>
                 </h1>
 
-                <h2 class="text-xl sm:text-3xl font-semibold mb-3 text-base-content leading-relaxed">
+                <h2 class="text-xl sm:text-3xl font-semibold mb-1 text-base-content leading-relaxed">
                     Langsung Order Makanan
                     <br class="block md:hidden" />
                     <span
-                        class="inline-block bg-emerald-400 text-white px-4 py-1.5 sm:py-1 rounded-lg text-lg md:text-3xl font-semibold mt-2 md:mt-0 md:ml-1 shadow-sm">
+                        class="inline-block bg-emerald-400 text-white px-4 py-1.5 sm:py-1 rounded-lg text-lg md:text-3xl font-semibold mt-2 mb-2 md:mt-0 md:ml-1 shadow-sm">
                         Tanpa Perlu Ke Kantin
                     </span>
                 </h2>
@@ -52,9 +52,10 @@
                 </form>
 
                 <!-- Hero CTA Buttons -->
-                <div class="flex flex-row gap-4 justify-center lg:justify-start items-center">
+                <div
+                    class="flex flex-col min-[380px]:flex-row gap-3 justify-center lg:justify-start items-center w-full max-w-xs mx-auto lg:mx-0 min-[380px]:max-w-none">
                     <a href="{{ route('canteen.index') }}"
-                        class="btn bg-fern-700 text-white hover:bg-fern-800 border-none shadow-md hover:shadow-lg px-6 py-3 min-h-0 h-auto text-sm font-bold rounded-2xl w-auto transition-all duration-200 active:scale-95 flex items-center gap-2">
+                        class="btn bg-fern-700 text-white hover:bg-fern-800 border-none shadow-md hover:shadow-lg px-6 py-3 min-h-0 h-auto text-sm font-bold rounded-2xl w-full min-[380px]:w-auto transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
                         <span>Pesan Sekarang</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2.5">
@@ -62,7 +63,7 @@
                         </svg>
                     </a>
                     <a href="#menu-populer"
-                        class="btn bg-vanilla-custard-200 text-fern-900 hover:bg-vanilla-custard-300 border-none shadow-sm hover:shadow-md px-6 py-3 min-h-0 h-auto text-sm font-bold rounded-2xl w-auto transition-all duration-200 active:scale-95">
+                        class="btn bg-vanilla-custard-200 text-fern-900 hover:bg-vanilla-custard-300 border-none shadow-sm hover:shadow-md px-6 py-3 min-h-0 h-auto text-sm font-bold rounded-2xl w-full min-[380px]:w-auto transition-all duration-200 active:scale-95 text-center flex items-center justify-center">
                         Lihat Menu
                     </a>
                 </div>
@@ -90,26 +91,28 @@
                 @php
                     $catConfig = [
                         'Makanan' => [
-                            'bg'   => 'bg-fern-50 hover:bg-fern-100 border-fern-300 text-fern-700',
+                            'bg' => 'bg-fern-50 hover:bg-fern-100 border-fern-300 text-fern-700',
                             'ring' => 'group-hover:ring-2 group-hover:ring-fern-300 group-hover:ring-offset-1',
                             'icon' =>
                                 '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v3m0 0a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7zm-8 10h16a1 1 0 0 1 1 1v1H3v-1a1 1 0 0 1 1-1z"/>',
                         ],
                         'Minuman' => [
-                            'bg'   => 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-700',
+                            'bg' => 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-700',
                             'ring' => 'group-hover:ring-2 group-hover:ring-emerald-300 group-hover:ring-offset-1',
                             'icon' =>
                                 '<path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8zM6 3v2m4-2v2m4-2v2"/>',
                         ],
                         'Camilan' => [
-                            'bg'   => 'bg-vanilla-custard-100 hover:bg-vanilla-custard-200 border-vanilla-custard-400 text-vanilla-custard-800',
-                            'ring' => 'group-hover:ring-2 group-hover:ring-vanilla-custard-400 group-hover:ring-offset-1',
+                            'bg' =>
+                                'bg-vanilla-custard-100 hover:bg-vanilla-custard-200 border-vanilla-custard-400 text-vanilla-custard-800',
+                            'ring' =>
+                                'group-hover:ring-2 group-hover:ring-vanilla-custard-400 group-hover:ring-offset-1',
                             'icon' =>
                                 '<path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M9 9.5H9.01M15 11H15.01M11 15H11.01M14 15H14.01M8 12H8.01"/>',
                         ],
                     ];
                     $defaultCfg = [
-                        'bg'   => 'bg-base-200 hover:bg-base-300 border-base-300 text-base-content',
+                        'bg' => 'bg-base-200 hover:bg-base-300 border-base-300 text-base-content',
                         'ring' => 'group-hover:ring-2 group-hover:ring-base-400 group-hover:ring-offset-1',
                         'icon' =>
                             '<path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/>',
@@ -160,7 +163,7 @@
                         </svg>
                     </div>
                     <div>
-                        <span class="text-xs font-bold text-fern-700 uppercase tracking-wider">Langkah 1</span>
+                        <span class="text-xs font-bold text-fern-700">Langkah 1</span>
                         <h3 class="text-base font-bold text-base-content mt-0.5 mb-1">Pilih Menu</h3>
                         <p class="text-xs text-base-content/60 font-medium leading-snug">Jelajahi menu favorit dari kantin
                             kampus.</p>
@@ -179,7 +182,7 @@
                         </svg>
                     </div>
                     <div>
-                        <span class="text-xs font-bold text-fern-700 uppercase tracking-wider">Langkah 2</span>
+                        <span class="text-xs font-bold text-fern-700">Langkah 2</span>
                         <h3 class="text-base font-bold text-base-content mt-0.5 mb-1">Bayar Pesanan</h3>
                         <p class="text-xs text-base-content/60 font-medium leading-snug">Selesaikan pembayaran tunai atau
                             online.</p>
@@ -198,9 +201,9 @@
                         </svg>
                     </div>
                     <div>
-                        <span class="text-xs font-bold text-fern-700 uppercase tracking-wider">Langkah 3</span>
+                        <span class="text-xs font-bold text-fern-700">Langkah 3</span>
                         <h3 class="text-base font-bold text-base-content mt-0.5 mb-1">Ambil di Kantin</h3>
-                        <p class="text-xs text-base-content/60 font-medium leading-snug">Ambil makananmu setelah pesanan
+                        <p class="text-xs text-base-content/60 font-medium luppercase tracking-widereading-snug">Ambil makananmu setelah pesanan
                             siap.</p>
                     </div>
                 </div>
@@ -215,7 +218,8 @@
 
             <div class="mb-7 text-center">
                 <h2 class="text-2xl sm:text-3xl font-bold text-base-content">Menu Terpopuler</h2>
-                <p class="text-base-content/60 text-sm mt-1.5 font-medium">Menu favorit civitas akademika PNC yang paling sering dipesan.</p>
+                <p class="text-base-content/60 text-sm mt-1.5 font-medium">Menu favorit civitas akademika PNC yang paling
+                    sering dipesan.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -238,7 +242,8 @@
 
             <div class="mb-7 text-center">
                 <h2 class="text-2xl sm:text-3xl font-bold text-base-content">Jelajahi Kantin Kampus</h2>
-                <p class="text-base-content/60 text-sm mt-1.5 font-medium">Pilih kantin favoritmu untuk melihat menu makanan dan minuman khas mereka.</p>
+                <p class="text-base-content/60 text-sm mt-1.5 font-medium">Pilih kantin favoritmu untuk melihat menu
+                    makanan dan minuman khas mereka.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

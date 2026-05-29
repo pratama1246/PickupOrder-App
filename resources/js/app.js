@@ -126,7 +126,31 @@ function initTypewriter() {
     const typingTextEl = document.getElementById("typing-text");
     if (!typingTextEl) return;
 
-    const words = ["Nugas?", "Praktikum?", "Ngoding?", "Kelas?", "Begadang?"];
+    const words = [
+        "Nugas?",
+        "Praktikum?",
+        "Bikin Laporan?",
+        "Ngoding?",
+        "Benerin Bug?",
+        "Ngebubut?",
+        "Nyolder?",
+        "Bikin Robot?",
+        "Ngukur Tegangan?",
+        "Titrasi?",
+        "Sampling Air?",
+        "Olah Pangan?",
+        "Pentesting?",
+        "Ngedit Video?",
+        "Bikin Animasi?",
+        "Input Jurnal?",
+        "Revisi TA?",
+        "Rapat Hima?",
+        "Bikin Proposal?",
+        "Bikin Undang-Undang?",
+        "Evaluasi Event?",
+        "Begadang?",
+        "Mager?"
+    ];
     let i = 0;
     let j = 0;
     let currentWord = "";
