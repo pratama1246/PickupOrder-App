@@ -100,7 +100,7 @@
                         <div class="space-y-4">
                             {{-- Online Payment (Midtrans) --}}
                             <label
-                                class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-[:checked]:bg-fern-50/50 has-[:checked]:border-fern-700">
+                                class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-checked:bg-fern-50/50 has-checked:border-fern-700">
                                 <input type="radio" name="payment_method" value="qris"
                                     class="radio radio-success radio-sm" checked>
                                 <div class="flex-1">
@@ -121,7 +121,7 @@
 
                             {{-- Cash / Offline --}}
                             <label
-                                class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-[:checked]:bg-fern-50/50 has-[:checked]:border-fern-700">
+                                class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-checked:bg-fern-50/50 has-checked:border-fern-700">
                                 <input type="radio" name="payment_method" value="bayar_di_warung"
                                     class="radio radio-success radio-sm">
                                 <div class="flex-1">

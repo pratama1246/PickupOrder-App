@@ -8,7 +8,8 @@
     'cartId' => null,
 ])
 
-<div class="cart-item-card bg-white border border-base-content/20 rounded-2xl p-4 sm:p-5 cursor-pointer select-none"
+<div class="cart-item-card border transition-all duration-200 rounded-2xl p-4 sm:p-5 cursor-pointer select-none"
+     :class="items[{{ $itemId }}] && items[{{ $itemId }}].selected ? 'bg-fern-100/80 border-fern-300 shadow-xs' : 'bg-white border-base-content/20'"
      x-data="{
          toggleCard(e) {
              // Abaikan jika klik mengenai tombol, form, input, label checkbox, atau di dalam dialog modal
@@ -27,7 +28,7 @@
     <div class="flex items-start sm:items-center gap-3">
 
         {{-- Checkbox Pilih Item --}}
-        <label class="flex items-center justify-center pt-0.5 sm:pt-0 shrink-0 cursor-pointer">
+        <label class="hidden sm:flex items-center justify-center shrink-0 cursor-pointer">
             <input
                 type="checkbox"
                 name="selected_menu_ids[]"
@@ -107,7 +108,7 @@
                 <!-- Delete Button (Triggers Modal) -->
                 <button type="button"
                     onclick="document.getElementById('delete_modal_{{ $itemId }}').showModal()"
-                    class="w-8 h-8 flex items-center justify-center text-base-content/35 hover:text-red-500 transition-colors active:scale-90">
+                    class="w-8 h-8 flex items-center justify-center text-red-500 hover:text-red-700 transition-colors active:scale-90">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round"

@@ -128,10 +128,10 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
             <!-- Active Orders Table -->
             <div class="lg:col-span-2 bg-base-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                <div class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-sunrise-gold-500">
+                <div class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-vanilla-custard-100">
                     <h2 class="text-sm sm:text-base font-bold text-base-content">Pesanan Aktif</h2>
                     <a href="{{ route('vendor.order.index') }}"
-                        class="text-xs sm:text-sm text-fern-600 hover:text-fern-700 font-medium px-3 py-1.5 bg-fern-50 rounded-lg hover:bg-fern-100 transition-colors">Lihat
+                        class="text-xs sm:text-sm text-fern-600 hover:text-fern-700 font-medium px-3 py-1.5 rounded-lg hover:bg-fern-200 transition-colors">Lihat
                         Semua</a>
                 </div>
                 <div class="overflow-auto flex-1 p-0">
@@ -189,7 +189,7 @@
                 <!-- Card Menunggu (Bold / Highlighted) -->
                 <a href="{{ route('vendor.order.index', ['status' => 'menunggu']) }}"
                     class="flex-1 bg-linear-to-tl from-emerald-800 to-fern-600 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between transition-all duration-300">
-                    <p class="text-sm font-medium text-fern-200 tracking-wider">Menunggu</p>
+                    <p class="text-sm font-medium text-fern-200">Menunggu</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
                         <p class="text-3xl sm:text-4xl font-bold text-white">
                             {{ $stats['pesanan_baru'] }}
@@ -203,56 +203,58 @@
                         </div>
                     </div>
                     <div class="pt-3 text-[11px] sm:text-xs text-fern-200 font-medium">
-                        Pesanan baru masuk dan belum diproses
+                        Perlu segera diproses
                     </div>
                 </a>
 
                 <!-- Card Dimasak -->
                 <a href="{{ route('vendor.order.index', ['status' => 'dimasak']) }}"
                     class="flex-1 bg-linear-to-br from-vanilla-custard-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
-                    <p class="text-sm font-medium text-base-content/60 tracking-wider">Dimasak</p>
+                    <p class="text-sm font-medium text-base-content/60">Dimasak</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
                         <p class="text-3xl sm:text-4xl font-extrabold text-vanilla-custard-700">
                             {{ $stats['sedang_dimasak'] }}
                         </p>
                         <div class="bg-vanilla-custard-100 text-vanilla-custard-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4 8 16-4" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.45l.45 1.81" />
                             </svg>
                         </div>
                     </div>
                     <div class="pt-3 border-t border-base-200/60 text-[11px] sm:text-xs text-base-content/50 font-medium">
-                        Makanan sedang disiapkan di dapur
+                        Sedang dalam proses masak
                     </div>
                 </a>
 
                 <!-- Card Siap Pickup -->
                 <a href="{{ route('vendor.order.index', ['status' => 'siap_diambil']) }}"
                     class="flex-1 bg-linear-to-br from-emerald-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
-                    <p class="text-sm font-medium text-base-content/60 tracking-wider">Siap Pickup</p>
+                    <p class="text-sm font-medium text-base-content/60">Siap Pickup</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
                         <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600">
                             {{ $stats['siap_pickup'] }}
                         </p>
                         <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
                             </svg>
                         </div>
                     </div>
                     <div class="pt-3 border-t border-base-200/60 text-[11px] sm:text-xs text-base-content/50 font-medium">
-                        Makanan siap diserahkan ke pembeli
+                        Siap diambil pelanggan
                     </div>
                 </a>
 
                 <!-- Card Dibatalkan -->
                 <a href="{{ route('vendor.order.index', ['status' => 'dibatalkan']) }}"
                     class="flex-1 bg-linear-to-br from-rose-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
-                    <p class="text-sm font-medium text-base-content/60 tracking-wider">Dibatalkan</p>l
+                    <p class="text-sm font-medium text-base-content/60">Dibatalkan</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
                         <p class="text-3xl sm:text-4xl font-extrabold text-rose-700">
                             {{ $stats['pesanan_batal'] }}
@@ -266,7 +268,7 @@
                         </div>
                     </div>
                     <div class="pt-3 border-t border-base-200/60 text-[11px] sm:text-xs text-base-content/50 font-medium">
-                        Pesanan batal &amp; tidak selesai diproses
+                        Pesanan berakhir batal
                     </div>
                 </a>
             </div>
@@ -276,14 +278,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
             <!-- Best Sellers Chart -->
             <div
-                class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
-                <h2 class="text-base font-bold text-base-content mb-4">Top 5 Menu Laris</h2>
+                class="lg:col-span-2 bg-linear-to-tl from-emerald-800 to-fern-600 rounded-2xl shadow-sm p-4 sm:p-5 flex flex-col justify-between">
+                <h2 class="text-base font-bold text-white mb-4">Top 5 Menu Laris</h2>
                 <div id="bestSellerChart" class="w-full h-75"></div>
             </div>
 
             <!-- Target Pendapatan Harian -->
             <div
-                class="lg:col-span-1 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+                class="lg:col-span-1 bg-vanilla-custard-50 rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
                 <!-- Background decoration glow -->
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-vanilla-custard-100/50 rounded-full blur-2xl"></div>
                 <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-50 rounded-full blur-2xl"></div>
@@ -315,7 +317,7 @@
                         </div>
                     </div>
 
-                    <div class="w-full mt-6 bg-base-200/40 rounded-xl p-3 text-center">
+                    <div class="w-full mt-6 bg-base-200/40 rounded-2xl p-3 text-center">
                         <p class="text-[11px] text-base-content/60 font-semibold tracking-wider mb-0.5">Tercapai</p>
                         <p class="text-xl font-bold text-fern-700">
                             Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}</p>
@@ -432,7 +434,7 @@
 
             <!-- Revenue & Orders Chart -->
             <div
-                class="lg:col-span-3 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
+                class="lg:col-span-3 bg-vanilla-custard-50 rounded-2xl shadow-sm p-4 sm:p-5 flex flex-col justify-between">
                 <h2 class="text-base font-bold text-base-content mb-4">Tren Transaksi 7 Hari Terakhir</h2>
                 <div id="trendChart" class="w-full h-75"></div>
             </div>
@@ -535,12 +537,38 @@
                         horizontal: true,
                     }
                 },
-                colors: ['#4d9959'],
+                colors: ['#ffffff'],
                 dataLabels: {
                     enabled: false
                 },
                 xaxis: {
                     categories: @json($topMenuLabels),
+                    labels: {
+                        style: {
+                            colors: '#ffffff',
+                            fontFamily: 'Poppins, sans-serif'
+                        }
+                    },
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#ffffff',
+                            fontFamily: 'Poppins, sans-serif'
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: 'rgba(255, 255, 255, 0.15)',
+                },
+                tooltip: {
+                    theme: 'dark'
                 }
             };
             const bestSellerChart = new ApexCharts(document.querySelector("#bestSellerChart"), bestSellerOptions);

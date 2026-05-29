@@ -13,7 +13,7 @@
             @click="clicks++; flashing = true; setTimeout(() => flashing = false, 400);">
 
             <!-- Traffic Light Box -->
-            <div class="absolute inset-0 bg-dark-spruce-800 rounded-[2rem] p-4 shadow-xl border-4 border-dark-spruce-900 flex flex-col items-center justify-between z-10 transition-transform duration-100"
+            <div class="absolute inset-0 bg-dark-spruce-800 rounded-4xl p-4 shadow-xl border-4 border-dark-spruce-900 flex flex-col items-center justify-between z-10 transition-transform duration-100"
                 :class="{ 'scale-95': flashing }">
 
                 <!-- Red Light (Active) -->
@@ -40,7 +40,7 @@
             <div class="absolute -top-12 -right-36 w-40 bg-white text-dark-spruce-800 text-sm font-bold p-3 rounded-2xl rounded-bl-none shadow-lg opacity-0 transition-opacity duration-300 z-20 text-left"
                 :class="{ 'opacity-100': flashing }">
                 <span
-                    x-text="clicks > 5 ? 'Udah dibilang sabar! 😭' : (clicks > 2 ? 'Masih merah, bos!' : 'Rem dulu! 🛑')"></span>
+                    x-text="clicks > 5 ? 'Udah dibilang sabar! 😭' : (clicks > 2 ? 'Masih merah bang. Hehe!' : 'Rem dulu! 🛑')"></span>
             </div>
         </div>
 

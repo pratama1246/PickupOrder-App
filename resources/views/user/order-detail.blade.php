@@ -159,10 +159,10 @@
                                     class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 4 ? ($step > 4 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4 8 16-4" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.45l.45 1.81" />
                                     </svg>
                                 </div>
                                 <div>
@@ -280,10 +280,10 @@
                                     class="w-20 h-20 rounded-full flex items-center justify-center {{ $step >= 4 ? ($step > 4 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4 8 16-4" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.45l.45 1.81" />
                                     </svg>
                                 </div>
                                 <p
@@ -379,7 +379,7 @@
                             <div
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-content/10 pb-4 mb-4">
                                 <div>
-                                    <h3 class="text-base sm:text-lg font-bold text-base-content mb-1">No. Order :
+                                    <h3 class="text-sm sm:text-lg font-bold text-base-content mb-1 whitespace-nowrap truncate">No. Order :
                                         {{ $order->order_code }}</h3>
                                     <p class="font-bold text-xl sm:text-2xl text-base-content">{{ $order->canteen->name }}
                                     </p>
@@ -465,22 +465,22 @@
                     <!-- Kanan: Ringkasan & Aksi -->
                     <div class="w-full lg:w-80 xl:w-96 shrink-0">
                         <div class="space-y-6 sticky top-24">
-                            <div class="mb-8">
+                            @if ($step == 5)
+                                <!-- QR Code Section -->
+                                <div
+                                    class="bg-white border border-base-content/15 rounded-3xl p-5 text-center shadow-sm">
+                                    <p class="text-xs font-bold text-base-content/70 uppercase mb-3">Kode Pengambilan
+                                    </p>
+                                    <canvas id="qr-code" class="mx-auto rounded-xl"></canvas>
+                                    <p class="text-3xl font-black text-base-content tracking-widest mt-4">
+                                        {{ $order->pickup_code }}</p>
+                                    <p class="text-xs text-base-content/50 mt-2 font-medium">Tunjukkan ke kasir untuk
+                                        verifikasi pesanan</p>
+                                </div>
+                            @endif
 
-                                @if ($step == 5)
-                                    <!-- QR Code Section -->
-                                    <div
-                                        class="bg-white border border-base-content/10 rounded-2xl p-5 text-center mb-6 shadow-sm">
-                                        <p class="text-xs font-bold text-base-content/70 uppercase mb-3">Kode Pengambilan
-                                        </p>
-                                        <canvas id="qr-code" class="mx-auto rounded-xl"></canvas>
-                                        <p class="text-3xl font-black text-base-content tracking-widest mt-4">
-                                            {{ $order->pickup_code }}</p>
-                                        <p class="text-xs text-base-content/50 mt-2 font-medium">Tunjukkan ke kasir untuk
-                                            verifikasi pesanan</p>
-                                    </div>
-                                @endif
-
+                            <!-- Summary Card -->
+                            <div class="bg-white border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
                                 <h3 class="text-lg font-bold text-base-content mb-2">Total Belanja</h3>
                                 <p class="text-3xl font-extrabold text-base-content mb-6">{{ $order->formatted_total }}
                                 </p>
@@ -563,9 +563,9 @@
                                         class="m-0 p-0 mt-3">
                                         @csrf
                                         <button type="submit"
-                                            class="btn bg-base-200 hover:bg-base-300 text-base-content border-none w-full h-12 min-h-0 rounded-xl font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full h-12 min-h-0 rounded-xl font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                             </svg>

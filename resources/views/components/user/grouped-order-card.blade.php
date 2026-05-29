@@ -20,7 +20,7 @@
                 </svg>
                 <span class="text-xs font-bold text-amber-700 uppercase tracking-wide">Menunggu Pembayaran</span>
             </div>
-            <h2 class="text-base sm:text-xl font-bold text-base-content mb-1">No. Transaksi: {{ $firstOrder->payment_code }}</h2>
+            <h2 class="text-sm sm:text-xl font-bold text-base-content mb-1 whitespace-nowrap truncate max-w-[240px] sm:max-w-none">No. Transaksi: {{ $firstOrder->payment_code }}</h2>
             <p class="text-xs sm:text-sm font-medium text-base-content/70">Waktu Pickup: {{ $firstOrder->pickup_time->format('H:i, d M Y') }}</p>
         </div>
         <div class="shrink-0">

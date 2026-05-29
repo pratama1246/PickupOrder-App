@@ -62,7 +62,7 @@
 @endphp
 
 <div
-    class="{{ $style['card'] }} rounded-xl p-5 shadow-sm border flex justify-between items-start gap-4 min-h-[10.75rem]">
+    class="{{ $style['card'] }} rounded-2xl p-5 shadow-sm border flex justify-between items-start gap-4 min-h-43">
     <div class="flex-1 min-w-0 self-stretch flex flex-col justify-between">
         <h3 class="text-sm font-medium {{ $style['label'] }}">{{ $label }}</h3>
 
