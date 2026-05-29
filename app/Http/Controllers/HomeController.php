@@ -48,4 +48,12 @@ class HomeController extends Controller
 
         return view('user.index', compact('canteens', 'popularMenus', 'categories'));
     }
+
+    /**
+     * Halaman Tentang Kami.
+     */
+    public function about(): View
+    {
+        return view('user.about');
+    }
 }

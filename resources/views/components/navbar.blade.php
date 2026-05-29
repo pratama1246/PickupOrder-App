@@ -19,7 +19,8 @@
             <li><a href="/riwayat"
                     class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('riwayat*') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Riwayat</a>
             </li>
-            <li><a href="#" class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium text-white">Tentang
+            <li><a href="{{ route('about') }}"
+                    class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->routeIs('about') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Tentang
                     Kami</a></li>
         </ul>
     </div>

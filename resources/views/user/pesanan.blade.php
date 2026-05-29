@@ -25,11 +25,12 @@
                     </label>
                     <button type="button"
                         class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"
+                        <svg x-show="!loading" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <circle cx="11" cy="11" r="8" />
                             <path d="m21 21-4.35-4.35" />
                         </svg>
+                        <span x-show="loading" class="loading loading-spinner loading-xs text-white" style="display: none;"></span>
                     </button>
                 </form>
 

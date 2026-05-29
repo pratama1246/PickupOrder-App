@@ -268,20 +268,10 @@ window.initLiveSearch = function(targetSelector) {
             let showSkeletonTimeout = null;
 
             if (target && !url) {
-                // Tampilkan skeleton hanya jika koneksi lambat (lebih dari 150ms) untuk mencegah flicker cepat
+                // Dim the content slightly if loading takes more than 150ms
                 showSkeletonTimeout = setTimeout(() => {
                     if (!completed) {
-                        target.classList.add('opacity-0', 'scale-95', 'transform');
-                        setTimeout(() => {
-                            if (!completed) {
-                                target.innerHTML = `
-                                    <div class="flex justify-center items-center py-24 w-full">
-                                        <span class="loading loading-bars loading-lg text-fern-700"></span>
-                                    </div>
-                                `;
-                                target.classList.remove('opacity-0', 'scale-95');
-                            }
-                        }, 200);
+                        target.classList.add('opacity-50', 'pointer-events-none');
                     }
                 }, 150);
             }
@@ -315,19 +305,26 @@ window.initLiveSearch = function(targetSelector) {
                 const doc = parser.parseFromString(html, 'text/html');
                 const newContent = doc.querySelector(targetSelector);
                 if (target && newContent) {
-                    // Animasi memudar & menyusut keluar sebelum menukar konten baru
-                    target.classList.add('opacity-0', 'scale-95', 'transform');
-                    setTimeout(() => {
-                        target.innerHTML = newContent.innerHTML;
-                        target.classList.remove('opacity-0', 'scale-95');
-                    }, 200);
+                    // Check if content actually changed
+                    if (target.innerHTML.trim() !== newContent.innerHTML.trim()) {
+                        // Restore animation for smooth content swap
+                        target.classList.add('opacity-0', 'scale-95', 'transform');
+                        setTimeout(() => {
+                            target.classList.remove('opacity-50', 'pointer-events-none');
+                            target.innerHTML = newContent.innerHTML;
+                            target.classList.remove('opacity-0', 'scale-95');
+                        }, 200);
+                    } else {
+                        // Content is the same, just remove loading state
+                        target.classList.remove('opacity-50', 'pointer-events-none');
+                    }
                 }
             })
             .catch(() => {
                 completed = true;
                 clearTimeout(showSkeletonTimeout);
                 if (target) {
-                    target.classList.remove('opacity-0', 'scale-95');
+                    target.classList.remove('opacity-50', 'pointer-events-none');
                 }
             })
             .finally(() => {

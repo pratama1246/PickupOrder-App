@@ -52,6 +52,9 @@ Route::middleware('auth')->group(function () {
     // Beranda
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
+    // Tentang Kami
+    Route::get('/tentang-kami', [HomeController::class, 'about'])->name('about');
+
     // Browse kantin & menu
     Route::get('/pesan', [UserCanteenController::class, 'index'])->name('canteen.index');
     Route::get('/kantin/{id}', [UserCanteenController::class, 'show'])->name('canteen.show');
