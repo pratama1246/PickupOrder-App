@@ -4,204 +4,126 @@
 
 @section('content')
     <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-6 lg:pb-0">
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+
+        {{-- ===== HEADER ===== --}}
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-2">
             <div>
-                <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Ikhtisar Platform</h1>
-                <p class="text-base-content/70 text-sm sm:text-lg font-medium">Pantau performa dan aktivitas kantin secara
-                    real-time.</p>
+                <h1 class="text-2xl sm:text-4xl font-bold text-base-content">Ikhtisar Platform</h1>
+                <p class="text-base-content/60 text-sm sm:text-base font-medium mt-1">Monitoring performa & aktivitas kantin
+                    PNC secara real-time.</p>
             </div>
+            <p class="text-xs font-medium text-base-content/40 shrink-0">{{ now()->translatedFormat('l, d F Y') }}</p>
         </div>
 
-        <!-- Stats Row -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <x-stat-card label="Total Pendapatan" value="Rp{{ number_format($stats['total_pendapatan'], 0, ',', '.') }}"
-                :growth="$stats['pendapatan_growth']" subtext="vs 7 hari lalu" iconBg="bg-emerald-50 text-fern-700">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-
-            <x-stat-card label="Volume Transaksi" value="{{ number_format($stats['volume_transaksi'], 0, ',', '.') }}"
-                :growth="$stats['transaksi_growth']" subtext="vs 7 hari lalu" iconBg="bg-emerald-50 text-fern-700">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-
-            <x-stat-card label="Rata-rata Nilai Pesanan" value="Rp{{ number_format($stats['aov'], 0, ',', '.') }}"
-                iconBg="bg-emerald-50 text-fern-700">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-
-            <x-stat-card label="Total Pengguna" value="{{ number_format($stats['total_pengguna'], 0, ',', '.') }}"
-                iconBg="bg-emerald-50 text-fern-700">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-
-            <x-stat-card label="Total Kantin" value="{{ number_format($stats['total_kantin'], 0, ',', '.') }}"
-                iconBg="bg-emerald-50 text-fern-700">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
-                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                        <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
-                        <path d="M2 7h20" />
-                        <path d="M22 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
-                        <path d="M18 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
-                        <path d="M14 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
-                        <path d="M10 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
-                        <path d="M6 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-
-            <x-stat-card label="Total Menu" value="{{ number_format($stats['total_menu'], 0, ',', '.') }}"
-                iconBg="bg-emerald-50 text-fern-700">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-
-            <x-stat-card label="Rata-rata Rating"
-                value="{{ $stats['avg_rating'] > 0 ? number_format($stats['avg_rating'], 1) : '5.0' }}"
-                iconBg="bg-amber-50 text-amber-600">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                        <path fill-rule="evenodd"
-                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.006z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-
-            <x-stat-card label="Total Ulasan" value="{{ number_format($stats['total_ulasan'], 0, ',', '.') }}"
-                iconBg="bg-amber-50 text-amber-600">
-                <x-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-                    </svg>
-                </x-slot:icon>
-            </x-stat-card>
-        </div>
-
-        <!-- Charts Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <!-- Revenue & Orders Chart -->
-            <div class="lg:col-span-2 bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">Tren Transaksi 7 Hari Terakhir</h2>
-                <div id="trendChart" class="w-full h-[300px]"></div>
-            </div>
-
-            <!-- Market Share Chart -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">Market Share Kantin</h2>
-                <div id="shareChart" class="w-full h-[300px]"></div>
-            </div>
-        </div>
-
-        <!-- Charts Row 2 (Bar Charts) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
-            <!-- Top Canteens Revenue Bar Chart -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">5 Kantin Pendapatan Tertinggi</h2>
-                <div id="topCanteensChart" class="w-full h-[300px]"></div>
-            </div>
-
-            <!-- Top Menus Bar Chart -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">5 Menu Paling Laris</h2>
-                <div id="topMenusChart" class="w-full h-[300px]"></div>
-            </div>
-        </div>
-
-        <!-- Charts Row 3: Category Distribution -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">Distribusi Penjualan per Kategori</h2>
-                @if (count($categoryLabels) > 0)
-                    <div id="categoryDistChart" class="w-full h-[300px]"></div>
-                @else
-                    <div class="flex items-center justify-center h-[300px] text-base-content/40">
-                        <p class="text-sm font-medium">Belum ada data. Pastikan menu memiliki kategori.</p>
+        {{-- ===== SECTION 1: REVENUE BANNER (Primary Focus) ===== --}}
+        <div class="bg-linear-to-br from-fern-700 to-emerald-900 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
+                {{-- Main Revenue --}}
+                <div class="lg:col-span-1 flex flex-col justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-fern-300 uppercase tracking-widest mb-1">Total Pendapatan Platform</p>
+                        <p class="text-4xl sm:text-5xl font-extrabold text-white leading-none">
+                            Rp{{ number_format($stats['total_pendapatan'], 0, ',', '.') }}
+                        </p>
+                        <div class="flex items-center gap-2 mt-3">
+                            @php $isPos = $stats['pendapatan_growth'] >= 0; @endphp
+                            <span
+                                class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold {{ $isPos ? 'bg-fern-600/50 text-fern-100' : 'bg-rose-500/30 text-rose-200' }}">
+                                @if ($isPos)
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                                    </svg>
+                                    +{{ abs($stats['pendapatan_growth']) }}%
+                                @else
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M2.25 6L9 12.75l4.286-4.286a11.948 11.948 0 014.306 6.43l.776 2.898m0 0l3.182-5.514m-3.182 5.514l-5.514-3.182" />
+                                    </svg>
+                                    {{ abs($stats['pendapatan_growth']) }}%
+                                @endif
+                            </span>
+                            <span class="text-xs text-fern-300 font-medium">vs 7 hari lalu</span>
+                        </div>
                     </div>
-                @endif
-            </div>
-            <div
-                class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-center items-center gap-3">
-                <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider">Rating Platform</p>
-                <p class="text-7xl font-extrabold text-fern-700">
-                    {{ $stats['avg_rating'] > 0 ? number_format($stats['avg_rating'], 1) : '5.0' }}</p>
-                <div class="flex items-center gap-1">
-                    @for ($i = 1; $i <= 5; $i++)
-                        <svg class="w-6 h-6 {{ $i <= round($stats['avg_rating'] ?: 5) ? 'text-amber-400' : 'text-base-content/20' }}"
-                            viewBox="0 0 20 20" fill="currentColor">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                    @endfor
                 </div>
-                <p class="text-base-content/60 text-sm font-medium">dari {{ number_format($stats['total_ulasan']) }}
-                    ulasan mahasiswa</p>
+
+                {{-- Divider --}}
+                <div class="hidden lg:block w-px bg-fern-600/40 self-stretch"></div>
+
+                {{-- Sub Metrics --}}
+                <div class="lg:col-span-1 grid grid-cols-2 gap-4 sm:gap-5">
+                    <div>
+                        <p class="text-[11px] font-bold text-fern-300 uppercase tracking-wider mb-1">Volume Transaksi</p>
+                        <p class="text-2xl sm:text-3xl font-extrabold text-white">
+                            {{ number_format($stats['volume_transaksi'], 0, ',', '.') }}</p>
+                        <div class="flex items-center gap-1.5 mt-1.5">
+                            @php $isPosT = $stats['transaksi_growth'] >= 0; @endphp
+                            <span
+                                class="text-[11px] font-bold {{ $isPosT ? 'text-fern-300' : 'text-rose-300' }}">{{ $isPosT ? '+' : '' }}{{ $stats['transaksi_growth'] }}%</span>
+                            <span class="text-[11px] text-fern-400">vs 7 hari lalu</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-fern-300 uppercase tracking-wider mb-1">Rata-rata Order</p>
+                        <p class="text-2xl sm:text-3xl font-extrabold text-white">
+                            Rp{{ number_format($stats['aov'], 0, ',', '.') }}</p>
+                        <p class="text-[11px] text-fern-400 mt-1.5 font-medium">per transaksi</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Tables Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 pb-6 sm:pb-10">
-            <!-- Top Canteens -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
-                <div class="p-4 sm:p-5 border-b border-base-200">
-                    <h2 class="text-sm sm:text-base font-bold text-base-content">Performa Kantin</h2>
+        {{-- ===== SECTION 2: TREND CHART (Full Width) ===== --}}
+        <div class="bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-base-content">Tren Pendapatan & Transaksi</h2>
+                    <p class="text-xs text-base-content/50 font-medium mt-0.5">7 hari terakhir</p>
                 </div>
-                <div class="overflow-x-auto flex-1 p-0">
-                    <table class="table table-sm w-full min-w-[400px]">
-                        <thead class="bg-base-200/50 text-xs">
+            </div>
+            <div id="trendChart" class="w-full h-[280px]"></div>
+        </div>
+
+        {{-- ===== SECTION 3: VENDOR PERFORMANCE + PLATFORM SNAPSHOT ===== --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
+            {{-- Vendor Performance Table (2/3) --}}
+            <div class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
+                <div class="px-4 sm:px-5 py-4 border-b border-base-200 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-base-content">Performa Kantin</h2>
+                        <p class="text-xs text-base-content/50 font-medium mt-0.5">Berdasarkan pendapatan kumulatif</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto flex-1">
+                    <table class="table table-sm w-full min-w-[480px]">
+                        <thead class="bg-base-200/60 text-xs">
                             <tr>
-                                <th class="font-medium text-base-content/70 py-3 px-4">Nama Kantin</th>
-                                <th class="font-medium text-base-content/70 py-3 px-4 text-center">Pesanan Selesai</th>
-                                <th class="font-medium text-base-content/70 py-3 px-4 text-right">Pendapatan</th>
+                                <th class="font-semibold text-base-content/60 py-3 px-4 w-8">#</th>
+                                <th class="font-semibold text-base-content/60 py-3 px-4">Nama Kantin</th>
+                                <th class="font-semibold text-base-content/60 py-3 px-4 text-center">Selesai / Total</th>
+                                <th class="font-semibold text-base-content/60 py-3 px-4 text-right">Pendapatan</th>
                             </tr>
                         </thead>
-                        <tbody class="text-xs sm:text-sm">
-                            @forelse($topCanteens ?? [] as $canteen)
-                                <tr class="hover:bg-base-200/30 transition-colors border-b border-base-content/5">
-                                    <td class="font-medium px-4 py-3">{{ $canteen->name }}</td>
-                                    <td class="text-center px-4 py-3">
-                                        {{ number_format($canteen->completed_orders_count) }}
-                                        / {{ number_format($canteen->orders_count) }}</td>
-                                    <td class="text-right font-semibold text-fern-600 px-4 py-3">
-                                        Rp{{ number_format($canteen->total_revenue ?? 0, 0, ',', '.') }}</td>
+                        <tbody class="text-xs sm:text-sm divide-y divide-base-content/5">
+                            @forelse($topCanteens ?? [] as $i => $canteen)
+                                <tr class="hover:bg-base-200/30 transition-colors">
+                                    <td class="px-4 py-3 text-base-content/40 font-bold">{{ $i + 1 }}</td>
+                                    <td class="px-4 py-3 font-semibold text-base-content">{{ $canteen->name }}</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="font-bold text-fern-700">{{ number_format($canteen->completed_orders_count) }}</span>
+                                        <span class="text-base-content/40 mx-0.5">/</span>
+                                        <span class="text-base-content/60">{{ number_format($canteen->orders_count) }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <span class="font-bold text-fern-700">Rp{{ number_format($canteen->total_revenue ?? 0, 0, ',', '.') }}</span>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center py-6 text-base-content/50">Belum ada data
+                                    <td colspan="4" class="text-center py-10 text-base-content/40 text-xs">Belum ada data
                                         performa kantin.</td>
                                 </tr>
                             @endforelse
@@ -210,56 +132,218 @@
                 </div>
             </div>
 
-            <!-- Recent Transactions -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
-                <div class="p-4 sm:p-5 border-b border-base-200">
-                    <h2 class="text-sm sm:text-base font-bold text-base-content">Transaksi Terbaru</h2>
-                </div>
-                <div class="overflow-x-auto flex-1 p-0">
-                    <table class="table table-sm w-full min-w-[400px]">
-                        <thead class="bg-base-200/50 text-xs">
-                            <tr>
-                                <th class="font-medium text-base-content/70 py-3 px-4">Order Code</th>
-                                <th class="font-medium text-base-content/70 py-3 px-4">Pengguna</th>
-                                <th class="font-medium text-base-content/70 py-3 px-4 text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-xs sm:text-sm">
-                            @forelse($recentOrders ?? [] as $order)
-                                <tr class="hover:bg-base-200/30 transition-colors border-b border-base-content/5">
-                                    <td class="px-4 py-3">
-                                        <span
-                                            class="font-medium text-[11px] sm:text-xs">{{ $order->order_code }}</span><br>
-                                        <span
-                                            class="text-[10px] sm:text-xs text-base-content/50">{{ $order->created_at->diffForHumans() }}</span>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span
-                                            class="font-medium truncate max-w-[100px] sm:max-w-none inline-block">{{ optional($order->user)->name ?? '-' }}</span><br>
-                                        <span
-                                            class="text-[10px] sm:text-xs text-base-content/50">{{ optional($order->canteen)->name ?? '-' }}</span>
-                                    </td>
-                                    <td class="text-center px-4 py-3">
-                                        <x-status-badge :status="$order->status_label" />
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center py-6 text-base-content/50">Belum ada transaksi
-                                        terbaru.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            {{-- Platform Snapshot Sidebar (1/3) --}}
+            <div class="flex flex-col gap-3">
+                {{-- Platform Stats Summary --}}
+                <div class="bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5">
+                    <h2 class="text-sm font-bold text-base-content mb-4">Ringkasan Platform</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between py-2.5 border-b border-base-200/70">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-fern-50 text-fern-700 flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.75" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-medium text-base-content/70">Total Pengguna</span>
+                            </div>
+                            <span
+                                class="text-base font-extrabold text-base-content">{{ number_format($stats['total_pengguna']) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2.5 border-b border-base-200/70">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-fern-50 text-fern-700 flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+                                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                                        <path d="M2 7h20" />
+                                        <path d="M12 12v9" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-medium text-base-content/70">Total Kantin</span>
+                            </div>
+                            <span
+                                class="text-base font-extrabold text-base-content">{{ number_format($stats['total_kantin']) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2.5 border-b border-base-200/70">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-fern-50 text-fern-700 flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.75" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-medium text-base-content/70">Total Menu</span>
+                            </div>
+                            <span
+                                class="text-base font-extrabold text-base-content">{{ number_format($stats['total_menu']) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2.5">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-medium text-base-content/70">Rating Rata-rata</span>
+                                    <p class="text-[11px] text-base-content/40 font-medium">{{ number_format($stats['total_ulasan']) }} ulasan</p>
+                                </div>
+                            </div>
+                            <span class="text-base font-extrabold text-base-content">
+                                {{ $stats['avg_rating'] > 0 ? number_format($stats['avg_rating'], 1) : '5.0' }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        {{-- ===== SECTION 4: VENDOR HIGHLIGHTS + BEST SELLERS ===== --}}
+        @php
+            $topVendor = $topCanteens->first();
+            $completionRate = ($topVendor && $topVendor->orders_count > 0)
+                ? round(($topVendor->completed_orders_count / $topVendor->orders_count) * 100)
+                : 0;
+        @endphp
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-5">
+
+            {{-- Vendor Highlights (2/5) --}}
+            <div class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col">
+                {{-- Header --}}
+                <div class="flex items-center gap-2.5 mb-4">
+                    <div>
+                        <h2 class="text-sm font-bold text-base-content">Vendor Terbaik</h2>
+                        <p class="text-[11px] text-base-content/50 font-medium">Berdasarkan total pendapatan</p>
+                    </div>
+                </div>
+
+                @if ($topVendor)
+                    {{-- Vendor Name --}}
+                    <div class="bg-fern-50 rounded-xl px-4 py-3 mb-4">
+                        <p class="text-[11px] font-bold text-fern-600 uppercase tracking-wider mb-0.5">Peringkat #1</p>
+                        <p class="text-lg font-extrabold text-fern-800 leading-tight">{{ $topVendor->name }}</p>
+                    </div>
+
+                    {{-- Stats --}}
+                    <div class="space-y-3 flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-base-content/60">Total Pendapatan</span>
+                            <span class="text-sm font-bold text-fern-700">Rp{{ number_format($topVendor->total_revenue ?? 0, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="h-px bg-base-200"></div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-base-content/60">Completion Rate</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-20 h-1.5 bg-base-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-fern-500 rounded-full"
+                                        style="width: {{ $completionRate }}%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-base-content">{{ $completionRate }}%</span>
+                            </div>
+                        </div>
+                        <div class="h-px bg-base-200"></div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-base-content/60">Total Pesanan</span>
+                            <span class="text-sm font-bold text-base-content">{{ number_format($topVendor->orders_count) }}</span>
+                        </div>
+                        <div class="h-px bg-base-200"></div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-base-content/60">Pesanan Selesai</span>
+                            <span class="text-sm font-bold text-emerald-600">{{ number_format($topVendor->completed_orders_count) }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Growth context --}}
+                    <div class="mt-4 pt-4 border-t border-base-200 flex items-center justify-between">
+                        <span class="text-[11px] text-base-content/50 font-medium">Pertumbuhan platform (7 hari)</span>
+                        @php $isPosG = $stats['pendapatan_growth'] >= 0; @endphp
+                        <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg {{ $isPosG ? 'bg-emerald-50 text-fern-700' : 'bg-rose-50 text-rose-600' }}">
+                            @if ($isPosG)
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                                </svg>
+                                +{{ abs($stats['pendapatan_growth']) }}%
+                            @else
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6L9 12.75l4.286-4.286a11.948 11.948 0 014.306 6.43l.776 2.898m0 0l3.182-5.514m-3.182 5.514l-5.514-3.182" />
+                                </svg>
+                                {{ abs($stats['pendapatan_growth']) }}%
+                            @endif
+                        </span>
+                    </div>
+                @else
+                    <div class="flex-1 flex items-center justify-center">
+                        <p class="text-sm text-base-content/40 font-medium">Belum ada data vendor.</p>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Best Sellers Chart (3/5, reduced height) --}}
+            <div class="lg:col-span-3 bg-linear-to-br from-emerald-800 to-fern-700 rounded-2xl shadow-sm p-4 sm:p-5 flex flex-col">
+                <div class="mb-3">
+                    <h2 class="text-sm font-bold text-white">5 Menu Paling Laris</h2>
+                    <p class="text-[11px] text-fern-300 font-medium mt-0.5">Berdasarkan total item terjual</p>
+                </div>
+                <div id="topMenusChart" class="w-full flex-1 min-h-[200px]"></div>
+            </div>
+        </div>
+
+        {{-- ===== SECTION 5: PLATFORM ACTIVITY FEED + TOP CANTEENS CHART ===== --}}
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-5 pb-6 lg:pb-2">
+            {{-- Top Canteens Revenue Chart (3/5) --}}
+            <div class="lg:col-span-3 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5">
+                <div class="mb-4">
+                    <h2 class="text-sm sm:text-base font-bold text-base-content">Pendapatan per Kantin</h2>
+                    <p class="text-xs text-base-content/50 font-medium mt-0.5">5 kantin dengan pendapatan tertinggi</p>
+                </div>
+                <div id="topCanteensChart" class="w-full h-[260px]"></div>
+            </div>
+
+            {{-- Recent Activity Feed (2/5) --}}
+            <div class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
+                <div class="px-4 sm:px-5 py-4 border-b border-base-200 bg-vanilla-custard-50">
+                    <h2 class="text-sm sm:text-base font-bold text-base-content">Aktivitas Terbaru</h2>
+                    <p class="text-xs text-base-content/50 font-medium mt-0.5">Transaksi masuk platform</p>
+                </div>
+                <div class="flex-1 overflow-y-auto divide-y divide-base-content/5 max-h-[320px]">
+                    @forelse($recentOrders ?? [] as $order)
+                        <div class="px-4 py-3 flex items-start gap-3 hover:bg-base-200/30 transition-colors">
+                            <div class="mt-0.5 shrink-0">
+                                <x-status-badge :status="$order->status_label" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-base-content truncate">{{ $order->order_code }}</p>
+                                <p class="text-[11px] text-base-content/60 font-medium truncate mt-0.5">
+                                    {{ optional($order->user)->name ?? '-' }}
+                                    <span class="text-base-content/30 mx-1">&bull;</span>
+                                    {{ optional($order->canteen)->name ?? '-' }}
+                                </p>
+                            </div>
+                            <p class="text-[10px] text-base-content/40 font-medium shrink-0 mt-0.5">{{ $order->created_at->diffForHumans() }}</p>
+                        </div>
+                    @empty
+                        <div class="flex items-center justify-center py-12 text-base-content/40">
+                            <p class="text-sm font-medium">Belum ada aktivitas.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
 @push('scripts')
     <script>
         window.addEventListener("load", function() {
+
             // Trend Chart
             const trendOptions = {
                 series: [{
@@ -272,199 +356,86 @@
                     data: @json($trendOrders)
                 }],
                 chart: {
-                    height: 300,
+                    height: 280,
                     type: 'line',
-                    toolbar: {
-                        show: false
-                    },
+                    toolbar: { show: false },
                     fontFamily: 'Poppins, sans-serif'
                 },
-                stroke: {
-                    curve: 'smooth',
-                    width: [2, 3]
-                },
+                stroke: { curve: 'smooth', width: [2, 3] },
                 fill: {
                     type: ['gradient', 'solid'],
                     gradient: {
                         shadeIntensity: 1,
-                        opacityFrom: 0.4,
-                        opacityTo: 0.05,
+                        opacityFrom: 0.35,
+                        opacityTo: 0.03,
                         stops: [0, 90, 100]
                     }
                 },
-                colors: ['#306939', '#3b82f6'],
+                colors: ['#306939', '#73c780'],
                 labels: @json($trendDates),
-                xaxis: {
-                    tooltip: {
-                        enabled: false
-                    }
-                },
+                xaxis: { tooltip: { enabled: false } },
                 yaxis: [{
                     title: {
                         text: 'Pendapatan (Rp)',
-                        style: {
-                            fontWeight: 600,
-                            fontFamily: 'Poppins'
-                        }
+                        style: { fontWeight: 600, fontFamily: 'Poppins' }
                     },
                     labels: {
-                        formatter: (value) => {
-                            return "Rp" + value.toLocaleString("id-ID");
-                        }
+                        formatter: (v) => "Rp" + v.toLocaleString("id-ID")
                     }
                 }, {
                     opposite: true,
                     title: {
                         text: 'Transaksi',
-                        style: {
-                            fontWeight: 600,
-                            fontFamily: 'Poppins'
-                        }
+                        style: { fontWeight: 600, fontFamily: 'Poppins' }
                     }
                 }],
-                legend: {
-                    position: 'top',
-                    horizontalAlign: 'right'
-                }
+                legend: { position: 'top', horizontalAlign: 'right' }
             };
+            new ApexCharts(document.querySelector("#trendChart"), trendOptions).render();
 
-            const trendChart = new ApexCharts(document.querySelector("#trendChart"), trendOptions);
-            trendChart.render();
-
-            // Share Chart
-            const shareOptions = {
-                series: @json($shareSeries),
-                labels: @json($shareLabels),
-                chart: {
-                    type: 'donut',
-                    height: 300,
-                    fontFamily: 'Poppins, sans-serif'
-                },
-                colors: ['#306939', '#4d9959', '#73c780', '#a3e6af', '#d1f4d6', '#cbd5e1'],
-                stroke: {
-                    width: 0
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                legend: {
-                    position: 'bottom'
-                },
-                tooltip: {
-                    y: {
-                        formatter: function(val) {
-                            return "Rp" + val.toLocaleString("id-ID")
-                        }
-                    }
-                }
-            };
-
-            const shareChart = new ApexCharts(document.querySelector("#shareChart"), shareOptions);
-            shareChart.render();
-
-            // Top Canteens Bar Chart
-            const topCanteensOptions = {
-                series: [{
-                    name: 'Pendapatan',
-                    data: @json($topCanteenSeries)
-                }],
-                chart: {
-                    type: 'bar',
-                    height: 300,
-                    toolbar: {
-                        show: false
-                    },
-                    fontFamily: 'Poppins, sans-serif'
-                },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        horizontal: false,
-                        columnWidth: '55%',
-                    }
-                },
-                colors: ['#306939'],
-                dataLabels: {
-                    enabled: false
-                },
-                xaxis: {
-                    categories: @json($topCanteenLabels),
-                },
-                yaxis: {
-                    labels: {
-                        formatter: (value) => {
-                            return "Rp" + (value >= 1000 ? (value / 1000).toLocaleString("id-ID") + "K" :
-                                value.toLocaleString("id-ID"));
-                        }
-                    }
-                }
-            };
-            const topCanteensChart = new ApexCharts(document.querySelector("#topCanteensChart"),
-                topCanteensOptions);
-            topCanteensChart.render();
-
-            // Top Menus Bar Chart
+            // Top Menus Chart (on dark bg)
             const topMenusOptions = {
-                series: [{
-                    name: 'Terjual',
-                    data: @json($topMenuSeries)
-                }],
+                series: [{ name: 'Terjual', data: @json($topMenuSeries) }],
                 chart: {
                     type: 'bar',
-                    height: 300,
-                    toolbar: {
-                        show: false
-                    },
+                    height: 260,
+                    toolbar: { show: false },
                     fontFamily: 'Poppins, sans-serif'
                 },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        horizontal: true,
-                    }
-                },
-                colors: ['#4d9959'],
-                dataLabels: {
-                    enabled: false
-                },
+                plotOptions: { bar: { borderRadius: 4, horizontal: true } },
+                colors: ['#a3e6af'],
+                dataLabels: { enabled: false },
                 xaxis: {
                     categories: @json($topMenuLabels),
+                    labels: { style: { colors: '#a3e6af', fontFamily: 'Poppins, sans-serif' }, axisBorder: { show: false }, axisTicks: { show: false } }
+                },
+                yaxis: { labels: { style: { colors: '#ffffff', fontFamily: 'Poppins, sans-serif' } } },
+                grid: { borderColor: 'rgba(255,255,255,0.1)' },
+                tooltip: { theme: 'dark' }
+            };
+            new ApexCharts(document.querySelector("#topMenusChart"), topMenusOptions).render();
+
+            // Top Canteens Chart
+            const topCanteensOptions = {
+                series: [{ name: 'Pendapatan', data: @json($topCanteenSeries) }],
+                chart: {
+                    type: 'bar',
+                    height: 260,
+                    toolbar: { show: false },
+                    fontFamily: 'Poppins, sans-serif'
+                },
+                plotOptions: { bar: { borderRadius: 4, horizontal: false, columnWidth: '55%' } },
+                colors: ['#306939'],
+                dataLabels: { enabled: false },
+                xaxis: { categories: @json($topCanteenLabels) },
+                yaxis: {
+                    labels: {
+                        formatter: (v) => "Rp" + (v >= 1000 ? (v / 1000).toLocaleString("id-ID") + "K" : v.toLocaleString("id-ID"))
+                    }
                 }
             };
-            const topMenusChart = new ApexCharts(document.querySelector("#topMenusChart"), topMenusOptions);
-            topMenusChart.render();
+            new ApexCharts(document.querySelector("#topCanteensChart"), topCanteensOptions).render();
 
-            // Category Distribution Chart
-            @if (count($categoryLabels) > 0)
-                const categoryDistOptions = {
-                    series: @json($categorySeries),
-                    labels: @json($categoryLabels),
-                    chart: {
-                        type: 'donut',
-                        height: 300,
-                        fontFamily: 'Poppins, sans-serif'
-                    },
-                    colors: ['#f97316', '#0ea5e9', '#f59e0b', '#4d9959', '#a855f7'],
-                    stroke: {
-                        width: 0
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: (val) => Math.round(val) + '%'
-                    },
-                    legend: {
-                        position: 'bottom'
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: (val) => val + ' porsi'
-                        }
-                    }
-                };
-                const categoryDistChart = new ApexCharts(document.querySelector("#categoryDistChart"),
-                    categoryDistOptions);
-                categoryDistChart.render();
-            @endif
         });
     </script>
 @endpush
