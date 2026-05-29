@@ -320,9 +320,6 @@
                             <span class="text-3xl sm:text-4xl font-bold text-fern-700 leading-none">
                                 Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}
                             </span>
-                            <span class="text-sm font-medium text-base-content/40 leading-none">
-                                / Rp{{ number_format($dailyTarget, 0, ',', '.') }}
-                            </span>
                         </div>
                         <p class="text-xs text-base-content/50 font-medium mt-1.5">Pendapatan hari ini</p>
                     </div>
@@ -344,14 +341,10 @@
                     </div>
 
                     {{-- 3-column breakdown: Target / Tercapai / Sisa --}}
-                    <div class="grid grid-cols-3 gap-2 bg-base-200/40 rounded-xl p-3">
+                    <div class="grid grid-cols-2 gap-2 bg-base-200/40 rounded-xl p-3">
                         <div>
                             <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Target</p>
                             <p class="text-xs font-bold text-base-content leading-tight">Rp{{ number_format($dailyTarget, 0, ',', '.') }}</p>
-                        </div>
-                        <div class="border-x border-base-200 px-2">
-                            <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Tercapai</p>
-                            <p class="text-xs font-bold text-fern-700 leading-tight">Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}</p>
                         </div>
                         <div>
                             <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Sisa</p>
@@ -400,7 +393,7 @@
                                 ],
                                 $stats['pesanan_hari_ini'] > 0 => [
                                     'bg-amber-300',
-                                    'Pesanan masih berjalan hari ini.',
+                                    'Masih ada waktu untuk mengejar target hari ini.',
                                     'text-base-content/60 font-medium',
                                 ],
                                 default => [
