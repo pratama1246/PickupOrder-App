@@ -3,6 +3,11 @@
 @section('title', 'Riwayat Pesanan - PNC')
 
 @section('content')
+    {{-- 
+      Membuat indeks pencarian statis ('items') menggunakan objek JSON yang dirender langsung dari Blade ke state Alpine.js. 
+      Hal ini memungkinkan penyaringan status pesanan dan pencarian kata kunci berjalan secara instan di sisi klien 
+      tanpa membebani server dengan kueri basis data berulang.
+    --}}
     <main class="min-h-screen bg-base-100 pb-12" x-data="{
         selectedStatus: 'Semua Status',
         searchQuery: '',
@@ -83,7 +88,6 @@
             <div class="max-w-7xl mx-auto">
                 <div class="max-w-4xl space-y-6">
 
-                    {{-- BAGIAN 1: Transaksi online yang BELUM DIBAYAR (dikelompokkan per payment_code) --}}
                     @if ($pendingOnlineGroups->isNotEmpty())
                         @foreach ($pendingOnlineGroups as $paymentCode => $group)
                             @php
@@ -100,7 +104,6 @@
                         @endforeach
                     @endif
 
-                    {{-- BAGIAN 2: Pesanan lainnya (tunai atau sudah dibayar) --}}
                     @foreach ($orders as $order)
                         @php
                             $statusText = match ($order->status) {
@@ -119,13 +122,11 @@
                         </div>
                     @endforeach
 
-                    {{-- Placeholder jika benar-benar belum memiliki riwayat pesanan --}}
                     <div x-show="items.length === 0"
                         class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
                         <p class="text-base-content/60 font-medium">Belum ada riwayat pesanan.</p>
                     </div>
 
-                    {{-- Placeholder jika hasil filter atau pencarian tidak ditemukan --}}
                     <div x-show="items.length > 0 && !hasVisibleItems" x-cloak
                         class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
                         <p class="text-base-content/60 font-medium">Tidak ditemukan pesanan dengan status atau kata kunci

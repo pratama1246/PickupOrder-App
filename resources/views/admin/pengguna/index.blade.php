@@ -4,6 +4,11 @@
 
 @section('content')
 
+    {{-- 
+      Container utama daftar pengguna.
+      Menggunakan live search berbasis AJAX untuk pencarian real-time tanpa reload 
+      serta menyimpan array `selectedIds` untuk memproses aksi massal (bulk actions).
+    --}}
     <div class="max-w-8xl mx-auto pb-10 lg:pb-0" id="users-container" x-data="{
         ...initLiveSearch('#users-container'),
         selectedIds: [],
@@ -17,22 +22,18 @@
         }
     }" x-cloak>
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <!-- Title & Action Buttons Group (Mobile: Title + Icons on one row) -->
             <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                     <div>
                         <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Pengguna</h1>
                         <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola akun pengguna sistem.</p>
                     </div>
-
-
                 </div>
 
-                <!-- Action Buttons (Mobile only, Icon-only) -->
                 <div class="flex md:hidden items-center gap-2">
                     <a href="{{ route('admin.pengguna.import.form') }}"
                         class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center"
-                        title="Import Pengguna">
+                        title="Impor Pengguna">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/70" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -49,10 +50,8 @@
                 </div>
             </div>
 
-            <!-- Search & Filter Group -->
             <form method="GET" action="{{ route('admin.pengguna.index') }}" @submit.prevent
                 class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                <!-- Search Input -->
                 <div class="w-full md:w-64 xl:w-80 grow relative">
                     <label
                         class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
@@ -69,7 +68,6 @@
                     </button>
                 </div>
 
-                <!-- Filter Button -->
                 <button type="submit"
                     class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/70" fill="none"
@@ -81,7 +79,6 @@
                 </button>
 
                 @if (request('search') || request('role'))
-                    <!-- Clear Search Button -->
                     <a href="{{ route('admin.pengguna.index') }}"
                         class="btn btn-md bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0"
                         title="Hapus filter pencarian">
@@ -93,7 +90,6 @@
                     </a>
                 @endif
 
-                <!-- Desktop Action Buttons -->
                 <div class="hidden md:flex items-center gap-2 shrink-0">
                     <a href="{{ route('admin.pengguna.import.form') }}"
                         class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content border-none rounded-full w-12 h-12 p-0 shadow-sm transition-colors flex items-center justify-center"
@@ -116,10 +112,12 @@
             </form>
         </div>
 
-        <!-- Bulk Actions Panel (Desktop & Mobile) -->
+        {{-- 
+          Panel Bulk Actions: Hanya muncul saat ada satu atau lebih baris yang dicentang.
+          Menyediakan aksi massal untuk aktifkan/nonaktifkan/hapus akun terpilih sekaligus.
+        --}}
         <div x-show="selectedIds.length > 0" x-transition class="mb-4" style="display: none;" x-cloak>
 
-            <!-- Desktop version -->
             <div
                 class="hidden md:flex items-center gap-2 bg-white border border-base-content/15 px-4 py-2 rounded-full shadow-sm w-fit transition-all duration-300">
                 <span class="text-sm font-bold text-base-content/70 mr-2"><span x-text="selectedIds.length"></span> pengguna
@@ -169,7 +167,6 @@
                 </form>
             </div>
 
-            <!-- Mobile version -->
             <div
                 class="flex flex-col md:hidden gap-3 bg-white border border-base-content/15 px-4 py-3 rounded-xl shadow-sm w-full transition-all duration-300">
                 <div class="text-xs font-bold text-base-content/70"><span x-text="selectedIds.length"></span> pengguna
@@ -218,7 +215,11 @@
             </div>
         </div>
     </div>
-    <!-- Global Modals for Actions -->
+    {{-- 
+      Modals Konfirmasi Global:
+      Menggunakan satu instance modal bersama demi menghemat ukuran DOM (tidak menduplikasi modal di tiap baris).
+      Form aktif yang memicu konfirmasi disimpan di variable global JavaScript `currentFormToSubmit`.
+    --}}
     <x-modal id="global_confirm_modal" type="warning" title="Konfirmasi">
         <span id="global_confirm_text"></span>
         <x-slot:footer>
@@ -244,8 +245,10 @@
 
 @push('scripts')
     <script>
+        // Menyimpan referensi form aktif agar modal konfirmasi global tahu form mana yang harus di-submit saat tombol konfirmasi diklik
         let currentFormToSubmit = null;
 
+        // Mencegah pengiriman form instan untuk memicu modal konfirmasi DaisyUI terlebih dahulu demi UX yang konsisten
         function confirmAction(event, text, isDelete = false) {
             event.preventDefault();
             currentFormToSubmit = event.target;
@@ -259,6 +262,7 @@
             }
         }
 
+        // Dipanggil saat pengguna menekan tombol "Ya/Setuju" di dalam modal konfirmasi global
         function submitCurrentForm() {
             if (currentFormToSubmit) {
                 currentFormToSubmit.submit();

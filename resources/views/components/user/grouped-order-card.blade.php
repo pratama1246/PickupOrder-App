@@ -10,6 +10,16 @@
     $retryUrl = route('checkout.retry', $firstOrder->payment_code);
 @endphp
 
+{{-- 
+  Komponen Card Pesanan Terkelompok (Multi-Kantin):
+  - Mengelola tampilan transaksi online tertunda (pending) yang melibatkan lebih dari satu kantin 
+    dan dikelompokkan berdasarkan kode pembayaran unik ('payment_code').
+  - Menyusun rincian pesanan per kantin dengan meloop subkomponen 'x-user.order-item' di dalam pembungkus masing-masing.
+  - Menyediakan tombol bayar yang berintegrasi langsung dengan SDK JavaScript Midtrans Snap ('openSnapGroup') 
+    menggunakan 'snap_token' transaksi.
+  - Membuka modal konfirmasi pembatalan massal ('cancel_group_modal_...') untuk membatalkan seluruh grup pesanan sekaligus.
+--}}
+
 <div class="bg-vanilla-custard-50 border border-amber-300 rounded-3xl p-4 sm:p-8 shadow-sm">
     
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6">
@@ -31,7 +41,6 @@
         </div>
     </div>
     
-    {{-- Daftar kantin dalam grup ini --}}
     <div class="space-y-4 mb-6">
         @foreach ($group as $groupedOrder)
             <div class="bg-white border border-base-content/20 rounded-2xl p-4 sm:p-5">
@@ -60,14 +69,12 @@
         @endforeach
     </div>
 
-    {{-- Footer: total + tombol aksi --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-5 border-t border-amber-200">
         <div>
             <p class="text-xs text-base-content/60 font-bold uppercase">Total Pembayaran</p>
             <p class="text-xl sm:text-2xl font-black text-fern-700">{{ $formattedTotalGroup }}</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            {{-- Tombol Batalkan: batalkan SELURUH grup --}}
             <button 
                 type="button" 
                 onclick="document.getElementById('cancel_group_modal_{{ $firstOrder->payment_code }}').showModal()"
@@ -89,7 +96,6 @@
                 </x-slot:footer>
             </x-modal>
 
-            {{-- Tombol Bayar Sekarang --}}
             <button 
                 onclick="openSnapGroup('{{ $firstOrder->snap_token }}', '{{ $retryUrl }}', '{{ $csrfToken }}')"
                 class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-8 min-h-0 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md"

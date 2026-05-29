@@ -26,6 +26,10 @@
                 @enderror
             </div>
 
+            {{-- 
+              Menjelaskan bahwa akun pengelola (vendor) akan dibuat secara otomatis berdasarkan Nama Kantin
+              agar admin mengetahui bahwa mereka tidak perlu mengisi data kredensial akun vendor secara terpisah.
+            --}}
             <div class="alert alert-info bg-blue-50 text-blue-800 border-none rounded-xl text-sm font-medium">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     class="stroke-current shrink-0 w-5 h-5">
@@ -57,6 +61,10 @@
                 @enderror
             </div>
 
+            {{-- 
+              Menggunakan Alpine.js untuk membuat URL pratinjau (local preview) dari file gambar yang dipilih 
+              agar admin dapat meninjau aspek rasio & kesesuaian gambar sebelum berkas dikirim ke server.
+            --}}
             <div x-data="{ imageUrl: null }">
                 <label class="block text-sm font-bold text-base-content mb-1.5">Gambar Kantin</label>
                 <label

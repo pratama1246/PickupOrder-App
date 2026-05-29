@@ -9,12 +9,22 @@
     'actionUrl' => '#',
 ])
 
+{{-- 
+  Komponen Card Menu Makanan Global:
+  - Mengimplementasikan tampilan ganda responsive:
+    - Mode mobile (lebar layar < 640px): Tampilan berorientasi baris/horizontal yang ringkas.
+    - Mode desktop (lebar layar >= 640px): Tampilan berorientasi kolom/vertical card standar.
+  - Menggunakan teknik stretched-link ('absolute inset-0 z-10') agar seluruh card dapat berinteraksi 
+    dengan link detail menu tanpa merusak aksesibilitas HTML5.
+  - Mendukung lazy loading gambar serta penanganan fallback URL otomatis (menggunakan ui-avatars.com) 
+    via atribut 'onerror' untuk menjamin kestabilan layout visual jika berkas gambar menu kosong.
+--}}
+
 @php
     $imageUrl = $image ? $image : 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random';
 @endphp
 
 <div class="card relative bg-base-100 w-full h-full flex flex-col shadow-sm rounded-2xl overflow-hidden border border-base-200">
-    <!-- Stretched Link -->
     <a href="{{ $actionUrl }}" class="absolute inset-0 z-10" aria-label="Lihat {{ $name }}"></a>
 
     <div class="flex sm:hidden gap-4 p-4 h-full">

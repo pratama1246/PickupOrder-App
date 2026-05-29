@@ -1,5 +1,14 @@
 @props(['order', 'canteen'])
 
+{{-- 
+  Komponen Card Detail Pesanan Vendor:
+  - Menyajikan informasi detail pesanan untuk pemilik kantin (status pembayaran, catatan pembeli, rincian item, detail pickup).
+  - Melindungi pesanan online pending ('midtrans' & 'pending') dengan menonaktifkan tombol pemrosesan 
+    dan memunculkan pesan peringatan agar vendor tidak memproses pesanan sebelum dana terkonfirmasi.
+  - Berfungsi sebagai pengendali State Machine alur pesanan ('menunggu' -> 'dimasak' -> 'siap_diambil' -> 'selesai'):
+  - Khusus untuk pesanan tunai ('cash' & 'pending') di fase 'siap_diambil', label tombol berubah menjadi 
+    "Selesai & Terima Uang" guna menginstruksikan vendor untuk menagih uang tunai saat serah terima makanan.
+--}}
 <div class="bg-vanilla-custard-50 border border-base-content/30 rounded-3xl p-6 sm:p-8 shadow-sm">
     <div
         class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-content/20 pb-4 mb-6">
@@ -65,14 +74,13 @@
                 </li>
             </ul>
 
-            {{-- Peringatan: pesanan Midtrans yang masih pending tidak boleh diproses --}}
             @if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
                 <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4">
                     <div class="flex items-start gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         <div>
                             <p class="text-amber-800 font-bold text-sm">Menunggu Pembayaran Online</p>
@@ -86,7 +94,6 @@
             <div class="flex flex-col sm:flex-row gap-3">
                 @if (in_array($order->status, ['menunggu', 'dimasak', 'siap_diambil']))
                     @if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
-                        {{-- Nonaktifkan tombol jika pembayaran online belum dikonfirmasi --}}
                         <button type="button" disabled
                             class="btn bg-base-300 text-base-content/40 border-none w-full rounded-xl font-bold shadow-sm cursor-not-allowed flex-1">
                             Menunggu Pembayaran

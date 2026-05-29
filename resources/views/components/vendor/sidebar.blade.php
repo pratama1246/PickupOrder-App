@@ -1,3 +1,11 @@
+{{-- 
+  Komponen Sidebar Dashboard Vendor:
+  - Menyediakan navigasi menu samping persisten untuk layout panel administrasi pemilik kantin (Vendor).
+  - Mengevaluasi jalur rute aktif secara dinamis menggunakan helper 'request()->is()' untuk 
+    menerapkan kelas gaya penanda rute terpilih secara visual.
+  - Mengintegrasikan tombol logout aman di bagian bawah sidebar dengan pemicu form POST ('vendor-logout-form') 
+    guna melindungi proses keluar dari serangan CSRF.
+--}}
 <aside class="w-64 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
     <nav class="flex-1 px-3 py-4 space-y-1">
 

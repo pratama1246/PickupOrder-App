@@ -83,6 +83,10 @@
                 @enderror
             </div>
 
+            {{-- 
+              Menggunakan Alpine.js untuk menampilkan pratinjau gambar makanan secara lokal di sisi klien 
+              sebelum berkas diunggah dan diproses oleh server Laravel.
+            --}}
             <div x-data="{ imageUrl: null }">
                 <label class="block text-sm font-bold text-base-content mb-1.5">Foto Menu</label>
                 <label

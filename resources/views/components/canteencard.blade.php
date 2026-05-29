@@ -10,12 +10,20 @@
     'actionText' => 'Lihat Menu',
 ])
 
+{{-- 
+  Komponen Card Kantin Global:
+  - Menyusun detail informasi kantin (nama, rating, deskripsi, jumlah menu, jam operasional).
+  - Menggunakan teknik stretched-link ('absolute inset-0 z-10') agar seluruh permukaan card 
+    bisa diklik secara semantik tanpa mengacaukan struktur markup HTML atau merusak aksesibilitas.
+  - Mendukung lazy loading gambar serta penanganan fallback URL otomatis (menggunakan ui-avatars.com) 
+    via atribut 'onerror' untuk mengantisipasi gambar kantin yang kosong atau bermasalah saat dimuat.
+--}}
+
 @php
     $imagePath = $image ? $image : 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random';
 @endphp
 
 <div class="card relative bg-base-100 rounded-3xl shadow-sm p-0 md:p-6 flex flex-col md:flex-row gap-0 md:gap-6 border border-base-200 cursor-pointer">
-    <!-- Stretched Link menutupi seluruh area card -->
     <a href="{{ $actionUrl }}" class="absolute inset-0 z-10 rounded-3xl" aria-label="Lihat {{ $name }}"></a>
 
     <figure

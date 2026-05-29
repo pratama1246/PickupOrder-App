@@ -4,22 +4,28 @@
 
 @section('hero-title', 'Pesan Makanan Langsung, Tanpa Perlu Ke Kantin')
 
-@section('form')
+{{-- 
+  Halaman Masuk (Login):
+  - Memperluas layout 'layouts.auth' untuk menampilkan panel login responsif di atas backdrop gradien mesh dinamis.
+  - Menerima input 'identifier' yang mendukung penulisan Email, NIM, atau NIP untuk proses otentikasi fleksibel.
+  - Memasang panel kontrol visibilitas password menggunakan state Alpine.js lokal ('x-data="{ show: false }"') 
+    guna meminimalkan rendering ulang DOM.
+  - Menampilkan umpan balik kesalahan validasi ('$errors') serta pesan status session ('session('status')') 
+    secara responsif di bagian atas formulir.
+--}}
 
-    {{-- Heading --}}
+@section('form')
     <div class="mb-7">
         <h2 class="text-2xl sm:text-3xl font-bold text-base-content mb-1">Selamat Datang!</h2>
         <p class="text-sm text-base-content/60 font-medium">Login dulu ya best, biar bisa jajan sepuasnya. hehe</p>
     </div>
 
-    {{-- Error Alert --}}
     @if ($errors->any())
         <div class="bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-xl px-4 py-3 mb-5">
             {{ $errors->first() }}
         </div>
     @endif
 
-    {{-- Session Status --}}
     @if (session('status'))
         <div class="bg-fern-50 border border-fern-200 text-fern-700 text-sm font-medium rounded-xl px-4 py-3 mb-5">
             {{ session('status') }}
@@ -29,7 +35,6 @@
     <form action="{{ route('login') }}" method="POST" class="space-y-5">
         @csrf
 
-        {{-- Email/NIM/NIP --}}
         <div>
             <label class="block text-sm font-bold text-base-content mb-1.5">Email / NIM / NIP</label>
             <input type="text" name="identifier" value="{{ old('identifier') }}"
@@ -38,7 +43,6 @@
                        @error('identifier') border-red-400 @enderror" />
         </div>
 
-        {{-- Password --}}
         <div x-data="{ show: false }">
             <label class="block text-sm font-bold text-base-content mb-1.5">Password</label>
             <div class="relative">
@@ -64,7 +68,6 @@
             </div>
         </div>
 
-        {{-- Remember Me + Lupa Password --}}
         <div class="flex items-center justify-between">
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="remember" class="checkbox checkbox-sm rounded border-base-content/30" />
@@ -76,7 +79,6 @@
             </a>
         </div>
 
-        {{-- Submit --}}
         <button type="submit"
             class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
             Masuk

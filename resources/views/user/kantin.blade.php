@@ -3,6 +3,11 @@
 @section('title', $canteen->name . ' - PNC')
 
 @section('content')
+    {{-- 
+      Memuat seluruh data menu kantin ke dalam objek JSON Alpine.js di sisi klien 
+      agar fitur pencarian kata kunci dan filter kategori menu dapat berjalan secara instan, 
+      responsif, dan hemat bandwidth tanpa memicu request AJAX ke server.
+    --}}
     <main class="min-h-screen bg-base-100 pb-12" x-data="{
         selectedCategory: 'Semua Kategori',
         searchQuery: '',

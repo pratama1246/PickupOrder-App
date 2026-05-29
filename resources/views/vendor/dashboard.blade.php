@@ -3,13 +3,16 @@
 @section('title', 'Dashboard - Vendor PNC')
 
 @section('content')
+    {{-- 
+      Membatasi nilai persentase visualisasi maksimal 100% agar lebar element progress bar 
+      tidak meluap keluar (overflow) dari wadah penampung jika pendapatan harian melampaui target.
+    --}}
     @php
         $dailyTarget = $canteen->daily_target ?? 500000;
         $targetPercentageReal = $dailyTarget > 0 ? round(($stats['pendapatan_hari_ini'] / $dailyTarget) * 100) : 0;
         $chartSeries = min(100, $targetPercentageReal);
     @endphp
     <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-10 lg:pb-0">
-        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
                 <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Dashboard Kantin</h1>
@@ -17,6 +20,10 @@
                     Berikut performa hari ini.</p>
             </div>
 
+            {{-- 
+              Menggunakan Alpine.js dan Fetch API untuk toggle status buka/tutup kantin secara async 
+              tanpa reload halaman penuh demi kemudahan operasional pemilik kantin.
+            --}}
             <div x-data="{
                 isOpen: {{ $canteen->is_open ? 'true' : 'false' }},
                 isLoading: false,
@@ -62,7 +69,6 @@
             </div>
         </div>
 
-        <!-- Alert Stok Habis -->
         @if ($stats['menu_habis'] > 0)
             <div
                 class="alert alert-warning shadow-sm border border-warning/20 bg-warning/10 rounded-2xl p-3 sm:p-4 flex gap-3 text-xs sm:text-sm">
@@ -76,7 +82,6 @@
             </div>
         @endif
 
-        <!-- Daily Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <x-stat-card label="Pendapatan Hari Ini"
                 value="Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}" :growth="$stats['pendapatan_growth']"
@@ -124,9 +129,7 @@
             </x-stat-card>
         </div>
 
-        <!-- Charts Row -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <!-- Active Orders Table -->
             <div class="lg:col-span-2 bg-base-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
                 <div class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-vanilla-custard-50">
                     <h2 class="text-md sm:text-lg font-semibold text-base-content">Pesanan Aktif</h2>
@@ -184,9 +187,7 @@
                 </div>
             </div>
 
-            <!-- Status Antrean (Queue Status) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col gap-3 sm:gap-4 h-full">
-                <!-- Card Menunggu (Bold / Highlighted) -->
                 <a href="{{ route('vendor.order.index', ['status' => 'menunggu']) }}"
                     class="flex-1 bg-linear-to-br from-fern-700 to-fern-900 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between transition-all duration-300">
                     <p class="text-sm font-medium text-fern-100">Menunggu</p>
@@ -207,7 +208,6 @@
                     </div>
                 </a>
 
-                <!-- Card Dimasak -->
                 <a href="{{ route('vendor.order.index', ['status' => 'dimasak']) }}"
                     class="flex-1 bg-linear-to-br from-vanilla-custard-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
                     <p class="text-sm font-medium text-base-content/60">Dimasak</p>
@@ -230,7 +230,6 @@
                     </div>
                 </a>
 
-                <!-- Card Siap Pickup -->
                 <a href="{{ route('vendor.order.index', ['status' => 'siap_diambil']) }}"
                     class="flex-1 bg-linear-to-br from-emerald-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
                     <p class="text-sm font-medium text-base-content/60">Siap Pickup</p>
@@ -251,7 +250,6 @@
                     </div>
                 </a>
 
-                <!-- Card Dibatalkan -->
                 <a href="{{ route('vendor.order.index', ['status' => 'dibatalkan']) }}"
                     class="flex-1 bg-linear-to-br from-rose-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
                     <p class="text-sm font-medium text-base-content/60">Dibatalkan</p>
@@ -274,19 +272,15 @@
             </div>
         </div>
 
-        <!-- Best Sellers & Category Distribution -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <!-- Best Sellers Chart -->
             <div
                 class="lg:col-span-2 bg-vanilla-custard-50 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
                 <h2 class="text-base font-semibold text-base-content mb-4">Top 5 Menu Laris</h2>
                 <div id="bestSellerChart" class="w-full h-75"></div>
             </div>
 
-            <!-- Target Pendapatan Harian -->
             <div
                 class="lg:col-span-1 bg-base-100 rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
-                <!-- Background decoration glow -->
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-vanilla-custard-100/50 rounded-full blur-2xl"></div>
                 <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-50 rounded-full blur-2xl"></div>
 
@@ -296,8 +290,6 @@
                     $ordersNeeded   = ($aovToday > 0 && $remaining > 0) ? (int) ceil($remaining / $aovToday) : null;
                 @endphp
                 <div class="relative z-10 w-full flex flex-col h-full gap-4">
-
-                    {{-- Header --}}
                     <div class="flex items-start justify-between">
                         <div>
                             <h2 class="text-base font-semibold text-base-content">Target Pendapatan Hari Ini</h2>
@@ -314,7 +306,6 @@
                         </button>
                     </div>
 
-                    {{-- Primary revenue figure --}}
                     <div>
                         <div class="flex items-baseline gap-1.5 flex-wrap">
                             <span class="text-3xl sm:text-4xl font-bold text-fern-700 leading-none">
@@ -324,7 +315,6 @@
                         <p class="text-xs text-base-content/50 font-medium mt-1.5">Pendapatan hari ini</p>
                     </div>
 
-                    {{-- Progress bar + percentage --}}
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <span class="text-[11px] font-semibold text-base-content/50 tracking-wide">Progres</span>
@@ -340,7 +330,6 @@
                         </div>
                     </div>
 
-                    {{-- 3-column breakdown: Target / Tercapai / Sisa --}}
                     <div class="grid grid-cols-2 gap-2 bg-base-200/40 rounded-xl p-3">
                         <div>
                             <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Target</p>
@@ -354,7 +343,6 @@
                         </div>
                     </div>
 
-                    {{-- Contextual orders-needed hint --}}
                     @if ($ordersNeeded !== null)
                         <div class="flex items-center gap-2 px-3 py-2 rounded-md bg-fern-50 border border-fern-100">
                             <p class="text-xs font-medium text-fern-800 leading-snug">
@@ -367,7 +355,6 @@
                         </div>
                     @endif
 
-                    {{-- Status footer: qualitative insight, not a repeat of the Sisa column --}}
                     <div class="mt-auto pt-3 border-t border-base-200/70">
                         @php
                             [$footerDot, $footerText, $footerColor] = match (true) {
@@ -418,7 +405,6 @@
                     </div>
                 </div>
 
-                <!-- Modal Edit Target (Menggunakan Bawaan Proyek) -->
                 <x-modal id="editTargetModal" title="Atur Target Harian" :showFooter="false">
                     <form action="{{ route('vendor.canteen.target') }}" method="POST" class="mt-2">
                         @csrf
@@ -446,9 +432,7 @@
             </div>
         </div>
 
-        <!-- Rating & Trend Penjualan -->
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 mb-6">
-            <!-- Rating Kantin -->
             <div
                 class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
                 <div>
@@ -485,7 +469,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Reviews -->
                 <div class="space-y-3 max-h-56 overflow-y-auto pr-1">
                     @forelse($recentReviews as $review)
                         <div class="flex items-start gap-3 p-3 bg-base-200/40 rounded-2xl">
@@ -518,7 +501,6 @@
                 </div>
             </div>
 
-            <!-- Revenue & Orders Chart -->
             <div
                 class="lg:col-span-3 bg-vanilla-custard-50 rounded-2xl shadow-sm p-4 sm:p-5 flex flex-col justify-between">
                 <h2 class="text-base font-semibold text-base-content mb-4">Tren Transaksi 7 Hari Terakhir</h2>
@@ -533,7 +515,8 @@
 @push('scripts')
     <script>
         window.addEventListener("load", function() {
-            // Trend Chart
+            // Membuat grafik tren transaksi gabungan: Pendapatan (skala kiri, Rupiah) dan frekuensi transaksi (skala kanan, Transaksi) 
+            // agar vendor dapat menganalisis korelasi peningkatan omzet dengan jumlah transaksi harian.
             const trendOptions = {
                 series: [{
                     name: 'Pendapatan',
@@ -603,7 +586,6 @@
             const trendChart = new ApexCharts(document.querySelector("#trendChart"), trendOptions);
             trendChart.render();
 
-            // Best Sellers Chart
             const bestSellerOptions = {
                 series: [{
                     name: 'Terjual',

@@ -1,7 +1,17 @@
 @props(['order'])
 
+{{-- 
+  Komponen Card Ringkasan Pesanan (Sisi Mahasiswa):
+  - Menampilkan ringkasan informasi pesanan tunggal (kode pesanan, waktu pengambilan, status, kantin, rincian barang, total biaya).
+  - Menggabungkan taktik stretched-link ('absolute inset-0 z-10') dengan lapisan z-index tinggi ('relative z-20') 
+    pada elemen form/tombol interaktif internal sehingga pengguna bisa mengklik kartu untuk detail pesanan, 
+    tanpa merusak fungsionalitas tombol aksi.
+  - Menyediakan cabang logika aksi berdasarkan status pesanan:
+    - Status selesai/dibatalkan: Memunculkan form POST untuk "Beli Lagi" (reorder) dan tautan ke halaman detail.
+    - Status berjalan (menunggu/proses/siap): Memunculkan tombol utama "Pantau Antrian" untuk pelacakan real-time.
+--}}
+
 <div class="bg-vanilla-custard-50 border border-base-content/30 rounded-3xl p-4 sm:p-10 shadow-sm relative">
-    <!-- Stretched Link -->
     <a href="{{ route('order.show', $order->id) }}" class="absolute inset-0 z-10 rounded-3xl"
         aria-label="Detail Pesanan {{ $order->order_code }}"></a>
 

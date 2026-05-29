@@ -5,7 +5,8 @@
 @section('content')
     <main class="min-h-screen bg-base-100 pb-12" x-data="{
         init() {
-            // Simple polling to refresh the page every 30 seconds if order is active
+            // Melakukan polling berkala setiap 30 detik untuk mendeteksi perubahan status pesanan di database
+            // secara otomatis, sehingga status antrian / proses masak ter-update tanpa memerlukan koneksi WebSocket.
             if ({{ in_array($order->status, ['menunggu', 'dimasak']) ? 'true' : 'false' }}) {
                 setInterval(() => {
                     window.location.reload();
@@ -78,16 +79,13 @@
                         @endif
                     </div>
 
-                    <!-- Stepper untuk Mobile (Vertical) -->
                     <div class="block md:hidden pb-8 mb-8">
                         <div class="relative flex flex-col gap-6 pl-6">
-                            <!-- Vertical Connecting Line -->
                             <div class="absolute top-6 bottom-6 left-[46px] w-1 bg-gray-300 z-0">
                                 <div class="w-full bg-fern-700 transition-all duration-500"
                                     style="height: {{ $step > 1 ? ($step - 1) * 20 : 0 }}%"></div>
                             </div>
 
-                            <!-- Step 1: Belum Dibayar -->
                             <div class="relative z-10 flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 1 ? ($step > 1 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -109,7 +107,6 @@
                                 </div>
                             </div>
 
-                            <!-- Step 2: Menunggu Konfirmasi -->
                             <div class="relative z-10 flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 2 ? ($step > 2 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -131,7 +128,6 @@
                                 </div>
                             </div>
 
-                            <!-- Step 3: Dalam Antrian -->
                             <div class="relative z-10 flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 3 ? ($step > 3 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -153,7 +149,6 @@
                                 </div>
                             </div>
 
-                            <!-- Step 4: Sedang Dimasak -->
                             <div class="relative z-10 flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 4 ? ($step > 4 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -177,7 +172,6 @@
                                 </div>
                             </div>
 
-                            <!-- Step 5: Siap Diambil -->
                             <div class="relative z-10 flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 5 ? ($step > 5 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -199,7 +193,6 @@
                                 </div>
                             </div>
 
-                            <!-- Step 6: Selesai -->
                             <div class="relative z-10 flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $step >= 6 ? 'bg-fern-700 text-white' : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -218,18 +211,16 @@
                         </div>
                     </div>
 
-                    <!-- Stepper untuk Desktop (Horizontal Scrollable) -->
                     <div class="hidden md:block w-full overflow-x-auto pb-8 mb-8">
                         <div
                             class="relative flex justify-between items-start w-full min-w-[800px] max-w-5xl mx-auto pt-6 px-4">
 
-                            <!-- Connecting Lines (behind circles) -->
+
                             <div class="absolute top-[64px] left-16 right-16 h-1 bg-gray-300 z-0">
                                 <div class="h-full bg-fern-700 transition-all duration-500"
                                     style="width: {{ $step > 1 ? ($step - 1) * 20 : 0 }}%"></div>
                             </div>
 
-                            <!-- Step 1: Belum Dibayar -->
                             <div class="relative z-10 flex flex-col items-center w-32">
                                 <div
                                     class="w-20 h-20 rounded-full flex items-center justify-center {{ $step >= 1 ? ($step > 1 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -244,7 +235,6 @@
                                     Belum<br>Dibayar</p>
                             </div>
 
-                            <!-- Step 2: Menunggu Konfirmasi -->
                             <div class="relative z-10 flex flex-col items-center w-32">
                                 <div
                                     class="w-20 h-20 rounded-full flex items-center justify-center {{ $step >= 2 ? ($step > 2 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -259,7 +249,6 @@
                                     Menunggu<br>Konfirmasi</p>
                             </div>
 
-                            <!-- Step 3: Dalam Antrian -->
                             <div class="relative z-10 flex flex-col items-center w-32">
                                 <div
                                     class="w-20 h-20 rounded-full flex items-center justify-center {{ $step >= 3 ? ($step > 3 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -274,7 +263,6 @@
                                     Dalam<br>Antrian</p>
                             </div>
 
-                            <!-- Step 4: Sedang Dimasak -->
                             <div class="relative z-10 flex flex-col items-center w-32">
                                 <div
                                     class="w-20 h-20 rounded-full flex items-center justify-center {{ $step >= 4 ? ($step > 4 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -291,7 +279,6 @@
                                     Sedang Di<br>masak</p>
                             </div>
 
-                            <!-- Step 5: Siap Diambil -->
                             <div class="relative z-10 flex flex-col items-center w-32">
                                 <div
                                     class="w-20 h-20 rounded-full flex items-center justify-center {{ $step >= 5 ? ($step > 5 ? 'bg-fern-700 text-white' : 'bg-vanilla-custard-300 text-base-content') : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -306,7 +293,6 @@
                                     Siap Di<br>Ambil</p>
                             </div>
 
-                            <!-- Step 6: Selesai -->
                             <div class="relative z-10 flex flex-col items-center w-32">
                                 <div
                                     class="w-20 h-20 rounded-full flex items-center justify-center {{ $step >= 6 ? 'bg-fern-700 text-white' : 'bg-gray-300 text-base-content/70' }} shadow-sm transition-colors">
@@ -328,7 +314,6 @@
                 <h2 class="text-xl font-bold text-base-content mb-4">Detail Order</h2>
 
                 <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-                    <!-- Kiri: Detail Items dan Banner Pembayaran -->
                     <div class="w-full lg:flex-1 min-w-0 space-y-6">
 
                         {{-- Informasi: Pesanan pending diarahkan ke halaman Riwayat untuk membayar --}}
@@ -462,11 +447,9 @@
                         </div>
                     </div>
 
-                    <!-- Kanan: Ringkasan & Aksi -->
                     <div class="w-full lg:w-80 xl:w-96 shrink-0">
                         <div class="space-y-6 sticky top-24">
                             @if ($step == 5)
-                                <!-- QR Code Section -->
                                 <div
                                     class="bg-white border border-base-content/15 rounded-3xl p-5 text-center shadow-sm">
                                     <p class="text-xs font-bold text-base-content/70 uppercase mb-3">Kode Pengambilan
@@ -479,7 +462,6 @@
                                 </div>
                             @endif
 
-                            <!-- Summary Card -->
                             <div class="bg-white border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
                                 <h3 class="text-lg font-bold text-base-content mb-2">Total Belanja</h3>
                                 <p class="text-3xl font-extrabold text-base-content mb-6">{{ $order->formatted_total }}
@@ -700,7 +682,11 @@
 @endsection
 
 @push('scripts')
-    {{-- Load QRious JS for QR Code generation --}}
+    {{-- 
+      Menghasilkan gambar QR Code berdasarkan kode pengambilan menggunakan QRious. 
+      Tingkat koreksi kesalahan (level) diatur ke 'H' agar tetap mudah terbaca oleh kamera vendor 
+      meskipun kecerahan layar ponsel pembeli rendah atau memiliki goresan fisik.
+    --}}
     @if ($step == 5)
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
         <script>
@@ -712,7 +698,7 @@
                         value: '{{ $order->pickup_code }}',
                         size: 180,
                         level: 'H',
-                        foreground: '#1F2937', // dark text-base-content
+                        foreground: '#1F2937',
                         background: '#ffffff'
                     });
                 }

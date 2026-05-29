@@ -6,7 +6,10 @@
 
     <div class="max-w-8xl mx-auto space-y-6 pb-10 lg:pb-0" x-data="{ activeTab: 'menu' }" x-cloak>
 
-        <!-- 1. Header Actions & Breadcrumb -->
+        {{-- 
+          Navigasi tab 'menu' dan 'order' dikontrol di sisi klien menggunakan Alpine.js activeTab 
+          untuk performa perpindahan tab yang cepat tanpa memicu reload halaman penuh.
+        --}}
         <a href="{{ route('admin.kantin.index') }}"
             class="btn btn-sm btn-ghost gap-1 px-2 mb-2 text-base-content/70 hover:bg-base-200 transition-colors w-fit flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -24,7 +27,6 @@
                         transaksi kantin.</p>
                 </div>
 
-                <!-- Action Buttons (Mobile only, Icon-only) -->
                 <div class="flex md:hidden items-center gap-2 shrink-0">
                     <button type="button"
                         onclick="document.getElementById('delete_canteen_modal_{{ $canteen->id }}').showModal()"
@@ -46,7 +48,6 @@
                 </div>
             </div>
 
-            <!-- Action Buttons (Desktop only) -->
             <div class="hidden md:flex items-center gap-2 shrink-0">
                 <button type="button"
                     onclick="document.getElementById('delete_canteen_modal_{{ $canteen->id }}').showModal()"
@@ -60,9 +61,7 @@
             </div>
         </div>
 
-        <!-- 2. Hero Banner & Vendor Info -->
         <div class="bg-white rounded-3xl shadow-sm border border-base-200 overflow-hidden flex flex-col md:flex-row">
-            <!-- Image Section -->
             <div class="w-full md:w-1/3 h-48 md:h-auto relative bg-base-200">
                 <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
                     <span class="loading loading-bars loading-lg"></span>
@@ -75,7 +74,7 @@
                     <img src="{{ asset('assets/food/es teh.jpg') }}" alt="{{ $canteen->name }}"
                         class="w-full h-full object-cover opacity-80 relative" />
                 @endif
-                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden z-20"></div>
+                <div class="absolute inset-0 bg-linear-to-t from-black/50 to-transparent md:hidden z-20"></div>
                 <div class="absolute bottom-4 left-4 md:hidden z-20">
                     @if ($canteen->is_open)
                         <span
@@ -91,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- Info Section -->
             <div class="p-6 md:p-8 flex-1 flex flex-col justify-center">
                 <div class="flex items-start justify-between mb-2">
                     <div>
@@ -117,6 +115,10 @@
                 <div class="divider my-4"></div>
 
                 <div class="flex items-center gap-3">
+                    {{-- 
+                      Menggunakan event 'onerror' untuk menangani kasus di mana avatar pemilik gagal dimuat
+                      dengan cara menyembunyikan tag img dan menampilkan inisial teks sebagai avatar fallback.
+                    --}}
                     @if (optional($canteen->owner)->avatar)
                         <div
                             class="w-12 h-12 rounded-full bg-base-200 ring-2 ring-fern-200 flex items-center justify-center shrink-0 overflow-hidden">
@@ -149,7 +151,6 @@
             </div>
         </div>
 
-        <!-- 3. Stat Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <x-stat-card label="Total Menu" value="{{ $canteen->menus_count }} Menu" />
             <x-stat-card label="Total Pesanan" value="{{ $canteen->orders_count }} Pesanan" />
@@ -159,7 +160,6 @@
                 valueColor="text-fern-700" />
         </div>
 
-        <!-- 4. Tabbed Content (Menus & Orders) -->
         <div class="bg-white rounded-2xl shadow-sm border border-base-200 overflow-hidden mt-8">
             <div
                 class="flex items-center gap-6 px-6 border-b border-base-200 overflow-x-auto scrollbar-hide bg-base-100/50">
@@ -178,7 +178,6 @@
             </div>
 
             <div class="p-0">
-                <!-- TAB: MENU -->
                 <div x-show="activeTab === 'menu'" x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
                     <div class="overflow-x-auto">
@@ -247,7 +246,6 @@
                     @endif
                 </div>
 
-                <!-- TAB: ORDERS -->
                 <div x-show="activeTab === 'order'" style="display: none;"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
@@ -311,7 +309,7 @@
 
     </div>
 
-    <!-- Delete Confirmation Modal -->
+
     <x-modal id="delete_canteen_modal_{{ $canteen->id }}" type="error" title="Hapus Kantin">
         Apakah Anda yakin ingin menghapus kantin <strong>{{ $canteen->name }}</strong>? Seluruh data menu dan pesanan
         terkait akan ikut terhapus.

@@ -2,6 +2,14 @@
     'role' => 'user',
 ])
 
+{{-- 
+  Komponen Navigasi Dock Bawah (Mobile-First):
+  - Hanya muncul pada ukuran layar mobile/tablet ('lg:hidden').
+  - Menerima prop 'role' ('user', 'vendor', atau 'admin') untuk me-render daftar tautan menu yang sesuai.
+  - Memanfaatkan fungsi penolong request()->is() untuk menerapkan status kelas aktif ('dock-active text-fern-700') 
+    secara dinamis pada tautan navigasi yang sedang dibuka oleh pengguna.
+--}}
+
 <div class="dock lg:hidden bg-base-100 shadow-lg border-t border-base-200 z-50">
     @if ($role === 'admin')
         <a href="/admin/dashboard"

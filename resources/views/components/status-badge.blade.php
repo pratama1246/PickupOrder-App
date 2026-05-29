@@ -1,5 +1,12 @@
 @props(['status' => ''])
 
+{{-- 
+  Komponen Status Badge Global:
+  - Menerima prop 'status' (misalnya: Menunggu, Diproses, Selesai, Dibatalkan) secara case-insensitive.
+  - Memetakan status ke konfigurasi kelas Tailwind khusus untuk warna latar belakang (bg) dan teks.
+  - Menyertakan fallback gaya abu-abu untuk status yang tidak terdefinisi guna menghindari error rendering.
+--}}
+
 @php
     $statusLower = strtolower($status);
     $config = [

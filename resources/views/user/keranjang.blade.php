@@ -36,7 +36,7 @@
                 for (let id in this.items) {
                     if (this.items[id].canteenId === canteenId) {
                         this.items[id].selected = checked;
-                        // Sync checkbox DOM
+                        // Menyelaraskan keadaan checked state checkbox input tersembunyi dengan data state Alpine
                         const cb = document.querySelector(`input[name='selected_menu_ids[]'][value='${id}']`);
                         if (cb) cb.checked = checked;
                     }
@@ -55,7 +55,7 @@
         
                 item.qty = newQty;
         
-                // Sync ke backend di latar belakang (debounced)
+                // Debounce sync ke server sebesar 400ms untuk mencegah spam request ketika user mengubah kuantitas secara cepat
                 clearTimeout(this.updateTimeout);
                 this.updateTimeout = setTimeout(() => {
                     this.syncWithBackend(itemId, item.qty);
@@ -111,7 +111,6 @@
 
                             <div class="flex items-center justify-between mb-5">
                                 <div class="flex items-center gap-3">
-                                    {{-- Checkbox Pilih Semua per kantin --}}
                                     <label class="flex items-center cursor-pointer">
                                         <input
                                             type="checkbox"
@@ -193,7 +192,6 @@
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
 
-                        // Swap kontainer keranjang utama
                         const newCartContainer = doc.getElementById('cart-container');
                         if (newCartContainer) {
                             cartContainer.innerHTML = newCartContainer.innerHTML;
@@ -224,7 +222,6 @@
 
                     e.preventDefault();
 
-                    // Cari tombol submit yang memicu event
                     const submitBtn = e.submitter || form.querySelector('button[type="submit"]');
                     let originalContent = '';
                     if (submitBtn) {

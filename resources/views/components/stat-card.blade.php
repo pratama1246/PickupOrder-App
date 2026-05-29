@@ -9,6 +9,15 @@
     'reserveMetaSpace' => false,
 ])
 
+{{-- 
+  Komponen Stat Card (KPI Widget) Global:
+  - Menyediakan tampilan kartu metrik performa bisnis dengan beberapa preset varian warna (default, highlight, emerald, dll.).
+  - Menganalisis prop 'growth' secara dinamis untuk menentukan kelas warna tren (positif hijau / negatif merah) 
+    serta menampilkan ikon arah panah SVG (naik/turun) yang sesuai.
+  - Memiliki fitur 'reserveMetaSpace' guna menyisipkan placeholder kosong berukuran tetap agar tinggi antar kartu 
+    dalam satu baris dashboard tetap presisi dan sejajar, meskipun sebagian kartu tidak memiliki info subtext/growth.
+--}}
+
 @php
     $variants = [
         'default' => [

@@ -4,9 +4,12 @@
 
 @section('content')
 
+    {{-- 
+      Menggunakan global helper `initLiveSearch` untuk memfasilitasi pencarian menu secara real-time via AJAX 
+      sehingga meminimalkan reload halaman penuh untuk kenyamanan navigasi vendor.
+    --}}
     <div class="max-w-8xl pb-10 lg:pb-0" id="vendor-menu-container" x-data="initLiveSearch('#vendor-menu-results')">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <!-- Title & Action Button -->
             <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
                 <div>
                     <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Menu</h1>
@@ -25,7 +28,6 @@
                 </div>
             </div>
 
-            <!-- Search, Filter & Action Button -->
             <form method="GET" action="{{ route('vendor.menu.index') }}" @submit.prevent
                 class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
 
@@ -46,7 +48,6 @@
                 </div>
 
                 @if (request('search'))
-                    <!-- Clear Search Button -->
                     <a href="{{ route('vendor.menu.index') }}"
                         class="btn btn-md bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 active:scale-95 transition-all w-fit sm:w-auto shrink-0"
                         title="Kembali ke daftar lengkap">
@@ -70,8 +71,6 @@
                 </div>
             </form>
         </div>
-
-
 
         <div id="vendor-menu-results">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -114,7 +113,6 @@
         </div>
     </div>
 
-    <!-- Global Delete Modal -->
     <x-modal id="global_delete_modal" type="error" title="Hapus Menu" subtitle="Tindakan ini tidak dapat dibatalkan">
         Apakah Anda yakin ingin menghapus menu <strong id="delete_menu_name"></strong>? Data pesanan yang terkait mungkin
         akan ikut terarsipkan.
@@ -138,6 +136,8 @@
 
 @push('scripts')
     <script>
+        // Menggunakan satu instance modal global dan mengisi nilainya secara dinamis demi menghindari 
+        // duplikasi markup modal hapus pada setiap item kartu makanan (optimasi ukuran DOM).
         function openDeleteModal(name, url) {
             document.getElementById('delete_menu_name').innerText = name;
             document.getElementById('delete_menu_form').action = url;

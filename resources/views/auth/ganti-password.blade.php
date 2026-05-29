@@ -4,16 +4,22 @@
 
 @section('hero-title', 'Satu Langkah Lagi Buat Mulai Pesan Makanan!')
 
-@section('form')
+{{-- 
+  Halaman Ganti Password Baru (Login Pertama Kali):
+  - Memperluas layout 'layouts.auth' untuk menyelaraskan visual form di atas backdrop gradien mesh dinamis.
+  - Memanfaatkan modul input terisolasi dengan state Alpine.js lokal ('x-data="{ show: false }"') 
+    untuk mengendalikan visibilitas input password (tipe 'text' vs 'password') di sisi klien.
+  - Menampilkan blok peringatan kesalahan validasi tingkat pertama ('$errors->any()') 
+    serta menandai kolom input yang tidak valid secara visual dengan direktori '@error'.
+--}}
 
-    {{-- Heading --}}
+@section('form')
     <div class="mb-7">
         <h2 class="text-2xl sm:text-3xl font-extrabold text-base-content mb-1">Buat Password Baru</h2>
         <p class="text-sm text-base-content/60 font-medium">Ini login pertamamu, yuk ganti password default dulu biar aman.
         </p>
     </div>
 
-    {{-- Error Alert --}}
     @if ($errors->any())
         <div class="bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-xl px-4 py-3 mb-5">
             {{ $errors->first() }}
@@ -23,7 +29,6 @@
     <form action="{{ route('password.change') }}" method="POST" class="space-y-5">
         @csrf
 
-        {{-- Password Baru --}}
         <div x-data="{ show: false }">
             <label class="block text-sm font-bold text-base-content mb-1.5">Password Baru</label>
             <div class="relative">
@@ -49,7 +54,6 @@
             </div>
         </div>
 
-        {{-- Konfirmasi Password --}}
         <div x-data="{ show: false }">
             <label class="block text-sm font-bold text-base-content mb-1.5">Konfirmasi Password</label>
             <div class="relative">
@@ -74,7 +78,6 @@
             </div>
         </div>
 
-        {{-- Submit --}}
         <button type="submit"
             class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
             Simpan Password

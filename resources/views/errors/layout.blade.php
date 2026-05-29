@@ -1,3 +1,11 @@
+{{-- 
+  Layout Utama Halaman Error (Global Error Layout):
+  - Berperan sebagai kontainer dasar untuk merender seluruh halaman kesalahan HTTP (403, 404, 419, 429, 500, 503).
+  - Mengimpor bundel aset Vite ('app.css' & 'app.js') untuk memuat gaya desain premium DaisyUI dan eksekusi Alpine.js.
+  - Menyediakan pola dekoratif latar grid radial ('error-grid-bg') dan kontainer isi dinamis ('@yield('content')').
+  - Menyertakan tombol navigasi universal: tombol kembali (menggunakan pemicu histori peramban 'window.history.back()') 
+    dan tombol kembali ke beranda utama.
+--}}
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 
@@ -6,9 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title', 'Terjadi Kesalahan') - Pickup Order PNC</title>
-    <!-- Alpine.js -->
 
-    <!-- Vite CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .error-grid-bg {
@@ -22,10 +28,8 @@
     class="bg-vanilla-custard-50 text-shadow-grey-900 min-h-screen flex items-center justify-center error-grid-bg font-sans selection:bg-fern-200 selection:text-fern-900">
 
     <div class="max-w-3xl w-full px-6 py-12 text-center">
-        <!-- Main Content -->
         @yield('content')
 
-        <!-- Navigation Buttons -->
         <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button onclick="window.history.back()"
                 class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-white border border-shadow-grey-200 text-shadow-grey-700 font-semibold shadow-sm hover:bg-shadow-grey-50 hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">

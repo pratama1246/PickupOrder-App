@@ -29,6 +29,10 @@
                 @enderror
             </div>
 
+            {{-- 
+              Input pemilik (owner/vendor) dinonaktifkan (disabled) karena relasi kepemilikan kantin 
+              bersifat permanen. Perubahan nama/email pemilik harus dilakukan via Manajemen Pengguna.
+            --}}
             <div>
                 <label class="block text-sm font-bold text-base-content mb-1.5">Pengelola (Vendor)</label>
                 <input type="text" value="{{ $canteen->owner->name }} ({{ $canteen->owner->email }})" disabled
@@ -59,6 +63,10 @@
                 @enderror
             </div>
 
+            {{-- 
+              Menentukan path URL gambar kantin saat ini (apakah menggunakan gambar default/seeding di public 
+              atau berkas unggahan baru di storage) agar image preview Alpine.js memuat gambar yang benar.
+            --}}
             @php
                 $currentImageUrl = '';
                 if ($canteen->image) {
@@ -67,6 +75,10 @@
                         : asset('storage/' . $canteen->image);
                 }
             @endphp
+            {{-- 
+              Menggunakan Alpine.js untuk menampilkan gambar lama, lalu menggantinya secara instan 
+              dengan pratinjau (local preview) file baru jika ada berkas yang dipilih dari komputer.
+            --}}
             <div x-data="{ imageUrl: '{{ $currentImageUrl }}' }">
                 <label class="block text-sm font-bold text-base-content mb-1.5">Gambar Kantin</label>
                 <label

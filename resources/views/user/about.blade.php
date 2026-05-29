@@ -11,7 +11,6 @@
     <div class="px-4 sm:px-10 md:px-16 lg:px-24 pb-16 pt-8">
         <div class="max-w-4xl mx-auto space-y-12">
             
-            {{-- 1. Tentang Pickup Order PNC --}}
             <section>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-base-content mb-4">
                     Tentang Pickup Order PNC
@@ -21,7 +20,6 @@
                 </p>
             </section>
 
-            {{-- 2. Mengapa Platform Ini Dibuat --}}
             <section class="bg-vanilla-custard-50 rounded-3xl p-6 sm:p-8 border border-base-content/10 shadow-sm">
                 <h2 class="text-2xl font-bold text-base-content mb-3">Mengapa Platform Ini Dibuat</h2>
                 <p class="text-base-content/80 font-medium leading-relaxed">
@@ -29,7 +27,6 @@
                 </p>
             </section>
 
-            {{-- 3. Cara Kerja --}}
             <section>
                 <h2 class="text-2xl font-bold text-base-content mb-5">Cara Kerja</h2>
                 <div class="space-y-5">
@@ -57,9 +54,7 @@
                 </div>
             </section>
 
-            {{-- Manfaat (Grid 2 Kolom) --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- 4. Manfaat Bagi Mahasiswa --}}
                 <section class="bg-base-100 border border-base-200 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <h2 class="text-xl font-bold text-base-content mb-4">Manfaat Bagi Mahasiswa</h2>
                     <ul class="space-y-3">
@@ -84,7 +79,6 @@
                     </ul>
                 </section>
 
-                {{-- 5. Manfaat Bagi Kantin --}}
                 <section class="bg-base-100 border border-base-200 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <h2 class="text-xl font-bold text-base-content mb-4">Manfaat Bagi Kantin</h2>
                     <ul class="space-y-3">
@@ -110,7 +104,6 @@
                 </section>
             </div>
 
-            {{-- 6. Tujuan Pengembangan Platform --}}
             <section class="bg-emerald-50 rounded-3xl p-6 sm:p-8 border border-emerald-100">
                 <h2 class="text-2xl font-bold text-base-content mb-3">Tujuan Pengembangan Platform</h2>
                 <p class="text-base-content/80 font-medium leading-relaxed">

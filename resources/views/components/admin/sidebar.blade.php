@@ -1,3 +1,11 @@
+{{-- 
+  Komponen Sidebar Dashboard Admin:
+  - Menyusun panel menu samping persisten untuk dasbor Administrator.
+  - Membandingkan pola rute aktif menggunakan 'request()->is()' untuk mengaktifkan 
+    kelas visual warna latar belakang bernuansa custom token warna secara dinamis.
+  - Menyertakan tombol pintas keluar (logout) yang memicu submit form POST ('admin-logout-form') 
+    secara aman di bagian footer sidebar.
+--}}
 <aside class="w-64 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
     <nav class="flex-1 px-3 py-4 space-y-1">
 

@@ -1,3 +1,10 @@
+{{-- 
+  Layout Utama Aplikasi (Sisi Mahasiswa / User):
+  - Menyediakan metadata global, csrf-token untuk otentikasi AJAX request, serta integrasi aset Vite (CSS/JS).
+  - Menyertakan padding bawah ('pb-16 lg:pb-0') untuk mencegah konten halaman tertutup/tumpang tindih 
+    oleh bottom dock ('x-dock') yang aktif pada mode tampilan mobile.
+  - Memasang komponen kerangka global seperti navbar atas, bottom-nav dock, footer, dan toast notifikasi.
+--}}
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 

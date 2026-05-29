@@ -8,11 +8,18 @@
     'cartId' => null,
 ])
 
+{{-- 
+  Komponen Card Item Keranjang Belanja:
+  - Berinteraksi secara dua arah dengan state Alpine.js di halaman induk (seperti array 'items' dan fungsi 'changeQty' / 'toggleItem').
+  - Mengimplementasikan klik permukaan luar card ('toggleCard') untuk memicu centang checkbox item 
+    dengan filter pengabaian event ('e.target.closest') guna menghindari konflik gelembung event (event bubbling) 
+    saat mengklik elemen interaktif internal seperti tombol kuantitas, form, input, dan dialog modal.
+  - Memanfaatkan reaktivitas Alpine.js untuk menghitung subtotal harga menu secara instan di sisi klien.
+--}}
 <div class="cart-item-card border transition-all duration-200 rounded-2xl p-4 sm:p-5 cursor-pointer select-none"
      :class="items[{{ $itemId }}] && items[{{ $itemId }}].selected ? 'bg-fern-100/80 border-fern-300 shadow-xs' : 'bg-white border-base-content/20'"
      x-data="{
          toggleCard(e) {
-             // Abaikan jika klik mengenai tombol, form, input, label checkbox, atau di dalam dialog modal
              if (e.target.closest('button') || e.target.closest('form') || e.target.closest('input') || e.target.closest('label') || e.target.closest('dialog')) {
                  return;
              }
@@ -24,10 +31,7 @@
          }
      }"
      @click="toggleCard($event)">
-    <!-- Responsive Flex Layout: Kolom di Mobile, Baris Tunggal di Desktop -->
     <div class="flex items-start sm:items-center gap-3">
-
-        {{-- Checkbox Pilih Item --}}
         <label class="hidden sm:flex items-center justify-center shrink-0 cursor-pointer">
             <input
                 type="checkbox"
@@ -40,10 +44,7 @@
             >
         </label>
 
-        {{-- Konten Item --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-1 min-w-0">
-
-        {{-- Kiri/Atas: Gambar & Info (Nama, Deskripsi) --}}
         <div class="flex items-center gap-3 sm:gap-4 min-w-0">
             <div
                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10">
@@ -58,7 +59,6 @@
                     <p class="text-xs text-base-content/60 font-medium mt-0.5 leading-snug line-clamp-1">
                         {{ $description }}</p>
                 @endif
-                {{-- Harga Desktop: Sembunyi di mobile, muncul di desktop --}}
                 <p class="hidden sm:block text-xs sm:text-sm font-semibold text-base-content/70 mt-1">
                     Rp. <span
                         x-text="(items[{{ $itemId }}].qty * items[{{ $itemId }}].price).toLocaleString('id-ID')">{{ number_format($price * $quantity, 0, ',', '.') }}</span>,00
@@ -66,10 +66,8 @@
             </div>
         </div>
 
-        {{-- Kanan/Bawah: Harga (Mobile) & Kontrol Kuantitas + Tombol Hapus --}}
         <div
             class="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t border-base-content/5 pt-3 sm:pt-0 sm:border-none">
-            {{-- Harga Mobile: Muncul hanya di mobile --}}
             <div class="block sm:hidden">
                 <p class="text-[10px] text-base-content/50 font-bold uppercase tracking-wider mb-0.5">Subtotal</p>
                 <p class="text-sm font-bold text-base-content">
@@ -79,7 +77,6 @@
             </div>
 
             <div class="flex items-center gap-2 sm:gap-4 shrink-0">
-                <!-- Quantity Controls via Parent Alpine State -->
                 <div class="flex items-center gap-1.5 sm:gap-2.5">
                     <button type="button" @click="changeQty({{ $itemId }}, -1)"
                         class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95"
@@ -105,7 +102,6 @@
                     </button>
                 </div>
 
-                <!-- Delete Button (Triggers Modal) -->
                 <button type="button"
                     onclick="document.getElementById('delete_modal_{{ $itemId }}').showModal()"
                     class="w-8 h-8 flex items-center justify-center text-red-500 hover:text-red-700 transition-colors active:scale-90">
@@ -116,7 +112,6 @@
                     </svg>
                 </button>
 
-                <!-- Modal Konfirmasi Hapus -->
                 <x-modal id="delete_modal_{{ $itemId }}" type="warning" title="Hapus Menu Dari Keranjang?">
                     Apakah Anda yakin ingin menghapus menu <strong>{{ $name }}</strong> dari keranjang belanja?
                     <x-slot:footer>
@@ -137,6 +132,5 @@
                 </x-modal>
             </div>
         </div>
-        </div>{{-- end konten item --}}
     </div>
 </div>

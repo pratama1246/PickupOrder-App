@@ -40,6 +40,15 @@
     }
 @endphp
 
+{{-- 
+  Komponen Toast Notifikasi Global:
+  - Mengambil data notifikasi flash dari session Laravel (success, error, warning, info) 
+    dan memasukkannya ke dalam state awal Alpine.js.
+  - Mendengarkan event global 'notify' (window.addEventListener) agar modul JavaScript lain 
+    di frontend dapat mengirim notifikasi secara asinkron tanpa reload halaman.
+  - Menghitung progress bar secara real-time (setiap 50ms) menggunakan timer 4000ms 
+    sebelum toast dihilangkan secara otomatis dengan efek transisi keluar.
+--}}
 <div x-data="{
     toasts: {{ json_encode($toasts) }},
     addToast(message, type = 'success') {
@@ -99,7 +108,7 @@
         });
     }
 }"
-    class="fixed z-[9999] flex flex-col gap-3 w-[calc(100%-2rem)] sm:w-full max-w-sm pointer-events-none bottom-24 left-1/2 -translate-x-1/2 sm:bottom-auto sm:left-auto sm:translate-x-0 sm:top-24 sm:right-4">
+    class="fixed z-9999 flex flex-col gap-3 w-[calc(100%-2rem)] sm:w-full max-w-sm pointer-events-none bottom-24 left-1/2 -translate-x-1/2 sm:bottom-auto sm:left-auto sm:translate-x-0 sm:top-24 sm:right-4">
     <template x-for="toast in toasts" :key="toast.id">
         <div x-show="toast.show" x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="translate-y-[20px] sm:translate-y-[-20px] translate-x-0 sm:translate-x-[20px] opacity-0 scale-95"
@@ -115,7 +124,6 @@
                 'alert alert-info bg-white border-blue-200 text-blue-800': toast.type === 'info'
             }"
             role="alert">
-            <!-- SVG Icon -->
             <div class="shrink-0 pt-0.5">
                 <template x-if="toast.type === 'success'">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
@@ -147,12 +155,10 @@
                 </template>
             </div>
 
-            <!-- Toast Content -->
             <div class="flex-1 pr-4">
                 <span class="text-sm font-semibold leading-relaxed" x-html="toast.message"></span>
             </div>
 
-            <!-- Close Button -->
             <button @click="removeToast(toast.id)"
                 class="absolute top-3 right-3 text-current/50 hover:text-current active:scale-95 transition-all p-0.5 rounded-full hover:bg-current/10 shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -161,7 +167,6 @@
                 </svg>
             </button>
 
-            <!-- Bottom Progress Line -->
             <div class="absolute bottom-0 left-0 right-0 h-1 bg-current/10">
                 <div class="h-full bg-current transition-all linear duration-75" :style="`width: ${toast.progress}%`">
                 </div>

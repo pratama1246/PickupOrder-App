@@ -90,6 +90,10 @@
                 @enderror
             </div>
 
+            {{-- 
+              Menggunakan Alpine.js untuk mempermudah inisiasi data gambar lama dari storage 
+              serta menampilkan pratinjau lokal berkas gambar baru secara instan di sisi klien.
+            --}}
             <div x-data="{ imageUrl: '{{ $menu->image ? asset('storage/' . $menu->image) : '' }}' }">
                 <label class="block text-sm font-bold text-base-content mb-1.5">Foto Menu</label>
                 <label

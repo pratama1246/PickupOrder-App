@@ -4,9 +4,12 @@
 
 @section('content')
 
+    {{-- 
+      Menggunakan fungsi global `initLiveSearch` untuk mencari data kantin secara real-time via AJAX 
+      sehingga admin tidak perlu memuat ulang halaman ketika memfilter atau mengetik kata kunci.
+    --}}
     <div id="canteens-container" x-data="initLiveSearch('#canteens-results')">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <!-- Title & Action Buttons Group (Mobile: Title + Icons on one row) -->
             <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
                 <div>
                     <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Kantin</h1>
@@ -14,7 +17,6 @@
                     </p>
                 </div>
 
-                <!-- Action Buttons (Mobile only, Icon-only) -->
                 <div class="flex md:hidden items-center gap-2">
                     <a href="{{ route('admin.kantin.create') }}"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center">
@@ -26,9 +28,7 @@
                 </div>
             </div>
 
-            <!-- Search & Filter Group -->
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                <!-- Search Input -->
                 <form action="" method="GET" @submit.prevent class="w-full md:w-64 xl:w-80 grow relative">
                     <label
                         class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
@@ -45,7 +45,6 @@
                     </button>
                 </form>
 
-                <!-- Filter Button (Below Search on Mobile) -->
                 <button
                     class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/70" fill="none"
@@ -56,7 +55,6 @@
                     <span>Filter</span>
                 </button>
 
-                <!-- Desktop Action Buttons (Icon-only, visible on desktop next to Search/Filter) -->
                 <div class="hidden md:flex items-center gap-2 shrink-0">
                     <a href="{{ route('admin.kantin.create') }}"
                         class="btn btn-md bg-fern-700 hover:bg-fern-800 text-white border-none rounded-full w-12 h-12 p-0 shadow-sm transition-colors flex items-center justify-center"
@@ -88,8 +86,5 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-
 @endsection

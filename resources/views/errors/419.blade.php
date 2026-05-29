@@ -2,20 +2,25 @@
 
 @section('title', 'Sesi Kedaluwarsa')
 
+{{-- 
+  Halaman Error 419 (Sesi Kedaluwarsa / CSRF Timeout):
+  - Memperluas kerangka tata letak error pusat ('errors.layout').
+  - Mengimplementasikan interaksi visual berupa tiket kupon kadaluwarsa yang terpelanting dan berlubang saat diklik.
+  - Memanfaatkan state Alpine.js lokal ('punched') untuk mengaktifkan kelas skala-transisi tiket 
+    dan mereload halaman secara asinkron lewat 'window.location.reload()' guna menyegarkan token CSRF.
+--}}
+
 @section('content')
     <div x-data="{ punched: false }" class="flex flex-col items-center">
 
         <h1 class="text-7xl font-black text-shadow-grey-400 mb-2">419</h1>
         <h2 class="text-2xl md:text-3xl font-bold text-shadow-grey-800 mb-6">Waktu Antrean Habis</h2>
 
-        <!-- Interactive Ticket -->
         <div class="relative w-72 h-40 group select-none transition-transform duration-500"
             :class="{ 'scale-95 opacity-50 rotate-3': punched }">
 
-            <!-- Ticket Body -->
             <div
                 class="absolute inset-0 bg-vanilla-custard-100 rounded-xl shadow-lg border-2 border-dashed border-vanilla-custard-400 flex items-center justify-between p-4 overflow-hidden">
-                <!-- Cutout left/right -->
                 <div
                     class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-vanilla-custard-50 rounded-full border-r-2 border-vanilla-custard-400">
                 </div>
@@ -38,18 +43,15 @@
                 </div>
             </div>
 
-            <!-- Punch Hole (appears when clicked) -->
             <div class="absolute right-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-vanilla-custard-50 rounded-full shadow-inner opacity-0 scale-0 transition-all duration-300"
                 :class="{ 'opacity-100 scale-100': punched }"></div>
         </div>
 
-        <!-- Description -->
         <p class="mt-8 mb-6 text-shadow-grey-600 max-w-lg mx-auto text-lg leading-relaxed">
             Sesi belanjamu kedaluwarsa karena ditinggal terlalu lama. Tenang, cukup segarkan sesi untuk kembali memesan
             makanan.
         </p>
 
-        <!-- Custom Refresh Button -->
         <button @click="punched = true; setTimeout(() => window.location.reload(), 800);"
             class="px-6 py-3 rounded-2xl bg-vanilla-custard-600 text-white font-semibold shadow-md hover:bg-vanilla-custard-700 active:scale-95 transition-all flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" :class="{ 'animate-spin': punched }" fill="none"

@@ -5,6 +5,14 @@
     'tersedia' => true,
 ])
 
+{{-- 
+  Komponen Info Bar Menu Makanan/Kantin:
+  - Menyajikan ringkasan parameter status (rating, estimasi waktu penyajian, popularitas, ketersediaan stok) secara sejajar.
+  - Menampilkan ikon penunjuk tren popularitas secara kondisional berdasarkan nilai boolean prop 'populer'.
+  - Memetakan warna indikator bulat kecil secara dinamis: hijau untuk stok yang tersedia ('tersedia') 
+    dan merah pudar untuk stok habis.
+--}}
+
 <div
     {{ $attributes->merge(['class' => 'flex flex-wrap items-center gap-3 sm:gap-4 bg-base-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-base-content']) }}>
 

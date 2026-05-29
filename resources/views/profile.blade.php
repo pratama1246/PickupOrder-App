@@ -1,3 +1,7 @@
+{{-- 
+  Menentukan master layout secara dinamis berdasarkan tipe role pengguna agar halaman pengaturan profil 
+  ini dapat dipakai secara global bagi Mahasiswa (app), Admin (admin), maupun Vendor (vendor).
+--}}
 @php
     $layout = 'layouts.app';
     if (auth()->user()->isAdmin()) {
@@ -18,18 +22,17 @@
             <p class="text-sm text-base-content/70 mt-1">Kelola informasi pribadi dan pengaturan keamanan akun Anda.</p>
         </div>
 
-
-
+        {{-- 
+          Mendengarkan event global 'avatar-cropped' yang ditrigger oleh Cropper.js 
+          untuk memperbarui visualisasi pratinjau avatar terpilih secara real-time di UI.
+        --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6" x-data="{ avatarPreview: '{{ $user->avatar ? asset('storage/' . $user->avatar) : '' }}' }"
             @avatar-cropped.window="avatarPreview = $event.detail">
 
-            <!-- Sidebar Profile Card -->
             <div class="md:col-span-1 space-y-6">
                 <div class="bg-white border border-base-content/10 rounded-3xl p-6 shadow-sm text-center">
-                    <!-- Interactive Avatar Upload -->
                     <div class="relative w-24 h-24 mx-auto mb-4 group cursor-pointer"
                         @click="document.getElementById('avatar-input').click()" title="Klik untuk ubah foto profil">
-                        <!-- Image Display -->
                         <div
                             class="w-full h-full rounded-full ring ring-fern-50 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-base-100">
                             <template x-if="avatarPreview">
@@ -43,7 +46,6 @@
                             </template>
                         </div>
 
-                        <!-- Hover Camera Overlay -->
                         <div
                             class="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white mb-0.5" fill="none"
@@ -83,10 +85,8 @@
                 </div>
             </div>
 
-            <!-- Forms Area -->
             <div class="md:col-span-2 space-y-6">
 
-                <!-- Update Profile Info Form -->
                 <div class="bg-white border border-base-content/10 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <h3 class="text-lg font-bold text-shadow-grey-900 mb-4">Informasi Profil</h3>
 
@@ -95,7 +95,6 @@
                         @csrf
                         @method('PATCH')
 
-                        <!-- Hidden file input triggered by avatar container -->
                         <input type="file" id="avatar-input" name="avatar" class="hidden" accept="image/*"
                             @change="handleAvatarSelect($event)" />
 
@@ -127,7 +126,6 @@
                     </form>
                 </div>
 
-                <!-- Update Password Form -->
                 <div class="bg-white border border-base-content/10 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <h3 class="text-lg font-bold text-shadow-grey-900 mb-4">Ubah Password</h3>
 
@@ -175,10 +173,8 @@
         </div>
     </div>
 
-    <!-- Modal untuk Cropping Gambar -->
     <x-modal id="cropper_modal" title="Sesuaikan Foto Profil"
         subtitle="Seret atau perbesar foto agar pas di dalam lingkaran." :clickOutside="false" :showClose="false">
-        <!-- Area Cropper (Wajib dibatasi tingginya agar rapi) -->
         <div
             class="w-full aspect-square bg-base-200 overflow-hidden flex items-center justify-center rounded-2xl border border-base-content/10 mt-2">
             <img id="cropper_image" src="" class="max-w-full block" />

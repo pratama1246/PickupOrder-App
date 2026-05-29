@@ -14,7 +14,6 @@
                 Excel atau CSV.</p>
         </div>
 
-        <!-- Download Template Section -->
         <div
             class="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-base-content/15 p-4 rounded-xl mb-5 shadow-xs gap-3">
             <div>
@@ -32,7 +31,6 @@
             </a>
         </div>
 
-        <!-- Instructions / Document Style -->
         <div class="bg-white border border-base-content/15 rounded-2xl p-5 mb-6 shadow-xs text-sm">
             <div class="flex items-center gap-2 pb-3 mb-4 border-b border-base-content/10">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -65,13 +63,13 @@
                 <div class="space-y-2.5 text-xs text-base-content/85 font-medium">
                     <div class="flex gap-2">
                         <span
-                            class="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-fern-50 text-fern-700 font-bold text-xxs border border-fern-200">1</span>
+                            class="shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-fern-50 text-fern-700 font-bold text-xxs border border-fern-200">1</span>
                         <p class="leading-relaxed">File harus disimpan dalam format <strong>.csv</strong> menggunakan
                             pemisah koma (`,`).</p>
                     </div>
                     <div class="flex gap-2">
                         <span
-                            class="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-fern-50 text-fern-700 font-bold text-xxs border border-fern-200">2</span>
+                            class="shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-fern-50 text-fern-700 font-bold text-xxs border border-fern-200">2</span>
                         <p class="leading-relaxed">Baris pertama pada header wajib bertuliskan <span
                                 class="bg-base-200 px-1.5 py-0.5 rounded text-red-600 font-bold text-xs">nama</span>, <span
                                 class="bg-base-200 px-1.5 py-0.5 rounded text-red-600 font-bold text-xs">nim</span>, dan
@@ -107,6 +105,10 @@
             </div>
         </div>
 
+        {{-- 
+          Menampilkan daftar baris CSV spesifik yang gagal divalidasi oleh parser backend,
+          sehingga admin dapat langsung mengetahui data mana saja yang perlu diperbaiki.
+        --}}
         @if (session('error_list') && count(session('error_list')) > 0 && $errors->has('file'))
             <div class="alert alert-error rounded-xl mb-5 text-sm shadow-xs flex flex-col items-start gap-2">
                 <span class="font-bold text-red-800">Daftar kesalahan baris data:</span>
@@ -118,7 +120,11 @@
             </div>
         @endif
 
-        <!-- Import Form -->
+        {{-- 
+          Form pengunggahan berkas CSV.
+          Menggunakan input file tersembunyi yang dibungkus label kustom (menggunakan Alpine.js untuk
+          pelacakan nama file) demi tampilan antarmuka seret-taruh (drag-and-drop).
+        --}}
         <form action="{{ route('admin.pengguna.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 

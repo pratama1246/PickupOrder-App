@@ -5,14 +5,12 @@
 @section('content')
     <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-6 lg:pb-0">
 
-        {{--HEADER--}}
         <div class="mb-6 sm:mb-8">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Pemantauan Platform</h1>
             <p class="text-base-content/70 text-sm sm:text-lg font-medium">Monitoring performa & aktivitas kantin
                 PNC secara real-time.</p>
         </div>
 
-        {{--REVENUE BANNER --}}
         <div
             class="bg-linear-to-br from-fern-700 to-fern-900 rounded-2xl pt-5 pb-7 sm:pt-6 sm:pb-8 md:pt-7 md:pb-9 px-6 sm:px-8 shadow-sm">
             <div class="mb-4 flex">
@@ -23,7 +21,6 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
-                {{-- Main Revenue --}}
                 <div class="lg:col-span-1 flex flex-col justify-between">
                     <div>
                         <p class="text-sm font-medium text-fern-300 mb-3">Total Pendapatan Platform</p>
@@ -55,10 +52,8 @@
                     </div>
                 </div>
 
-                {{-- Divider Spacer --}}
                 <div class="hidden lg:block self-stretch"></div>
 
-                {{-- Sub Metrics --}}
                 <div class="lg:col-span-1 grid grid-cols-2 gap-4 sm:gap-5">
                     <div>
                         <p class="text-sm font-medium text-fern-300 mb-3">Volume Transaksi</p>
@@ -81,7 +76,6 @@
             </div>
         </div>
 
-        {{--TREND CHART--}}
         <div class="bg-vanilla-custard-50 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5">
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -92,9 +86,7 @@
             <div id="trendChart" class="w-full h-[280px]"></div>
         </div>
 
-        {{--VENDOR PERFORMANCE + PLATFORM SNAPSHOT --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-            {{-- Vendor Performance Table --}}
             <div
                 class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
                 <div class="px-4 sm:px-5 py-4 border-b border-base-200 flex items-center justify-between">
@@ -141,14 +133,12 @@
                 </div>
             </div>
 
-            {{-- Platform Snapshot Sidebar --}}
             <div class="flex flex-col gap-3">
-                {{-- Platform Stats Summary --}}
                 <div class="bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5">
                     <h2 class="text-sm font-semibold text-base-content mb-4">Ringkasan Platform</h2>
                     <div class="space-y-3">
                         <div class="flex items-center justify-between py-2.5 border-b border-base-200/70">
-                            <div class="flex iPerforma Katems-center gap-3">
+                            <div class="flex items-center gap-3">
                                 <div
                                     class="w-8 h-8 rounded-xl bg-fern-50 text-fern-700 flex items-center justify-center shrink-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -216,7 +206,10 @@
             </div>
         </div>
 
-        {{--VENDOR HIGHLIGHTS + BEST SELLERS--}}
+        {{-- 
+          Menghitung rasio penyelesaian pesanan vendor peringkat #1 secara dinamis untuk mengukur
+          tingkat efisiensi operasional kantin terbaik secara real-time.
+        --}}
         @php
             $topVendor = $topCanteens->first();
             $completionRate =
@@ -226,9 +219,7 @@
         @endphp
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-5">
 
-            {{-- Vendor Highlights --}}
             <div class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col">
-                {{-- Header --}}
                 <div class="flex items-center gap-2.5 mb-4">
                     <div>
                         <h2 class="text-sm font-semibold text-base-content">Vendor Terbaik</h2>
@@ -237,13 +228,11 @@
                 </div>
 
                 @if ($topVendor)
-                    {{-- Vendor Name --}}
                     <div class="bg-fern-50 rounded-xl px-4 py-3 mb-4">
                         <p class="text-sm font-bold text-fern-600 mb-0.5">Peringkat #1</p>
                         <p class="text-lg font-bold text-fern-800 leading-tight">{{ $topVendor->name }}</p>
                     </div>
 
-                    {{-- Stats --}}
                     <div class="space-y-3 flex-1">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-medium text-base-content/60">Total Pendapatan</span>
@@ -281,7 +270,6 @@
                 @endif
             </div>
 
-            {{-- Best Sellers Chart (3/5, reduced height) --}}
             <div class="lg:col-span-3 bg-vanilla-custard-50 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col">
                 <div class="mb-3">
                     <h2 class="text-sm sm:text-base font-semibold text-base-content">5 Menu Paling Laris</h2>
@@ -291,9 +279,7 @@
             </div>
         </div>
 
-        {{--PLATFORM ACTIVITY FEED + COMPLETION RATE CHART--}}
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-5 pb-6 lg:pb-2">
-            {{-- Order Completion Rate Chart --}}
             <div class="lg:col-span-3 bg-vanilla-custard-50 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5">
                 <div class="mb-4 flex items-start justify-between gap-3">
                     <div>
@@ -312,7 +298,6 @@
                 <div id="completionRateChart" class="w-full h-[260px]"></div>
             </div>
 
-            {{-- Recent Activity Feed --}}
             <div
                 class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
                 <div class="px-4 sm:px-5 py-4 border-b border-base-200 bg-vanilla-custard-50">
@@ -335,10 +320,8 @@
                             };
                         @endphp
                         <div class="px-4 py-3.5 flex items-start gap-3 hover:bg-base-200/30 transition-colors border-b border-base-content/5 last:border-0">
-                            {{-- Status dot --}}
                             <span class="mt-1.5 shrink-0 w-2 h-2 rounded-full {{ $dotColor }}"></span>
 
-                            {{-- Event description --}}
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs font-medium text-base-content leading-snug">
                                     {{ $eventText }}
@@ -377,7 +360,8 @@
     <script>
         window.addEventListener("load", function() {
 
-            // Trend Chart
+            // Membuat grafik tren gabungan: Pendapatan (skala kiri, area/rupiah) & Volume Transaksi (skala kanan, garis/jumlah).
+            // Pemisahan sumbu Y ganda ini karena keduanya menggunakan satuan ukuran yang berbeda (Rupiah vs Frekuensi).
             const trendOptions = {
                 series: [{
                     name: 'Pendapatan',
@@ -508,7 +492,8 @@
             };
             new ApexCharts(document.querySelector("#topMenusChart"), topMenusOptions).render();
 
-            // Completion Rate Chart
+            // Menggunakan tipe baris bertumpuk (stacked 100%) agar admin dapat melihat rasio efisiensi 
+            // penyelesaian order antar kantin secara langsung dengan membandingkan persentase selesai vs gagal.
             @php
                 $completedSeries = $topCanteens->map(fn($c) => (int) $c->completed_orders_count)->toArray();
                 $incompleteSeries = $topCanteens->map(fn($c) => max(0, (int) $c->orders_count - (int) $c->completed_orders_count))->toArray();

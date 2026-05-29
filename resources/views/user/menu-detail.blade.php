@@ -41,6 +41,10 @@
                             {{ $menu->description ?? 'Belum ada deskripsi untuk menu ini.' }}
                         </p>
 
+                        {{-- 
+                          Menggunakan Alpine.js untuk menghitung total harga pesanan secara real-time di sisi klien 
+                          berdasarkan kuantitas (qty) yang dipilih sebelum dikirimkan ke server.
+                        --}}
                         <div class="mb-5" x-data="{ qty: 1, harga: {{ $menu->price }} }">
                             <x-user.quantity-control x-model="qty" />
 
@@ -52,7 +56,6 @@
                                 </p>
                             </div>
 
-                            <!-- Real Cart form to CartController@store -->
                             <form action="{{ route('cart.store') }}" method="POST" class="mt-5">
                                 @csrf
                                 <input type="hidden" name="menu_id" value="{{ $menu->id }}">

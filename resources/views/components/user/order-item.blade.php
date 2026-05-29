@@ -7,10 +7,17 @@
     'variant' => 'card', // 'card' or 'list'
 ])
 
+{{-- 
+  Komponen Item Detail Pesanan:
+  - Menyajikan rincian data menu (gambar, nama, deskripsi, kuantitas order, harga) secara baris tunggal.
+  - Mendukung dua varian visual ('card' untuk card mandiri berbingkai, atau 'list' untuk baris daftar tipis dengan pemisah garis bawah).
+  - Melakukan kompilasi kelas gaya Tailwind secara otomatis di PHP block berdasarkan varian terpilih.
+  - Memanfaatkan indikator loading bar yang otomatis dihapus lewat manipulasi DOM mini ('onload="this.previousElementSibling?.remove()"') 
+    ketika gambar asli selesai diunduh oleh peramban.
+--}}
+
 @php
     $isCard = $variant === 'card';
-
-    // Classes based on variant
     $wrapperClasses = $isCard
         ? 'border border-base-content/30 rounded-xl p-3 mb-3 sm:mb-4'
         : 'border-b border-base-content/10 last:border-0 py-3 mb-2';

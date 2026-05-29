@@ -1,3 +1,13 @@
+{{-- 
+  Komponen Navbar Dashboard Vendor:
+  - Menyusun bagian header atas dashboard untuk peran Vendor (Pemilik Kantin).
+  - Menyediakan efek marquee dinamis (running text) berbasis Alpine.js pada nama kantin:
+    - Saat di-hover, panjang teks diukur secara real-time. Jika melebihi lebar kontainer, 
+      teks digeser secara asinkron ke kiri lewat manipulasi CSS transform (translateX) 
+      dan durasi transisi dinamis sehingga nama kantin yang sangat panjang tetap terbaca seutuhnya.
+  - Memuat dropdown profil dengan verifikasi avatar, pemetaan navigasi khusus vendor, 
+    dan mekanisme keluar (logout) aman.
+--}}
 <header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50 shadow-md">
     <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
         <div class="bg-fern-700 text-white font-bold text-lg px-3 py-1 rounded-lg tracking-wide shrink-0">

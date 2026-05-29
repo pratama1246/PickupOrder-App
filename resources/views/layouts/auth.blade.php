@@ -1,3 +1,8 @@
+{{-- 
+  Layout Utama Autentikasi (Sisi Mahasiswa, Vendor, Admin):
+  - Menyediakan tampilan minimalis, modern, dan interaktif untuk halaman Login, Registrasi, dll.
+  - Memuat x-toast notifikasi untuk menampilkan validasi/gagal login secara instan dari backend.
+--}}
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 
@@ -9,7 +14,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-base-200 flex items-center justify-center p-4 relative overflow-hidden"
+    {{-- 
+      Menggunakan Alpine.js untuk menganimasikan 4 blob warna dekoratif di latar belakang secara dinamis.
+      Setiap 4 detik, koordinat x dan y acak baru dihasilkan untuk memicu pergerakan transisi CSS 
+      yang menghasilkan efek gradien bergerak (animated mesh gradient) yang mulus di sisi klien.
+    --}}
+    <body class="min-h-screen bg-base-200 flex items-center justify-center p-4 relative overflow-hidden"
     x-data="{
         blobs: [
             { x: 20, y: 30, color: 'bg-fern-300' },
@@ -34,10 +44,9 @@
         }
     }">
 
-    {{-- Dynamic Colorful Blobs Background --}}
     <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden md:block">
         <template x-for="(blob, index) in blobs" :key="index">
-            <div class="absolute w-[20rem] md:w-140 h-80 md:h-140 rounded-full mix-blend-multiply opacity-50 md:opacity-40 transition-all duration-[4000ms] ease-in-out"
+            <div class="absolute w-[20rem] md:w-140 h-80 md:h-140 rounded-full mix-blend-multiply opacity-50 md:opacity-40 transition-all duration-4000 ease-in-out"
                 :class="blob.color"
                 :style="`left: ${blob.x}%; top: ${blob.y}%; transform: translate(-50%, -50%); filter: blur(80px);`">
             </div>
@@ -47,7 +56,6 @@
     <div
         class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-md flex flex-col md:flex-row min-h-[600px] relative z-10">
 
-        {{-- PANEL KIRI --}}
         <div class="bg-shadow-grey-900 text-white p-8 md:p-10 flex flex-col justify-between md:w-5/12 shrink-0">
             <div>
                 <div
@@ -60,7 +68,6 @@
                 </h1>
             </div>
 
-            {{-- Footer branding --}}
             <div class="mt-8 md:mt-0">
                 <div class="bg-white text-base-content rounded-xl px-4 py-3 flex items-center gap-1.5 w-fit">
                     <span class="font-bold text-sm">Made From and For</span>
@@ -73,7 +80,6 @@
             </div>
         </div>
 
-        {{-- PANEL KANAN --}}
         <div class="bg-fern-50 flex-1 flex items-center justify-center p-8 md:p-10">
             <div class="w-full max-w-sm">
                 @yield('form')

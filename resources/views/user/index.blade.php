@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Hero Section Container -->
     <section class="px-3 sm:px-10 md:px-16 lg:px-24 pt-6 pb-2 md:pt-8 md:pb-0">
         <div class="max-w-8xl mx-auto flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-10">
 
@@ -33,7 +32,6 @@
                     Politeknik Negeri Cilacap.
                 </p>
 
-                <!-- Integrated Search Bar Widget -->
                 <form action="{{ route('canteen.index') }}" method="GET" class="w-full max-w-md mx-auto lg:mx-0 mb-8">
                     <div class="relative w-full">
                         <label class="input input-bordered flex items-center w-full shadow-sm rounded-3xl input-md pr-12">
@@ -51,7 +49,6 @@
                     </div>
                 </form>
 
-                <!-- Hero CTA Buttons -->
                 <div
                     class="flex flex-col min-[380px]:flex-row gap-3 justify-center lg:justify-start items-center w-full max-w-xs mx-auto lg:mx-0 min-[380px]:max-w-none">
                     <a href="{{ route('canteen.index') }}"
@@ -80,7 +77,6 @@
         </div>
     </section>
 
-    <!-- Shortcut Kategori Menu -->
     @if ($categories->isNotEmpty())
         <section class="px-3 sm:px-10 md:px-16 lg:px-24 pt-10 pb-8">
             <div class="max-w-8xl mx-auto">
@@ -88,6 +84,10 @@
                     <h2 class="text-2xl sm:text-3xl font-bold text-base-content">Pilih Kategori</h2>
                     <p class="text-xs sm:text-sm text-base-content/60 font-medium mt-1">Temukan menu sesuai selera kamu</p>
                 </div>
+                {{-- 
+                  Memetakan styling kelas warna Tailwind dan kode path SVG kustom secara statis berdasarkan nama kategori. 
+                  Hal ini dilakukan untuk meminimalisir overhead kueri basis data dan menjaga performa rendering tetap instan.
+                --}}
                 @php
                     $catConfig = [
                         'Makanan' => [
@@ -120,7 +120,6 @@
                 @endphp
                 <div
                     class="flex items-center justify-center gap-5 sm:gap-8 overflow-x-auto pt-3 pb-3 scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
-                    {{-- Kategori Dinamis --}}
                     @foreach ($categories as $cat)
                         @php $cfg = $catConfig[$cat] ?? $defaultCfg; @endphp
                         <a href="{{ route('canteen.index', ['category' => $cat]) }}"
@@ -141,7 +140,6 @@
         </section>
     @endif
 
-    <!-- Langkah Mudah Memesan Section -->
     <section class="px-3 sm:px-10 md:px-16 lg:px-24 pt-10 pb-14">
         <div class="max-w-8xl mx-auto">
             <div class="mb-6 text-center">
@@ -151,7 +149,6 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
 
-                <!-- Step 1 -->
                 <div
                     class="bg-base-100 border border-base-200 rounded-3xl p-6 flex flex-row md:flex-col items-center md:items-center gap-5 md:gap-4 md:text-center shadow-sm hover:-translate-y-1 transition-transform duration-300">
                     <div
@@ -170,7 +167,6 @@
                     </div>
                 </div>
 
-                <!-- Step 2 -->
                 <div
                     class="bg-base-100 border border-base-200 rounded-3xl p-6 flex flex-row md:flex-col items-center md:items-center gap-5 md:gap-4 md:text-center shadow-sm hover:-translate-y-1 transition-transform duration-300">
                     <div
@@ -189,7 +185,6 @@
                     </div>
                 </div>
 
-                <!-- Step 3 -->
                 <div
                     class="bg-base-100 border border-base-200 rounded-3xl p-6 flex flex-row md:flex-col items-center md:items-center gap-5 md:gap-4 md:text-center shadow-sm hover:-translate-y-1 transition-transform duration-300">
                     <div
@@ -212,7 +207,6 @@
         </div>
     </section>
 
-    <!-- Menu Populer Section -->
     <section id="menu-populer" class="px-3 sm:px-10 md:px-16 lg:px-24 pt-10 pb-10">
         <div class="max-w-8xl mx-auto">
 
@@ -236,7 +230,6 @@
         </div>
     </section>
 
-    <!-- Pilih Kantin Section -->
     <section class="px-3 sm:px-10 md:px-16 lg:px-24 pt-10 pb-14">
         <div class="max-w-8xl mx-auto">
 

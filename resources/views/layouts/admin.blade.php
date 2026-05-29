@@ -1,3 +1,11 @@
+{{-- 
+  Layout Utama Dashboard Admin:
+  - Menyusun struktur dashboard menggunakan komponen Drawer DaisyUI ('drawer lg:drawer-open') 
+    untuk navigasi responsive (sidebar persisten di desktop, drawer laci di mobile).
+  - Mengelola tinggi viewport secara penuh ('h-screen overflow-hidden') dengan scrollbars 
+    hanya pada area utama ('main') guna menjaga stabilitas letak navbar dan dock.
+  - Memuat file aset CSS/JS via Vite, komponen toast notifikasi, serta x-dock sebagai bottom-nav mobile.
+--}}
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 

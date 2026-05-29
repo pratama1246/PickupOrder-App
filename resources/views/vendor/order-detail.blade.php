@@ -12,8 +12,11 @@
             <p class="text-base-content/70 text-sm sm:text-lg font-medium">Informasi lengkap mengenai pesanan pelanggan.</p>
         </div>
 
+        {{-- 
+          Delegasi detail rendering transaksi ke komponen reusable order-detail-card 
+          agar konsisten dengan tampilan di modul lainnya dan mudah dikelola secara terpusat.
+        --}}
         <x-vendor.order-detail-card :order="$order" :canteen="$canteen" />
-
     </div>
 
-@endsection
+    @endsection

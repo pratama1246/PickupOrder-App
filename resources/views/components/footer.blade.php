@@ -1,7 +1,12 @@
+{{-- 
+  Komponen Footer Global:
+  - Menyediakan navigasi penutup yang responsive (menggunakan kelas DaisyUI 'footer sm:footer-horizontal').
+  - Memetakan tautan navigasi utama menggunakan named route Laravel (route('home'), route('about'), dll.) untuk fleksibilitas URL.
+  - Memuat informasi operasional (jam buka, peta lokasi, kontak bantuan) serta hak cipta dinamis (tahun saat ini via helper date()).
+--}}
 <footer class="bg-base-200 text-base-content mt-12">
     <div class="footer sm:footer-horizontal p-10 px-6 sm:px-10 md:px-16 lg:px-24">
 
-        {{-- Brand & Description --}}
         <aside>
             <div class="bg-fern-700 text-white font-bold text-lg px-3 py-2 rounded-lg tracking-wide w-fit mb-2">
                 LOGO
@@ -10,7 +15,6 @@
                 Sistem Pickup Order Politeknik Negeri Cilacap. Pesan makanan kantin tanpa antri, langsung dari
                 genggamanmu.
             </p>
-            {{-- Accepted Payment Methods --}}
             <div class="mt-4">
                 <p class="text-xs font-bold text-fern-700 uppercase tracking-wider mb-2">Metode Pembayaran</p>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -24,7 +28,6 @@
             </div>
         </aside>
 
-        {{-- Quick Navigation --}}
         <nav>
             <h6 class="footer-title text-fern-700">Navigasi</h6>
             <a href="{{ route('home') }}" class="link link-hover text-sm">Beranda</a>
@@ -34,11 +37,9 @@
             <a href="{{ route('about') }}" class="link link-hover text-sm">Tentang Kami</a>
         </nav>
 
-        {{-- Operational Info --}}
         <nav>
             <h6 class="footer-title text-fern-700">Informasi Kantin</h6>
 
-            {{-- Opening Hours --}}
             <div class="flex items-start gap-2 text-sm text-base-content/80">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mt-0.5 shrink-0 text-fern-600" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -52,7 +53,6 @@
                 </div>
             </div>
 
-            {{-- Location --}}
             <div class="flex items-start gap-2 text-sm text-base-content/80 mt-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mt-0.5 shrink-0 text-fern-600" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -67,7 +67,6 @@
                 </div>
             </div>
 
-            {{-- Contact --}}
             <div class="flex items-start gap-2 text-sm text-base-content/80 mt-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mt-0.5 shrink-0 text-fern-600" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

@@ -13,6 +13,10 @@
             <p class="text-base-content/70 text-sm sm:text-lg font-medium">Daftarkan akun pengguna baru ke dalam sistem.</p>
         </div>
 
+        {{-- 
+          Menggunakan Alpine.js `role` untuk melakukan validasi input dinamis di sisi klien, 
+          khususnya menyembunyikan/menonaktifkan input NIM/NIP apabila peran yang dipilih adalah 'vendor'.
+        --}}
         <form action="{{ route('admin.pengguna.store') }}" method="POST" class="space-y-5" x-data="{ role: '{{ old('role', '') }}' }">
             @csrf
 
@@ -76,6 +80,10 @@
                 </div>
             </div>
 
+            {{-- 
+              Input password menggunakan Alpine.js untuk fitur toggle visibilitas password (show/hide),
+              sehingga mempermudah admin dalam memverifikasi ketikan tanpa perlu mengetik ulang berulang kali.
+            --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" x-data="{ showPw: false, showConfirmPw: false }">
                 <div>
                     <label class="block text-sm font-bold text-base-content mb-1.5">Password</label>

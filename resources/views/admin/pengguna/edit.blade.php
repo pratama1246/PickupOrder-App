@@ -14,6 +14,10 @@
                 pengguna.</p>
         </div>
 
+        {{-- 
+          Menggunakan Alpine.js `role` untuk melakukan validasi input dinamis di sisi klien, 
+          khususnya menyembunyikan/menonaktifkan input NIM/NIP apabila peran yang dipilih adalah 'vendor'.
+        --}}
         <form action="{{ route('admin.pengguna.update', $user->id) }}" method="POST" class="space-y-5" x-data="{ role: '{{ old('role', $user->role) }}' }">
             @csrf
             @method('PUT')
@@ -82,6 +86,10 @@
                 </div>
             </div>
 
+            {{-- 
+              Input password baru menggunakan Alpine.js untuk fitur toggle visibilitas password (show/hide),
+              sehingga mempermudah admin dalam memverifikasi ketikan tanpa perlu mengetik ulang berulang kali.
+            --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" x-data="{ showPw: false, showConfirmPw: false }">
                 <div>
                     <label class="block text-sm font-bold text-base-content mb-1.5">Password Baru</label>

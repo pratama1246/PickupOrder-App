@@ -1,3 +1,10 @@
+{{-- 
+  Komponen Navbar Global:
+  - Menyediakan navigasi atas aplikasi; bagian center menu disembunyikan di mobile ('hidden lg:flex') karena digantikan oleh x-dock.
+  - Membaca jumlah barang di keranjang belanja secara langsung dari session PHP ('session('cart')') untuk badge indikator.
+  - Menyusun dropdown profil pengguna terotentikasi, membedakan hak akses/role (Admin, Vendor, Mahasiswa) 
+    untuk mengarahkan ke dashboard yang relevan, serta menangani aksi keluar secara aman lewat POST request.
+--}}
 <div class="navbar bg-shadow-grey-900 shadow-sm px-6 sticky top-0 z-50 h-20">
 
     <div class="navbar-start">

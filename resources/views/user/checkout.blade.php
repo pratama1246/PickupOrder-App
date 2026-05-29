@@ -25,9 +25,13 @@
                 class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
                 @csrf
 
-                {{-- Kolom Kiri --}}
                 <div class="w-full lg:flex-1 min-w-0 space-y-6">
 
+                    {{-- 
+                      Menggunakan Alpine.js untuk mengelola pilihan waktu pickup. 
+                      Jika pengguna memilih opsi custom lalu mengklik di luar area tanpa mengisi waktu secara spesifik, 
+                      maka pilihan akan direset otomatis kembali ke 'now' untuk mencegah pengiriman data waktu kosong.
+                    --}}
                     <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm"
                         x-data="{ selectedTime: 'now', customTime: '' }"
                         @click.outside="if (selectedTime === 'custom' && !customTime) selectedTime = 'now'">
@@ -79,7 +83,6 @@
                             </label>
                         </div>
 
-                        {{-- Custom Time Picker Input --}}
                         <div class="mt-4" x-show="selectedTime === 'custom'" x-transition>
                             <label class="block text-sm font-bold text-base-content mb-2">Tentukan Jam Pengambilan</label>
                             <input type="time" name="custom_time" x-model="customTime"
@@ -93,7 +96,6 @@
                         @enderror
                     </div>
 
-                    {{-- Pilih Metode Pembayaran --}}
                     <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
                         <h2 class="text-lg sm:text-xl font-bold text-base-content mb-5">Pilih Metode Pembayaran</h2>
 
@@ -119,7 +121,6 @@
                                 </div>
                             </label>
 
-                            {{-- Cash / Offline --}}
                             <label
                                 class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-checked:bg-fern-50/50 has-checked:border-fern-700">
                                 <input type="radio" name="payment_method" value="bayar_di_warung"
@@ -155,7 +156,6 @@
 
                 </div>
 
-                {{-- Kolom Kanan (Order Summary & Action) --}}
                 <div class="w-full lg:w-[450px] shrink-0 space-y-6">
 
                     <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
@@ -181,7 +181,6 @@
                                     @endforeach
                                 </div>
 
-                                {{-- Catatan dari session keranjang --}}
                                 @if (!empty($notes[$canteenId]))
                                     <div
                                         class="mt-2 text-xs text-base-content/70 bg-base-100 px-3 py-2 rounded-lg border border-base-content/10 flex items-start gap-2">
@@ -239,7 +238,9 @@
 
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                e.stopPropagation(); // Blokir Global Submit Interceptor di app.js
+                // Menghentikan propagasi event untuk memblokir pemicu loading-spinner global di app.js, 
+                // karena halaman checkout memiliki penanganan loading dan popup pembayaran online sendiri (Midtrans Snap).
+                e.stopPropagation();
 
                 if (isSubmitting) return;
                 isSubmitting = true;
@@ -265,7 +266,7 @@
                         showError('Waktu permintaan habis (Timeout). Server tidak merespons.');
                         resetBtn();
                     }
-                }, 10000); // 10 detik batas waktu
+                }, 10000);
 
                 fetch(form.action, {
                         method: 'POST',

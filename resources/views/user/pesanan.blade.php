@@ -3,6 +3,12 @@
 @section('title', 'Pesan Makanan - PNC')
 
 @section('content')
+    {{-- 
+      Menggunakan fungsi pembantu initLiveSearch() dari app.js yang memanfaatkan 
+      Alpine.js untuk memantau perubahan input kata kunci, kategori, dan ID kantin. 
+      Setiap perubahan memicu request AJAX didebounce ke server untuk me-refresh 
+      kontainer '#pesanan-results' secara real-time.
+    --}}
     <main class="min-h-screen bg-base-100 pb-12" id="pesanan-container" x-data="initLiveSearch('#pesanan-results')">
         <x-breadcrumb :links="[['label' => 'Beranda', 'url' => '/'], ['label' => 'Pesan']]" />
 

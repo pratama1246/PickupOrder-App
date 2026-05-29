@@ -14,7 +14,6 @@
             </div>
 
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                <!-- Form Cari/Input Manual 6 Digit -->
                 <div class="relative w-full sm:w-64">
                     <input type="text" id="manual_code_input" placeholder="6 digit kode (cth: AB12CD)"
                         class="input bg-white border-base-content/20 rounded-xl w-full font-bold uppercase tracking-widest pl-4 pr-16 shadow-sm placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-sm text-left"
@@ -27,7 +26,7 @@
 
                 <p class="text-xs font-bold text-base-content/40 uppercase hidden sm:block">ATAU</p>
 
-                <!-- Tombol Scan QR -->
+                <!-- Tombol Scan QR (Mengaktifkan Kamera) -->
                 <button type="button" onclick="document.getElementById('scan_qr_modal').showModal(); startScanner();"
                     class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold shadow-sm active:scale-95 transition-all w-full sm:w-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24"
@@ -42,7 +41,6 @@
             </div>
         </div>
 
-        <!-- Filter Status Transaksi (Dropdown) -->
         <div class="mb-6 flex items-center gap-3 w-full sm:w-auto">
             <select onchange="location = this.value;"
                 class="select select-bordered select-md rounded-full border-base-content/40 w-full sm:w-auto min-w-48 focus:outline-none text-sm sm:text-base">
@@ -66,7 +64,7 @@
             @forelse($orders as $order)
                 <div
                     class="bg-vanilla-custard-50 border border-base-content/30 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative group cursor-pointer hover:border-fern-300 hover:shadow-md transition-all">
-                    <!-- Stretched Link -->
+                    {{-- Stretched link untuk mempermudah tap target area pada tampilan mobile card --}}
                     <a href="{{ route('vendor.order.show', $order->id) }}" class="absolute inset-0 z-10 rounded-2xl"
                         aria-label="Detail Pesanan {{ $order->order_code }}"></a>
 
@@ -133,7 +131,7 @@
             }
         }
 
-        // Biar bisa tekan enter di input manual
+        // Mengaktifkan fitur pencarian cepat saat pengguna menekan tombol Enter pada keyboard
         document.getElementById('manual_code_input')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchManualCode();
@@ -145,11 +143,11 @@
                 html5QrCode = new Html5Qrcode("reader");
             }
 
-            // Beri sedikit delay agar animasi modal selesai dan DOM siap
+            // Memberikan jeda agar transisi modal selesai dimuat sepenuhnya oleh browser sebelum kamera diakses
             setTimeout(() => {
                 html5QrCode.start({
                         facingMode: "environment"
-                    }, // Paksa gunakan kamera belakang
+                    },
                     {
                         fps: 10,
                         qrbox: {
@@ -178,16 +176,16 @@
         }
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Hentikan scan agar tidak memicu redirect berulang kali
+            // Menghentikan kamera pemindai agar tidak terjadi pengulangan redirect/pemanggilan berulang
             stopScanner();
             document.getElementById('scan_qr_modal').close();
 
-            // Arahkan ke endpoint scan
+            // Arahkan ke endpoint scan dengan kode hasil pemindaian
             window.location.href = "{{ url('/vendor/order/scan') }}/" + decodedText;
         }
 
         function onScanFailure(error) {
-            // Abaikan error pembacaan per frame (normal saat belum ada QR code)
+            // Mengabaikan log error deteksi per frame agar tidak membebani performa browser
         }
 
         // Pastikan kamera selalu dimatikan jika modal ditutup dengan cara apapun (klik backdrop, ESC, dll)

@@ -5,6 +5,14 @@
     'name' => 'quantity',
 ])
 
+{{-- 
+  Komponen Pengontrol Kuantitas (Quantity Selector):
+  - Memanfaatkan fitur Alpine.js 'x-modelable="count"' agar state lokal 'count' dapat disinkronisasikan 
+    dan dikontrol secara dua arah oleh model dari parent template/scope.
+  - Menerapkan batasan nilai minimum ('min') dan maksimum ('max') secara ketat pada tombol penambah/pengurang di sisi klien.
+  - Memasang input bertipe tersembunyi (hidden input) dengan nama yang dapat disesuaikan ('name') 
+    agar nilai kuantitas terpilih ikut terkirim secara otomatis saat disubmit dalam form HTML biasa.
+--}}
 <div {{ $attributes->merge(['class' => 'flex items-center gap-3']) }} x-data="{ count: {{ $quantity }} }" x-modelable="count">
 
     <button type="button"

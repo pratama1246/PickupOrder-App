@@ -5,7 +5,6 @@
 @section('content')
     <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-10 lg:pb-0">
 
-        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 print:px-0">
             <div>
                 <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Laporan Penjualan</h1>
@@ -23,7 +22,6 @@
             </button>
         </div>
 
-        <!-- Date Range Filter -->
         <div class="mb-6 print:hidden">
             <form method="GET" action="{{ route('vendor.laporan.index') }}"
                 class="flex flex-col sm:flex-row items-end gap-4">
@@ -45,16 +43,13 @@
             </form>
         </div>
 
-        <!-- Ringkasan Cetak -->
         <div class="hidden print:block border-b-2 border-black pb-4">
             <h2 class="text-2xl font-bold">Laporan Penjualan Kantin: {{ $canteen->name }}</h2>
             <p class="text-sm">Periode: {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') }} -
                 {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') }}</p>
         </div>
 
-        <!-- Stat Cards Row -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-            <!-- Total Pesanan -->
             <x-stat-card label="Total Pesanan" :value="$totalOrders" subtext="Pesanan berhasil diselesaikan"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
@@ -66,7 +61,6 @@
                 </x-slot:icon>
             </x-stat-card>
 
-            <!-- Total Pendapatan -->
             <x-stat-card label="Total Pendapatan" :value="'Rp ' . number_format($totalRevenue, 0, ',', '.')" subtext="Periode Terpilih"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
@@ -78,7 +72,6 @@
                 </x-slot:icon>
             </x-stat-card>
 
-            <!-- Rata-rata Nilai Pesanan -->
             <x-stat-card label="Rata-rata Pembelian" :value="'Rp ' . number_format($averageOrderValue, 0, ',', '.')" subtext="Per Transaksi (AOV)"
                 iconBg="bg-emerald-50 text-fern-700">
                 <x-slot:icon>
@@ -91,7 +84,6 @@
             </x-stat-card>
         </div>
 
-        <!-- Top Menus Table Section -->
         <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
             <div
                 class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-base-100/50 print:border-none print:bg-transparent">
@@ -145,7 +137,10 @@
             </div>
         </div>
 
-        <!-- Style khusus untuk cetak halaman -->
+        {{-- 
+          Aturan CSS inline khusus media print untuk menyembunyikan navigasi, sidebar, dan tombol cetak 
+          agar menghasilkan tata letak cetak dokumen fisik/PDF yang bersih dan rapi secara dinamis.
+        --}}
         <style>
             @media print {
                 body {

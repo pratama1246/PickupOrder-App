@@ -5,6 +5,17 @@
     'isSubmit' => false,
 ])
 
+{{-- 
+  Komponen Ringkasan Keranjang Belanja:
+  - Menyediakan tampilan panel pembayaran / rekapitulasi belanja per kantin secara ringkas.
+  - Berintegrasi dengan fungsi Alpine.js di halaman induk ('getCanteenTotal', 'getGrandTotal') 
+    untuk menghitung dan memformat nilai harga secara real-time pada sisi klien.
+  - Memanfaatkan reaktivitas Alpine.js untuk menonaktifkan tombol submit secara otomatis 
+    ketika grand total bernilai nol (tidak ada item terpilih).
+  - Mendukung penyesuaian tipe tombol melalui prop 'isSubmit' (mengirimkan form 'checkout-prepare-form' 
+    atau bertindak sebagai tautan redireksi biasa).
+--}}
+
 <div
     {{ $attributes->merge(['class' => 'bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm lg:sticky lg:top-24']) }}>
 

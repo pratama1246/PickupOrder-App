@@ -38,6 +38,10 @@
                 @enderror
             </div>
 
+            {{-- 
+              Menentukan path URL gambar kantin saat ini (apakah menggunakan gambar default/seeding di public 
+              atau berkas unggahan baru di storage) agar image preview Alpine.js memuat gambar yang benar.
+            --}}
             @php
                 $currentImageUrl = '';
                 if ($canteen->image) {
@@ -46,6 +50,10 @@
                         : asset('storage/' . $canteen->image);
                 }
             @endphp
+            {{-- 
+              Menggunakan Alpine.js untuk mempermudah penggantian gambar lama dengan pratinjau lokal berkas baru
+              secara instan sebelum dikirimkan ke server.
+            --}}
             <div x-data="{ imageUrl: '{{ $currentImageUrl }}' }">
                 <label class="block text-sm font-bold text-base-content mb-1.5">Gambar Kantin</label>
                 <label

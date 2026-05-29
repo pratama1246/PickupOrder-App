@@ -1,5 +1,16 @@
 @props(['users'])
 
+{{-- 
+  Komponen Tabel Pengguna Admin:
+  - Menyajikan antarmuka tabular untuk manajemen akun pengguna (Mahasiswa, Vendor, Admin).
+  - Berinteraksi dengan state Alpine.js di halaman induk ('selectedIds' dan 'allIds') 
+    untuk mengelola pilihan massal (bulk selection) secara langsung di sisi klien, 
+    termasuk perubahan warna latar baris tabel yang dicentang.
+  - Memetakan properti model '!is_first_login' menjadi label status (Aktif/Nonaktif).
+  - Memuat form aksi inline untuk mengubah status keaktifan pengguna (Toggle Status), tombol navigasi edit, 
+    dan tombol penghapusan dengan validasi konfirmasi global ('confirmAction').
+--}}
+
 <div class="bg-white border border-base-content/15 rounded-2xl overflow-hidden shadow-sm">
     <div class="overflow-x-auto w-full">
         <table class="table w-full min-w-max">

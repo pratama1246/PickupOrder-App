@@ -9,11 +9,17 @@
     'modalClass' => 'max-w-md',
 ])
 
+{{-- 
+  Komponen Dialog Modal Global:
+  - Dibangun menggunakan elemen native HTML5 <dialog> untuk kinerja aksesibilitas yang optimal.
+  - Secara visual responsive (modal-bottom di mobile, sm:modal-middle di layar desktop).
+  - Menyediakan opsi 'clickOutside' untuk menutup modal secara otomatis saat area luar modal diklik.
+  - Mendukung slot default untuk konten utama (body) dan slot 'footer' khusus untuk tombol aksi/form submit.
+--}}
+
 <dialog id="{{ $id }}" {{ $attributes->merge(['class' => 'modal modal-bottom sm:modal-middle']) }}>
     <div
         class="modal-box bg-base-100 rounded-t-2xl sm:rounded-2xl border border-base-content/5 p-6 shadow-xl {{ $modalClass }}">
-
-        <!-- Tombol Tutup Pojok Atas -->
         @if ($showClose)
             <button onclick="document.getElementById('{{ $id }}').close()" type="button"
                 class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-base-content/50 hover:text-base-content"
@@ -25,7 +31,6 @@
             </button>
         @endif
 
-        <!-- Header Content -->
         @if ($title)
             <div class="mb-3 pr-6">
                 <h3 class="font-bold text-lg text-base-content">
@@ -39,12 +44,10 @@
             </div>
         @endif
 
-        <!-- Body Content -->
         <div class="text-sm text-base-content/80 leading-relaxed font-medium">
             {{ $slot }}
         </div>
 
-        <!-- Footer / Action Area -->
         @if (isset($footer))
             <div class="modal-action mt-6 flex flex-row justify-end items-center gap-2">
                 {{ $footer }}
@@ -59,7 +62,6 @@
         @endif
     </div>
 
-    <!-- Backdrop Form (Klik Di Luar untuk Menutup) -->
     @if ($clickOutside)
         <form method="dialog" class="modal-backdrop">
             <button class="cursor-default outline-none">close</button>
