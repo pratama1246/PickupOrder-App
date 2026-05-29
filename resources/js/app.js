@@ -135,7 +135,7 @@ function initTypewriter() {
         "Ngebubut?",
         "Nyolder?",
         "Bikin Robot?",
-        "Ngukur Tegangan?",
+        "Ngelistrik?",
         "Titrasi?",
         "Sampling Air?",
         "Olah Pangan?",
@@ -144,10 +144,9 @@ function initTypewriter() {
         "Bikin Animasi?",
         "Input Jurnal?",
         "Revisi TA?",
-        "Rapat Hima?",
+        "Rapat?",
         "Bikin Proposal?",
-        "Bikin Undang-Undang?",
-        "Evaluasi Event?",
+        "Evaluasi?",
         "Begadang?",
         "Mager?"
     ];
