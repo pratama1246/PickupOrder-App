@@ -37,18 +37,13 @@
     {{-- Dynamic Colorful Blobs Background --}}
     <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden md:block">
         <template x-for="(blob, index) in blobs" :key="index">
-            <div class="absolute w-[20rem] md:w-[35rem] h-[20rem] md:h-[35rem] rounded-full mix-blend-multiply opacity-50 md:opacity-40 transition-all duration-[4000ms] ease-in-out"
+            <div class="absolute w-[20rem] md:w-140 h-80 md:h-140 rounded-full mix-blend-multiply opacity-50 md:opacity-40 transition-all duration-[4000ms] ease-in-out"
                 :class="blob.color"
                 :style="`left: ${blob.x}%; top: ${blob.y}%; transform: translate(-50%, -50%); filter: blur(80px);`">
             </div>
         </template>
     </div>
-
-    {{-- Dot Pattern Background --}}
-    <div class="absolute inset-0 z-0 pointer-events-none text-base-content"
-        style="background-image: radial-gradient(currentColor 2.5px, transparent 2.5px); background-size: 32px 32px; opacity: 0.2; mask-image: radial-gradient(ellipse at center, black 30%, transparent 100%); -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 100%);">
-    </div>
-
+    
     <div
         class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-md flex flex-col md:flex-row min-h-[600px] relative z-10">
 

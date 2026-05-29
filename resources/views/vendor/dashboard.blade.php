@@ -48,8 +48,8 @@
             }"
                 class="bg-base-100 rounded-2xl px-4 py-3 flex sm:items-center justify-between gap-4 border border-base-200 shadow-sm w-full sm:w-fit shrink-0">
                 <div>
-                    <p class="text-xs font-bold text-base-content/50 uppercase">Status Kantin</p>
-                    <p class="text-sm font-bold transition-colors" :class="isOpen ? 'text-emerald-700' : 'text-rose-600'"
+                    <p class="text-xs font-semibold text-base-content/50">Status Kantin</p>
+                    <p class="text-sm font-semibold transition-colors" :class="isOpen ? 'text-emerald-700' : 'text-rose-600'"
                         x-text="isOpen ? 'Buka' : 'Tutup'"></p>
                 </div>
                 <div class="m-0 p-0 flex items-center shrink-0">
@@ -128,8 +128,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
             <!-- Active Orders Table -->
             <div class="lg:col-span-2 bg-base-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                <div class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-vanilla-custard-100">
-                    <h2 class="text-sm sm:text-base font-bold text-base-content">Pesanan Aktif</h2>
+                <div class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-vanilla-custard-50">
+                    <h2 class="text-md sm:text-lg font-semibold text-base-content">Pesanan Aktif</h2>
                     <a href="{{ route('vendor.order.index') }}"
                         class="text-xs sm:text-sm text-fern-600 hover:text-fern-700 font-medium px-3 py-1.5 rounded-lg hover:bg-fern-200 transition-colors">Lihat
                         Semua</a>
@@ -185,13 +185,13 @@
             </div>
 
             <!-- Status Antrean (Queue Status) -->
-            <div class="flex flex-col gap-3 sm:gap-4 h-full">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col gap-3 sm:gap-4 h-full">
                 <!-- Card Menunggu (Bold / Highlighted) -->
                 <a href="{{ route('vendor.order.index', ['status' => 'menunggu']) }}"
-                    class="flex-1 bg-linear-to-tl from-emerald-800 to-fern-600 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between transition-all duration-300">
-                    <p class="text-sm font-medium text-fern-200">Menunggu</p>
+                    class="flex-1 bg-linear-to-br from-fern-700 to-fern-900 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between transition-all duration-300">
+                    <p class="text-sm font-medium text-fern-100">Menunggu</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
-                        <p class="text-3xl sm:text-4xl font-bold text-white">
+                        <p class="text-3xl sm:text-4xl font-semibold text-white">
                             {{ $stats['pesanan_baru'] }}
                         </p>
                         <div class="bg-fern-800 text-fern-100 p-3 rounded-xl">
@@ -212,7 +212,7 @@
                     class="flex-1 bg-linear-to-br from-vanilla-custard-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
                     <p class="text-sm font-medium text-base-content/60">Dimasak</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
-                        <p class="text-3xl sm:text-4xl font-extrabold text-vanilla-custard-700">
+                        <p class="text-3xl sm:text-4xl font-semibold text-vanilla-custard-700">
                             {{ $stats['sedang_dimasak'] }}
                         </p>
                         <div class="bg-vanilla-custard-100 text-vanilla-custard-700 p-3 rounded-xl">
@@ -235,7 +235,7 @@
                     class="flex-1 bg-linear-to-br from-emerald-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
                     <p class="text-sm font-medium text-base-content/60">Siap Pickup</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
-                        <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600">
+                        <p class="text-3xl sm:text-4xl font-semibold text-emerald-600">
                             {{ $stats['siap_pickup'] }}
                         </p>
                         <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
@@ -256,7 +256,7 @@
                     class="flex-1 bg-linear-to-br from-rose-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
                     <p class="text-sm font-medium text-base-content/60">Dibatalkan</p>
                     <div class="flex items-center justify-between gap-4 my-auto py-2">
-                        <p class="text-3xl sm:text-4xl font-extrabold text-rose-700">
+                        <p class="text-3xl sm:text-4xl font-semibold text-rose-700">
                             {{ $stats['pesanan_batal'] }}
                         </p>
                         <div class="bg-rose-100 text-rose-700 p-3 rounded-xl">
@@ -278,27 +278,33 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
             <!-- Best Sellers Chart -->
             <div
-                class="lg:col-span-2 bg-linear-to-tl from-emerald-800 to-fern-600 rounded-2xl shadow-sm p-4 sm:p-5 flex flex-col justify-between">
-                <h2 class="text-base font-bold text-white mb-4">Top 5 Menu Laris</h2>
+                class="lg:col-span-2 bg-vanilla-custard-50 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
+                <h2 class="text-base font-semibold text-base-content mb-4">Top 5 Menu Laris</h2>
                 <div id="bestSellerChart" class="w-full h-75"></div>
             </div>
 
             <!-- Target Pendapatan Harian -->
             <div
-                class="lg:col-span-1 bg-vanilla-custard-50 rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+                class="lg:col-span-1 bg-base-100 rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
                 <!-- Background decoration glow -->
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-vanilla-custard-100/50 rounded-full blur-2xl"></div>
                 <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-50 rounded-full blur-2xl"></div>
 
-                <div class="relative z-10 w-full flex flex-col h-full justify-between">
-                    <div class="w-full mb-6 flex items-start justify-between relative">
+                @php
+                    $remaining      = max(0, $dailyTarget - $stats['pendapatan_hari_ini']);
+                    $aovToday       = $stats['aov_hari_ini'] ?? 0;
+                    $ordersNeeded   = ($aovToday > 0 && $remaining > 0) ? (int) ceil($remaining / $aovToday) : null;
+                @endphp
+                <div class="relative z-10 w-full flex flex-col h-full gap-4">
+
+                    {{-- Header --}}
+                    <div class="flex items-start justify-between">
                         <div>
-                            <h2 class="text-base font-bold text-base-content">Target Pendapatan</h2>
-                            <p class="text-xs text-base-content/50 font-medium mt-1">Harian:
-                                Rp{{ number_format($dailyTarget, 0, ',', '.') }}</p>
+                            <h2 class="text-base font-semibold text-base-content">Target Pendapatan Hari Ini</h2>
+                            <p class="text-xs text-base-content/50 font-medium mt-0.5">Progres menuju target harian</p>
                         </div>
                         <button onclick="document.getElementById('editTargetModal').showModal()"
-                            class="btn btn-sm btn-circle btn-ghost text-fern-600 hover:text-fern-800 hover:bg-fern-50 transition-colors tooltip tooltip-left"
+                            class="btn btn-sm btn-circle btn-ghost text-fern-600 hover:text-fern-800 hover:bg-fern-50 transition-colors tooltip tooltip-left shrink-0"
                             data-tip="Ubah Target">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
@@ -308,27 +314,114 @@
                         </button>
                     </div>
 
-                    <div class="flex-1 flex items-center justify-center py-2">
-                        <div class="radial-progress text-fern-600"
-                            style="--value:{{ $chartSeries }}; --size:10rem; --thickness: 1.25rem;" role="progressbar">
-                            <div class="flex flex-col items-center justify-center">
-                                <span class="text-3xl font-bold text-base-content">{{ $targetPercentageReal }}%</span>
+                    {{-- Primary revenue figure --}}
+                    <div>
+                        <div class="flex items-baseline gap-1.5 flex-wrap">
+                            <span class="text-3xl sm:text-4xl font-bold text-fern-700 leading-none">
+                                Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}
+                            </span>
+                            <span class="text-sm font-medium text-base-content/40 leading-none">
+                                / Rp{{ number_format($dailyTarget, 0, ',', '.') }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-base-content/50 font-medium mt-1.5">Pendapatan hari ini</p>
+                    </div>
+
+                    {{-- Progress bar + percentage --}}
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-[11px] font-semibold text-base-content/50 tracking-wide">Progres</span>
+                            <span class="text-xs font-bold {{ $targetPercentageReal >= 100 ? 'text-emerald-600' : 'text-fern-700' }}">
+                                {{ $targetPercentageReal }}%
+                            </span>
+                        </div>
+                        <div class="w-full h-2 bg-base-200 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-500
+                                {{ $targetPercentageReal >= 100 ? 'bg-emerald-500' : 'bg-fern-500' }}"
+                                style="width: {{ min(100, $targetPercentageReal) }}%">
                             </div>
                         </div>
                     </div>
 
-                    <div class="w-full mt-6 bg-base-200/40 rounded-2xl p-3 text-center">
-                        <p class="text-[11px] text-base-content/60 font-semibold tracking-wider mb-0.5">Tercapai</p>
-                        <p class="text-xl font-bold text-fern-700">
-                            Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}</p>
+                    {{-- 3-column breakdown: Target / Tercapai / Sisa --}}
+                    <div class="grid grid-cols-3 gap-2 bg-base-200/40 rounded-xl p-3">
+                        <div>
+                            <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Target</p>
+                            <p class="text-xs font-bold text-base-content leading-tight">Rp{{ number_format($dailyTarget, 0, ',', '.') }}</p>
+                        </div>
+                        <div class="border-x border-base-200 px-2">
+                            <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Tercapai</p>
+                            <p class="text-xs font-bold text-fern-700 leading-tight">Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Sisa</p>
+                            <p class="text-xs font-bold {{ $remaining > 0 ? 'text-amber-600' : 'text-emerald-600' }} leading-tight">
+                                {{ $remaining > 0 ? 'Rp'.number_format($remaining, 0, ',', '.') : 'Lunas' }}
+                            </p>
+                        </div>
+                    </div>
 
-                        @if ($targetPercentageReal >= 100)
-                            <p class="text-[11px] text-emerald-600 font-bold mt-1">Luar biasa! Target tercapai</p>
-                        @else
-                            <p class="text-[11px] text-base-content/60 font-medium mt-1">Kurang
-                                Rp{{ number_format(max(0, $dailyTarget - $stats['pendapatan_hari_ini']), 0, ',', '.') }}
-                                lagi</p>
-                        @endif
+                    {{-- Contextual orders-needed hint --}}
+                    @if ($ordersNeeded !== null)
+                        <div class="flex items-center gap-2 px-3 py-2 rounded-md bg-fern-50 border border-fern-100">
+                            <p class="text-xs font-medium text-fern-800 leading-snug">
+                                Butuh sekitar
+                                <span class="font-bold">{{ $ordersNeeded }} pesanan</span>
+                                lagi &mdash; rata-rata
+                                <span class="font-semibold">Rp{{ number_format($aovToday, 0, ',', '.') }}</span>
+                                per pesanan
+                            </p>
+                        </div>
+                    @endif
+
+                    {{-- Status footer: qualitative insight, not a repeat of the Sisa column --}}
+                    <div class="mt-auto pt-3 border-t border-base-200/70">
+                        @php
+                            [$footerDot, $footerText, $footerColor] = match (true) {
+                                $targetPercentageReal >= 100 => [
+                                    'bg-emerald-500',
+                                    'Target hari ini sudah tercapai!',
+                                    'text-emerald-600 font-semibold',
+                                ],
+                                $targetPercentageReal >= 75 => [
+                                    'bg-fern-500',
+                                    'Tinggal sedikit lagi untuk mencapai target hari ini!',
+                                    'text-fern-700 font-medium',
+                                ],
+                                $targetPercentageReal >= 50 => [
+                                    'bg-fern-400',
+                                    'Hampir separuh target hari ini sudah tercapai!',
+                                    'text-fern-700 font-medium',
+                                ],
+                                $targetPercentageReal >= 25 => [
+                                    'bg-amber-400',
+                                    'Progres penjualan berjalan sesuai target.',
+                                    'text-base-content/60 font-medium',
+                                ],
+                                $stats['pesanan_hari_ini'] > 0 => [
+                                    'bg-amber-300',
+                                    'Pesanan masih berjalan hari ini.',
+                                    'text-base-content/60 font-medium',
+                                ],
+                                default => [
+                                    'bg-base-content/20',
+                                    'Belum ada pesanan selesai hari ini.',
+                                    'text-base-content/40 font-medium',
+                                ],
+                            };
+                            $showGrowth = $targetPercentageReal < 100 && ($stats['pendapatan_growth'] ?? 0) > 0;
+                        @endphp
+                        <div class="flex items-start gap-2">
+                            <span class="mt-1 w-2 h-2 rounded-full {{ $footerDot }} shrink-0"></span>
+                            <div>
+                                <p class="text-xs {{ $footerColor }}">{{ $footerText }}</p>
+                                @if ($showGrowth)
+                                    <p class="text-[11px] text-fern-600 font-semibold mt-0.5">
+                                        +{{ $stats['pendapatan_growth'] }}% lebih baik dari kemarin
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -366,10 +459,10 @@
             <div
                 class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
                 <div>
-                    <h2 class="text-base font-bold text-base-content mb-4">Performa Ulasan</h2>
+                    <h2 class="text-base font-semibold text-base-content mb-4">Performa Ulasan</h2>
                     <div class="flex items-center gap-6 mb-5">
                         <div class="text-center shrink-0">
-                            <p class="text-5xl font-bold text-fern-700">
+                            <p class="text-5xl font-semibold text-fern-700">
                                 {{ $avgRating > 0 ? number_format($avgRating, 1) : '5.0' }}</p>
                             <div class="flex items-center justify-center gap-0.5 mt-1">
                                 @for ($i = 1; $i <= 5; $i++)
@@ -435,7 +528,7 @@
             <!-- Revenue & Orders Chart -->
             <div
                 class="lg:col-span-3 bg-vanilla-custard-50 rounded-2xl shadow-sm p-4 sm:p-5 flex flex-col justify-between">
-                <h2 class="text-base font-bold text-base-content mb-4">Tren Transaksi 7 Hari Terakhir</h2>
+                <h2 class="text-base font-semibold text-base-content mb-4">Tren Transaksi 7 Hari Terakhir</h2>
                 <div id="trendChart" class="w-full h-75"></div>
             </div>
         </div>
@@ -537,7 +630,7 @@
                         horizontal: true,
                     }
                 },
-                colors: ['#ffffff'],
+                colors: ['#306939'],
                 dataLabels: {
                     enabled: false
                 },
@@ -545,12 +638,13 @@
                     categories: @json($topMenuLabels),
                     labels: {
                         style: {
-                            colors: '#ffffff',
+                            colors: '#64748b',
                             fontFamily: 'Poppins, sans-serif'
                         }
                     },
                     axisBorder: {
-                        show: false
+                        show: true,
+                        color: 'rgba(0, 0, 0, 0.1)'
                     },
                     axisTicks: {
                         show: false
@@ -559,16 +653,23 @@
                 yaxis: {
                     labels: {
                         style: {
-                            colors: '#ffffff',
+                            colors: '#64748b',
                             fontFamily: 'Poppins, sans-serif'
                         }
                     }
                 },
                 grid: {
-                    borderColor: 'rgba(255, 255, 255, 0.15)',
-                },
-                tooltip: {
-                    theme: 'dark'
+                    borderColor: 'rgba(0, 0, 0, 0.05)',
+                    xaxis: {
+                        lines: {
+                            show: false
+                        }
+                    },
+                    yaxis: {
+                        lines: {
+                            show: false
+                        }
+                    }
                 }
             };
             const bestSellerChart = new ApexCharts(document.querySelector("#bestSellerChart"), bestSellerOptions);

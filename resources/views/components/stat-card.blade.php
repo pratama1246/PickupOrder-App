@@ -12,7 +12,7 @@
 @php
     $variants = [
         'default' => [
-            'card' => 'bg-base-100 border-base-200',
+            'card' => 'bg-base-100 border border-base-200',
             'label' => 'text-base-content/60',
             'value' => $valueColor,
             'subtext' => 'text-base-content/100',
@@ -21,7 +21,7 @@
             'iconBg' => $iconBg,
         ],
         'highlight' => [
-            'card' => 'bg-linear-to-tl from-emerald-800 to-fern-600 border-fern-100',
+            'card' => 'bg-linear-to-br from-fern-700 to-fern-900',
             'label' => 'text-white/75',
             'value' => 'text-white',
             'subtext' => 'text-white/70',
@@ -30,7 +30,7 @@
             'iconBg' => $iconBg === 'bg-emerald-50 text-fern-700' ? 'bg-vanilla-custard-100 text-fern-800' : $iconBg,
         ],
         'emerald' => [
-            'card' => 'bg-linear-to-br from-emerald-50 to-base-100 border-base-200',
+            'card' => 'bg-linear-to-br from-emerald-50 to-base-100 border border-base-200',
             'label' => 'text-base-content/60',
             'value' => $valueColor,
             'subtext' => 'text-base-content/100',
@@ -39,7 +39,7 @@
             'iconBg' => $iconBg,
         ],
         'vanilla' => [
-            'card' => 'bg-linear-to-br from-vanilla-custard-50 to-base-100 border-base-200',
+            'card' => 'bg-linear-to-br from-vanilla-custard-50 to-base-100 border border-base-200',
             'label' => 'text-base-content/60',
             'value' => $valueColor,
             'subtext' => 'text-base-content/100',
@@ -48,7 +48,7 @@
             'iconBg' => $iconBg,
         ],
         'spruce' => [
-            'card' => 'bg-linear-to-br from-dark-spruce-50 to-base-100 border-base-200',
+            'card' => 'bg-linear-to-br from-dark-spruce-50 to-base-100 border border-base-200',
             'label' => 'text-base-content/60',
             'value' => $valueColor,
             'subtext' => 'text-base-content/100',
@@ -62,12 +62,12 @@
 @endphp
 
 <div
-    class="{{ $style['card'] }} rounded-2xl p-5 shadow-sm border flex justify-between items-start gap-4 min-h-43">
+    class="{{ $style['card'] }} rounded-2xl p-5 shadow-sm flex justify-between items-start gap-4 min-h-43">
     <div class="flex-1 min-w-0 self-stretch flex flex-col justify-between">
         <h3 class="text-sm font-medium {{ $style['label'] }}">{{ $label }}</h3>
 
         <div class="flex-1 flex items-center">
-            <p class="text-2xl sm:text-3xl font-bold {{ $style['value'] }}">{{ $value }}</p>
+            <p class="text-2xl sm:text-3xl font-semibold {{ $style['value'] }}">{{ $value }}</p>
         </div>
 
         @if ($growth !== null || $subtext)

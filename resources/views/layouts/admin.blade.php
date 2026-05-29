@@ -19,7 +19,7 @@
 
         <div class="drawer-content flex flex-col h-full overflow-hidden">
 
-            <main class="flex-1 overflow-y-auto bg-base-100 px-3 py-4 pb-24 sm:p-6 sm:pb-24 lg:p-8">
+            <main class="flex-1 overflow-y-auto bg-emerald-50 px-3 py-4 pb-24 sm:p-6 sm:pb-24 lg:p-8">
                 @yield('content')
             </main>
 
