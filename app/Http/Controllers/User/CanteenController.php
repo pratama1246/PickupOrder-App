@@ -11,7 +11,7 @@ use Illuminate\View\View;
 class CanteenController extends Controller
 {
     /**
-     * Browse semua kantin dan menu (halaman /pesan).
+     * Browse semua kantin dan menu (halaman /browse).
      * Mendukung pencarian dan filter status kantin.
      */
     public function index(Request $request): View
@@ -84,11 +84,11 @@ class CanteenController extends Controller
         $categories = Menu::select('category')->distinct()->whereNotNull('category')->pluck('category');
         $allCanteens = Canteen::where('is_open', true)->select('id', 'name')->get();
 
-        return view('user.pesanan', compact('canteens', 'categories', 'allCanteens'));
+        return view('user.browse', compact('canteens', 'categories', 'allCanteens'));
     }
 
     /**
-     * Detail satu kantin beserta daftar menu-nya (halaman /kantin/{id}).
+     * Detail satu kantin beserta daftar menu-nya (halaman /canteen/{id}).
      */
     public function show(int $id): View
     {
@@ -96,6 +96,6 @@ class CanteenController extends Controller
             $q->where('is_available', true)->orderBy('name');
         }])->findOrFail($id);
 
-        return view('user.kantin', compact('canteen'));
+        return view('user.canteen', compact('canteen'));
     }
 }

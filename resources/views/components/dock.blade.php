@@ -12,7 +12,7 @@
 
 <div class="dock lg:hidden bg-base-100 shadow-lg border-t border-base-200 z-50">
     @if ($role === 'admin')
-        <a href="/admin/dashboard"
+        <a href="{{ route('admin.dashboard') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('admin/dashboard') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -24,8 +24,8 @@
             <span class="dock-label text-xs">Overview</span>
         </a>
 
-        <a href="/admin/kantin"
-            class="flex flex-col items-center gap-0.5 {{ request()->is('admin/kantin*') ? 'dock-active text-fern-700 font-bold' : '' }}">
+        <a href="{{ route('admin.canteen.index') }}"
+            class="flex flex-col items-center gap-0.5 {{ request()->is('admin/canteen*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
@@ -34,8 +34,8 @@
             <span class="dock-label text-xs">Kantin</span>
         </a>
 
-        <a href="/admin/pengguna"
-            class="flex flex-col items-center gap-0.5 {{ request()->is('admin/pengguna*') ? 'dock-active text-fern-700 font-bold' : '' }}">
+        <a href="{{ route('admin.users.index') }}"
+            class="flex flex-col items-center gap-0.5 {{ request()->is('admin/users*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -46,7 +46,7 @@
             <span class="dock-label text-xs">Pengguna</span>
         </a>
     @elseif($role === 'vendor')
-        <a href="/vendor/dashboard"
+        <a href="{{ route('vendor.dashboard') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('vendor/dashboard') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -58,7 +58,7 @@
             <span class="dock-label text-xs">Overview</span>
         </a>
 
-        <a href="/vendor/order"
+        <a href="{{ route('vendor.order.index') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('vendor/order*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -68,7 +68,7 @@
             <span class="dock-label text-xs">Order</span>
         </a>
 
-        <a href="/vendor/menu"
+        <a href="{{ route('vendor.menu.index') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('vendor/menu*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -77,8 +77,8 @@
             <span class="dock-label text-xs">Menu</span>
         </a>
 
-        <a href="/vendor/laporan"
-            class="flex flex-col items-center gap-0.5 {{ request()->is('vendor/laporan*') ? 'dock-active text-fern-700 font-bold' : '' }}">
+        <a href="{{ route('vendor.report.index') }}"
+            class="flex flex-col items-center gap-0.5 {{ request()->is('vendor/report*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -103,8 +103,8 @@
             <span class="dock-label text-xs">Beranda</span>
         </a>
 
-        <a href="/pesan"
-            class="flex flex-col items-center gap-0.5 {{ request()->is('pesan*') || request()->is('kantin*') ? 'dock-active text-fern-700 font-bold' : '' }}">
+        <a href="{{ route('canteen.index') }}"
+            class="flex flex-col items-center gap-0.5 {{ request()->is('browse*') || request()->is('canteen*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path
@@ -113,8 +113,8 @@
             <span class="dock-label text-xs">Pesan</span>
         </a>
 
-        <a href="/riwayat"
-            class="flex flex-col items-center gap-0.5 {{ request()->is('riwayat*') ? 'dock-active text-fern-700 font-bold' : '' }}">
+        <a href="{{ route('order.index') }}"
+            class="flex flex-col items-center gap-0.5 {{ request()->is('history*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />

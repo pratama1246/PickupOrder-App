@@ -13,7 +13,7 @@ use Illuminate\View\View;
 class OrderController extends Controller
 {
     /**
-     * Daftar riwayat pesanan mahasiswa (/riwayat).
+     * Daftar riwayat pesanan mahasiswa (/history).
      * Pesanan online yang masih pending dikelompokkan per payment_code (1 kontainer).
      * Pesanan lainnya (sudah lunas atau tunai) ditampilkan per-item.
      */
@@ -58,11 +58,11 @@ class OrderController extends Controller
 
         $orders = $query->paginate(10)->withQueryString();
 
-        return view('user.riwayat', compact('orders', 'pendingOnlineGroups'));
+        return view('user.history', compact('orders', 'pendingOnlineGroups'));
     }
 
     /**
-     * Detail satu pesanan dari riwayat (/riwayat/{id}).
+     * Detail satu pesanan dari riwayat (/history/{id}).
      */
     public function show(int $id): View
     {

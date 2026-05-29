@@ -6,7 +6,7 @@
 
     <div
         class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
-        <x-breadcrumb compact :links="[['label' => 'Pengguna', 'url' => route('admin.pengguna.index')], ['label' => 'Edit Pengguna']]" />
+        <x-breadcrumb compact :links="[['label' => 'Pengguna', 'url' => route('admin.users.index')], ['label' => 'Edit Pengguna']]" />
 
         <div class="mb-6 sm:mb-8">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Edit Pengguna</h1>
@@ -18,7 +18,7 @@
           Menggunakan Alpine.js `role` untuk melakukan validasi input dinamis di sisi klien, 
           khususnya menyembunyikan/menonaktifkan input NIM/NIP apabila peran yang dipilih adalah 'vendor'.
         --}}
-        <form action="{{ route('admin.pengguna.update', $user->id) }}" method="POST" class="space-y-5" x-data="{ role: '{{ old('role', $user->role) }}' }">
+        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="space-y-5" x-data="{ role: '{{ old('role', $user->role) }}' }">
             @csrf
             @method('PUT')
 
@@ -150,7 +150,7 @@
                     class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6">
                     Simpan Perubahan
                 </button>
-                <a href="{{ route('admin.pengguna.index') }}"
+                <a href="{{ route('admin.users.index') }}"
                     class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6">
                     Batal
                 </a>

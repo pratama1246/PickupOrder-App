@@ -9,7 +9,7 @@ use Illuminate\View\View;
 class MenuController extends Controller
 {
     /**
-     * Halaman detail satu menu makanan (/kantin/{canteenId}/menu/{id}).
+     * Halaman detail satu menu makanan (/canteen/{canteenId}/menu/{id}).
      * Menampilkan info lengkap menu + daftar menu lain dari kantin yang sama.
      */
     public function show(int $canteenId, int $id): View

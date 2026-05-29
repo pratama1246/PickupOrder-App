@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="flex md:hidden items-center gap-2">
-                    <a href="{{ route('admin.pengguna.import.form') }}"
+                    <a href="{{ route('admin.users.import.form') }}"
                         class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center"
                         title="Impor Pengguna">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/70" fill="none"
@@ -40,7 +40,7 @@
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
                     </a>
-                    <a href="{{ route('admin.pengguna.create') }}"
+                    <a href="{{ route('admin.users.create') }}"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2.5">
@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <form method="GET" action="{{ route('admin.pengguna.index') }}" @submit.prevent
+            <form method="GET" action="{{ route('admin.users.index') }}" @submit.prevent
                 class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
                 <div class="w-full md:w-64 xl:w-80 grow relative">
                     <label
@@ -79,7 +79,7 @@
                 </button>
 
                 @if (request('search') || request('role'))
-                    <a href="{{ route('admin.pengguna.index') }}"
+                    <a href="{{ route('admin.users.index') }}"
                         class="btn btn-md bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0"
                         title="Hapus filter pencarian">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -91,7 +91,7 @@
                 @endif
 
                 <div class="hidden md:flex items-center gap-2 shrink-0">
-                    <a href="{{ route('admin.pengguna.import.form') }}"
+                    <a href="{{ route('admin.users.import.form') }}"
                         class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content border-none rounded-full w-12 h-12 p-0 shadow-sm transition-colors flex items-center justify-center"
                         title="Import Pengguna">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/70" fill="none"
@@ -100,7 +100,7 @@
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
                     </a>
-                    <a href="{{ route('admin.pengguna.create') }}"
+                    <a href="{{ route('admin.users.create') }}"
                         class="btn btn-md bg-fern-700 hover:bg-fern-800 text-white border-none rounded-full w-12 h-12 p-0 shadow-sm transition-colors flex items-center justify-center"
                         title="Tambah Pengguna">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -123,7 +123,7 @@
                 <span class="text-sm font-bold text-base-content/70 mr-2"><span x-text="selectedIds.length"></span> pengguna
                     terpilih:</span>
 
-                <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center"
+                <form action="{{ route('admin.users.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center"
                     onsubmit="confirmAction(event, 'Yakin ingin mengaktifkan semua pengguna yang terpilih?');">
                     @csrf
                     @method('PATCH')
@@ -137,7 +137,7 @@
                     </button>
                 </form>
 
-                <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center"
+                <form action="{{ route('admin.users.bulkToggle') }}" method="POST" class="m-0 p-0 flex items-center"
                     onsubmit="confirmAction(event, 'Yakin ingin menonaktifkan semua pengguna yang terpilih?');">
                     @csrf
                     @method('PATCH')
@@ -153,7 +153,7 @@
 
                 <div class="w-px h-5 bg-base-content/20 mx-2"></div>
 
-                <form action="{{ route('admin.pengguna.bulkDestroy') }}" method="POST" class="m-0 p-0 flex items-center"
+                <form action="{{ route('admin.users.bulkDestroy') }}" method="POST" class="m-0 p-0 flex items-center"
                     onsubmit="confirmAction(event, 'Yakin ingin menghapus semua pengguna yang terpilih?', true);">
                     @csrf
                     @method('DELETE')
@@ -172,7 +172,7 @@
                 <div class="text-xs font-bold text-base-content/70"><span x-text="selectedIds.length"></span> pengguna
                     terpilih</div>
                 <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                    <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0"
+                    <form action="{{ route('admin.users.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0"
                         onsubmit="confirmAction(event, 'Yakin ingin mengaktifkan semua pengguna yang terpilih?');">
                         @csrf
                         @method('PATCH')
@@ -183,7 +183,7 @@
                             class="btn btn-xs bg-fern-100 hover:bg-fern-200 text-fern-700 border-none rounded-md font-bold px-3">Aktifkan</button>
                     </form>
 
-                    <form action="{{ route('admin.pengguna.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0"
+                    <form action="{{ route('admin.users.bulkToggle') }}" method="POST" class="m-0 p-0 shrink-0"
                         onsubmit="confirmAction(event, 'Yakin ingin menonaktifkan semua pengguna yang terpilih?');">
                         @csrf
                         @method('PATCH')
@@ -194,7 +194,7 @@
                             class="btn btn-xs bg-orange-100 hover:bg-orange-200 text-orange-700 border-none rounded-md font-bold px-3">Nonaktifkan</button>
                     </form>
 
-                    <form action="{{ route('admin.pengguna.bulkDestroy') }}" method="POST" class="m-0 p-0 shrink-0"
+                    <form action="{{ route('admin.users.bulkDestroy') }}" method="POST" class="m-0 p-0 shrink-0"
                         onsubmit="confirmAction(event, 'Yakin ingin menghapus semua pengguna yang terpilih?', true);">
                         @csrf
                         @method('DELETE')
@@ -208,7 +208,7 @@
         </div>
 
         <div class="max-w-8xl">
-            <x-admin.pengguna-table :users="$users" />
+            <x-admin.users-table :users="$users" />
 
             <div class="mt-4">
                 {{ $users->links() }}

@@ -14,7 +14,7 @@ class CartController extends Controller
     private const SESSION_KEY = 'cart';
 
     /**
-     * Tampilkan isi keranjang belanja (/keranjang).
+     * Tampilkan isi keranjang belanja (/cart).
      * Data keranjang disimpan di session, dikelompokkan per kantin.
      */
     public function index(): View
@@ -27,7 +27,7 @@ class CartController extends Controller
         $grouped = $this->groupByCanteen($cart);
         $total = array_sum(array_column($cart, 'subtotal'));
 
-        return view('user.keranjang', compact('grouped', 'total'));
+        return view('user.cart', compact('grouped', 'total'));
     }
 
     /**

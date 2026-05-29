@@ -17,7 +17,7 @@
 
         <x-breadcrumb class="pt-8 pb-4" maxWidth="max-w-7xl" :links="[
             ['label' => 'Beranda', 'url' => '/'],
-            ['label' => 'Riwayat', 'url' => '/riwayat'],
+            ['label' => 'Riwayat', 'url' => route('order.index')],
             ['label' => 'Order No. ' . $order->order_code],
         ]" />
 

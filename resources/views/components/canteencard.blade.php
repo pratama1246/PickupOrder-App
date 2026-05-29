@@ -6,7 +6,7 @@
     'menuCount' => '25',
     'time' => '07.00–16.00',
     'image' => null,
-    'actionUrl' => '/kantin',
+    'actionUrl' => route('canteen.index'),
     'actionText' => 'Lihat Menu',
 ])
 

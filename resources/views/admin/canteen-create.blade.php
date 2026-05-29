@@ -6,7 +6,7 @@
 
     <div
         class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
-        <x-breadcrumb compact :links="[['label' => 'Kantin', 'url' => route('admin.kantin.index')], ['label' => 'Tambah Kantin']]" />
+        <x-breadcrumb compact :links="[['label' => 'Kantin', 'url' => route('admin.canteen.index')], ['label' => 'Tambah Kantin']]" />
 
         <div class="mb-6 sm:mb-8">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Tambah Kantin</h1>
@@ -14,7 +14,7 @@
                 sistem.</p>
         </div>
 
-        <form action="{{ route('admin.kantin.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+        <form action="{{ route('admin.canteen.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
 
             <div>
@@ -96,7 +96,7 @@
                     class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6">
                     Tambah Kantin
                 </button>
-                <a href="{{ route('admin.kantin.index') }}"
+                <a href="{{ route('admin.canteen.index') }}"
                     class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6">
                     Batal
                 </a>

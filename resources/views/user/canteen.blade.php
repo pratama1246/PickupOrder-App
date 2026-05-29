@@ -22,7 +22,7 @@
 
         <x-breadcrumb :links="[
             ['label' => 'Beranda', 'url' => '/'],
-            ['label' => 'Kantin', 'url' => '/pesan'],
+            ['label' => 'Kantin', 'url' => route('canteen.index')],
             ['label' => $canteen->name],
         ]" />
 

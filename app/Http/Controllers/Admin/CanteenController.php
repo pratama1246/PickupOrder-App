@@ -17,7 +17,7 @@ use Intervention\Image\Laravel\Facades\Image;
 class CanteenController extends Controller
 {
     /**
-     * Daftar semua kantin terdaftar (/admin/kantin).
+     * Daftar semua kantin terdaftar (/admin/canteen).
      * Mendukung pencarian dan filter status buka/tutup.
      */
     public function index(Request $request): View
@@ -34,11 +34,11 @@ class CanteenController extends Controller
 
         $canteens = $query->latest()->paginate(10)->withQueryString();
 
-        return view('admin.kantin', compact('canteens'));
+        return view('admin.canteen', compact('canteens'));
     }
 
     /**
-     * Detail satu kantin (/admin/kantin/{id}).
+     * Detail satu kantin (/admin/canteen/{id}).
      */
     public function show(int $id): View
     {
@@ -56,15 +56,15 @@ class CanteenController extends Controller
         $menus = $canteen->menus()->latest()->paginate(5, ['*'], 'menus_page')->withQueryString();
         $orders = $canteen->orders()->with('user')->latest()->paginate(5, ['*'], 'orders_page')->withQueryString();
 
-        return view('admin.kantin-show', compact('canteen', 'menus', 'orders'));
+        return view('admin.canteen-show', compact('canteen', 'menus', 'orders'));
     }
 
     /**
-     * Form tambah kantin baru (/admin/kantin/tambah).
+     * Form tambah kantin baru (/admin/canteen/create).
      */
     public function create(): View
     {
-        return view('admin.kantin-create');
+        return view('admin.canteen-create');
     }
 
     /**
@@ -116,18 +116,18 @@ class CanteenController extends Controller
 
         Canteen::create($validated);
 
-        return redirect()->route('admin.kantin.index')
+        return redirect()->route('admin.canteen.index')
             ->with('success', "Kantin berhasil ditambahkan. Akun Vendor dibuat dengan Email: {$email} dan Password: {$password}");
     }
 
     /**
-     * Form edit data kantin (/admin/kantin/{id}/edit).
+     * Form edit data kantin (/admin/canteen/{id}/edit).
      */
     public function edit(int $id): View
     {
         $canteen = Canteen::with('owner')->findOrFail($id);
 
-        return view('admin.kantin-edit', compact('canteen'));
+        return view('admin.canteen-edit', compact('canteen'));
     }
 
     /**
@@ -158,7 +158,7 @@ class CanteenController extends Controller
 
         $canteen->update($validated);
 
-        return redirect()->route('admin.kantin.index')
+        return redirect()->route('admin.canteen.index')
             ->with('success', 'Data kantin berhasil diperbarui.');
     }
 
@@ -175,7 +175,7 @@ class CanteenController extends Controller
 
         $canteen->delete();
 
-        return redirect()->route('admin.kantin.index')->with('success', 'Kantin berhasil dihapus.');
+        return redirect()->route('admin.canteen.index')->with('success', 'Kantin berhasil dihapus.');
     }
 
     /**
@@ -197,6 +197,6 @@ class CanteenController extends Controller
             $canteen->delete();
         }
 
-        return redirect()->route('admin.kantin.index')->with('success', 'Kantin terpilih berhasil dihapus.');
+        return redirect()->route('admin.canteen.index')->with('success', 'Kantin terpilih berhasil dihapus.');
     }
 }

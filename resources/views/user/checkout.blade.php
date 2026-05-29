@@ -7,7 +7,7 @@
 
         <x-breadcrumb class="pt-8 pb-4" maxWidth="max-w-7xl" :links="[
             ['label' => 'Beranda', 'url' => '/'],
-            ['label' => 'Keranjang Belanja', 'url' => '/keranjang'],
+            ['label' => 'Keranjang Belanja', 'url' => route('cart.index')],
             ['label' => 'Checkout'],
         ]" />
 
@@ -207,7 +207,7 @@
                         </div>
 
                         <div class="flex gap-3">
-                            <a href="/keranjang" id="checkout-cancel-btn"
+                            <a href="{{ route('cart.index') }}" id="checkout-cancel-btn"
                                 class="btn bg-red-500 hover:bg-red-600 text-white border-none flex-1 rounded-xl font-bold shadow-md active:scale-95 transition-all h-12 min-h-0 text-center flex items-center justify-center">
                                 Batalkan
                             </a>

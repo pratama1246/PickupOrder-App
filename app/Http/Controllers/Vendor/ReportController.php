@@ -52,7 +52,7 @@ class ReportController extends Controller
             ->take(10)
             ->get();
 
-        return view('vendor.laporan', compact(
+        return view('vendor.report', compact(
             'canteen', 'startDate', 'endDate', 'totalOrders', 'totalRevenue', 'averageOrderValue', 'topMenus'
         ));
     }

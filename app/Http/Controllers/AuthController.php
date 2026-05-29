@@ -77,7 +77,7 @@ class AuthController extends Controller
      */
     public function showChangePassword(): View
     {
-        return view('auth.ganti-password');
+        return view('auth.change-password');
     }
 
     /**
@@ -109,7 +109,7 @@ class AuthController extends Controller
      */
     public function showForgotPassword(): View
     {
-        return view('auth.lupa-password');
+        return view('auth.forgot-password');
     }
 
     /**

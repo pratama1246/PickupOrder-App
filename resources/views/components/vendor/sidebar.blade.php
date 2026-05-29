@@ -9,7 +9,7 @@
 <aside class="w-64 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
     <nav class="flex-1 px-3 py-4 space-y-1">
 
-        <a href="/vendor/dashboard"
+        <a href="{{ route('vendor.dashboard') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
        {{ request()->is('vendor/dashboard') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
@@ -22,7 +22,7 @@
             Overview
         </a>
 
-        <a href="/vendor/order"
+        <a href="{{ route('vendor.order.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
        {{ request()->is('vendor/order*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
@@ -34,7 +34,7 @@
         </a>
 
 
-        <a href="/vendor/menu"
+        <a href="{{ route('vendor.menu.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
        {{ request()->is('vendor/menu*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
@@ -44,9 +44,9 @@
             Menu
         </a>
 
-        <a href="/vendor/laporan"
+        <a href="{{ route('vendor.report.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('vendor/laporan*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('vendor/report*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"

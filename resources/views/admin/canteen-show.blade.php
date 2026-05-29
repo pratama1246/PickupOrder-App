@@ -10,7 +10,7 @@
           Navigasi tab 'menu' dan 'order' dikontrol di sisi klien menggunakan Alpine.js activeTab 
           untuk performa perpindahan tab yang cepat tanpa memicu reload halaman penuh.
         --}}
-        <a href="{{ route('admin.kantin.index') }}"
+        <a href="{{ route('admin.canteen.index') }}"
             class="btn btn-sm btn-ghost gap-1 px-2 mb-2 text-base-content/70 hover:bg-base-200 transition-colors w-fit flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 stroke-width="2">
@@ -37,7 +37,7 @@
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </button>
-                    <a href="{{ route('admin.kantin.edit', $canteen->id) }}"
+                    <a href="{{ route('admin.canteen.edit', $canteen->id) }}"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white border-none shadow-sm rounded-md transition-colors p-2.5 h-auto min-h-0 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
@@ -54,7 +54,7 @@
                     class="btn bg-red-600 hover:bg-red-700 text-white border-none shadow-sm rounded-xl transition-colors text-sm font-bold px-5">
                     Hapus
                 </button>
-                <a href="{{ route('admin.kantin.edit', $canteen->id) }}"
+                <a href="{{ route('admin.canteen.edit', $canteen->id) }}"
                     class="btn bg-fern-700 hover:bg-fern-800 text-white border-none shadow-sm rounded-xl transition-colors text-sm font-bold px-5">
                     Edit
                 </a>
@@ -317,7 +317,7 @@
         <x-slot:footer>
             <button type="button" onclick="document.getElementById('delete_canteen_modal_{{ $canteen->id }}').close()"
                 class="btn btn-ghost rounded-xl font-bold transition-colors">Batal</button>
-            <form action="{{ route('admin.kantin.destroy', $canteen->id) }}" method="POST"
+            <form action="{{ route('admin.canteen.destroy', $canteen->id) }}" method="POST"
                 class="m-0 p-0 inline-block">
                 @csrf
                 @method('DELETE')

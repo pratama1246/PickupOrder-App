@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="flex md:hidden items-center gap-2">
-                    <a href="{{ route('admin.kantin.create') }}"
+                    <a href="{{ route('admin.canteen.create') }}"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2.5">
@@ -56,7 +56,7 @@
                 </button>
 
                 <div class="hidden md:flex items-center gap-2 shrink-0">
-                    <a href="{{ route('admin.kantin.create') }}"
+                    <a href="{{ route('admin.canteen.create') }}"
                         class="btn btn-md bg-fern-700 hover:bg-fern-800 text-white border-none rounded-full w-12 h-12 p-0 shadow-sm transition-colors flex items-center justify-center"
                         title="Tambah Kantin">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -73,7 +73,7 @@
                 @forelse ($canteens as $canteen)
                     <div class="bg-white rounded-xl shadow-sm border border-base-200">
                         <x-canteencard :id="$canteen->id" :name="$canteen->name" :image="$canteen->image ? asset('storage/' . $canteen->image) : null" :description="$canteen->description"
-                            :menuCount="$canteen->menus_count" rating="4.8" actionText="Detail" :actionUrl="route('admin.kantin.show', $canteen->id)" />
+                            :menuCount="$canteen->menus_count" rating="4.8" actionText="Detail" :actionUrl="route('admin.canteen.show', $canteen->id)" />
                     </div>
                 @empty
                     <div class="p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">

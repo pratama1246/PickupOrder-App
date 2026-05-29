@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class UserController extends Controller
 {
     /**
-     * Daftar semua pengguna sistem (/admin/pengguna).
+     * Daftar semua pengguna sistem (/admin/users).
      * Menampilkan mahasiswa dan vendor, mendukung pencarian dan filter role.
      */
     public function index(Request $request): View
@@ -37,15 +37,15 @@ class UserController extends Controller
 
         $users = $query->paginate(15)->withQueryString();
 
-        return view('admin.pengguna.index', compact('users'));
+        return view('admin.users.index', compact('users'));
     }
 
     /**
-     * Form tambah pengguna baru (/admin/pengguna/create).
+     * Form tambah pengguna baru (/admin/users/create).
      */
     public function create(): View
     {
-        return view('admin.pengguna.create');
+        return view('admin.users.create');
     }
 
     /**
@@ -71,18 +71,18 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('admin.pengguna.index')
+        return redirect()->route('admin.users.index')
             ->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
     /**
-     * Form edit data pengguna (/admin/pengguna/{id}/edit).
+     * Form edit data pengguna (/admin/users/{id}/edit).
      */
     public function edit(int $id): View
     {
         $user = User::whereIn('role', ['mahasiswa', 'vendor'])->findOrFail($id);
 
-        return view('admin.pengguna.edit', compact('user'));
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -113,7 +113,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('admin.pengguna.index')
+        return redirect()->route('admin.users.index')
             ->with('success', 'Pengguna berhasil diperbarui.');
     }
 
@@ -201,11 +201,11 @@ class UserController extends Controller
     }
 
     /**
-     * Tampilkan form import pengguna CSV (/admin/pengguna/import).
+     * Tampilkan form import pengguna CSV (/admin/users/import).
      */
     public function importForm(): View
     {
-        return view('admin.pengguna.import');
+        return view('admin.users.import');
     }
 
     /**
@@ -350,11 +350,11 @@ class UserController extends Controller
         if (count($errors) > 0) {
             $message .= ' Namun ada '.count($errors).' baris data yang dilewati karena tidak valid.';
 
-            return redirect()->route('admin.pengguna.index')
+            return redirect()->route('admin.users.index')
                 ->with('success', $message)
                 ->with('error_list', $errors);
         }
 
-        return redirect()->route('admin.pengguna.index')->with('success', $message);
+        return redirect()->route('admin.users.index')->with('success', $message);
     }
 }

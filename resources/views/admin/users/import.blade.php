@@ -6,7 +6,7 @@
 
     <div
         class="max-w-2xl bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-6 sm:p-8 mb-10 lg:mb-0 shadow-sm">
-        <x-breadcrumb compact :links="[['label' => 'Pengguna', 'url' => route('admin.pengguna.index')], ['label' => 'Import Pengguna']]" />
+        <x-breadcrumb compact :links="[['label' => 'Pengguna', 'url' => route('admin.users.index')], ['label' => 'Import Pengguna']]" />
 
         <div class="mb-6 sm:mb-8">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Import Pengguna</h1>
@@ -20,7 +20,7 @@
                 <h3 class="text-sm font-bold text-base-content">Template Pengguna CSV</h3>
                 <p class="text-xs text-base-content/65">Unduh template CSV resmi untuk format pengisian data yang benar.</p>
             </div>
-            <a href="{{ route('admin.pengguna.import.template') }}"
+            <a href="{{ route('admin.users.import.template') }}"
                 class="btn btn-sm bg-base-200 hover:bg-base-300 text-base-content border-none rounded-lg font-bold flex items-center gap-1.5 shadow-xs shrink-0 w-fit">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
@@ -125,7 +125,7 @@
           Menggunakan input file tersembunyi yang dibungkus label kustom (menggunakan Alpine.js untuk
           pelacakan nama file) demi tampilan antarmuka seret-taruh (drag-and-drop).
         --}}
-        <form action="{{ route('admin.pengguna.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ route('admin.users.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div x-data="{ fileName: '' }">
@@ -162,7 +162,7 @@
                     class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6 transition-colors">
                     Mulai Impor
                 </button>
-                <a href="{{ route('admin.pengguna.index') }}"
+                <a href="{{ route('admin.users.index') }}"
                     class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6 transition-colors">
                     Batal
                 </a>

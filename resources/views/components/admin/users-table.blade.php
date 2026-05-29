@@ -52,7 +52,7 @@
                         </td>
                         <td class="py-3 px-4">
                             <div class="flex gap-2">
-                                <form action="{{ route('admin.pengguna.toggle', $user->id) }}" method="POST"
+                                <form action="{{ route('admin.users.toggle', $user->id) }}" method="POST"
                                     class="m-0 p-0">
                                     @csrf
                                     @method('PATCH')
@@ -61,11 +61,11 @@
                                         {{ !$user->is_first_login ? 'Nonaktifkan' : 'Aktifkan' }}
                                     </button>
                                 </form>
-                                <a href="{{ route('admin.pengguna.edit', $user->id) }}"
+                                <a href="{{ route('admin.users.edit', $user->id) }}"
                                     class="btn btn-xs bg-amber-500 hover:bg-amber-600 text-white border-none rounded-md font-bold">
                                     Edit
                                 </a>
-                                <form action="{{ route('admin.pengguna.destroy', $user->id) }}" method="POST"
+                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
                                     class="m-0 p-0"
                                     onsubmit="confirmAction(event, 'Yakin ingin menghapus pengguna ini?', true);">
                                     @csrf

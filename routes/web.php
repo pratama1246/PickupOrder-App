@@ -28,16 +28,16 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     // Lupa password
-    Route::get('/lupa-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
-    Route::post('/lupa-password', [AuthController::class, 'forgotPassword'])->name('password.request.submit')->middleware('throttle:3,1');
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.request.submit')->middleware('throttle:3,1');
 });
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // First login - ganti password wajib
-    Route::get('/ganti-password', [AuthController::class, 'showChangePassword'])->name('password.change.form');
-    Route::post('/ganti-password', [AuthController::class, 'changePassword'])->name('password.change');
+    Route::get('/change-password', [AuthController::class, 'showChangePassword'])->name('password.change.form');
+    Route::post('/change-password', [AuthController::class, 'changePassword'])->name('password.change');
 
     // Profile & Settings
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -56,15 +56,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/tentang-kami', [HomeController::class, 'about'])->name('about');
 
     // Browse kantin & menu
-    Route::get('/pesan', [UserCanteenController::class, 'index'])->name('canteen.index');
-    Route::get('/kantin/{id}', [UserCanteenController::class, 'show'])->name('canteen.show');
-    Route::get('/kantin/{canteenId}/menu/{id}', [UserMenuController::class, 'show'])->name('menu.show');
+    Route::get('/browse', [UserCanteenController::class, 'index'])->name('canteen.index');
+    Route::get('/canteen/{id}', [UserCanteenController::class, 'show'])->name('canteen.show');
+    Route::get('/canteen/{canteenId}/menu/{id}', [UserMenuController::class, 'show'])->name('menu.show');
 
     // Keranjang belanja
-    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/keranjang', [CartController::class, 'store'])->name('cart.store')->middleware('throttle:30,1');
-    Route::put('/keranjang/{menuId}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/keranjang/{menuId}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart', [CartController::class, 'store'])->name('cart.store')->middleware('throttle:30,1');
+    Route::put('/cart/{menuId}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{menuId}', [CartController::class, 'destroy'])->name('cart.destroy');
 
     // Checkout
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
@@ -73,12 +73,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/retry/{paymentCode}', [CheckoutController::class, 'retry'])->name('checkout.retry');
 
     // Riwayat pesanan
-    Route::get('/riwayat', [UserOrderController::class, 'index'])->name('order.index');
-    Route::get('/riwayat/{id}', [UserOrderController::class, 'show'])->name('order.show');
-    Route::delete('/riwayat/{id}', [UserOrderController::class, 'destroy'])->name('order.destroy');
-    Route::delete('/riwayat/group/{paymentCode}', [UserOrderController::class, 'cancelGroup'])->name('order.cancel-group');
-    Route::post('/riwayat/{id}/review', [ReviewController::class, 'store'])->name('order.review')->middleware('throttle:10,1');
-    Route::post('/riwayat/{id}/reorder', [CartController::class, 'reorder'])->name('order.reorder');
+    Route::get('/history', [UserOrderController::class, 'index'])->name('order.index');
+    Route::get('/history/{id}', [UserOrderController::class, 'show'])->name('order.show');
+    Route::delete('/history/{id}', [UserOrderController::class, 'destroy'])->name('order.destroy');
+    Route::delete('/history/group/{paymentCode}', [UserOrderController::class, 'cancelGroup'])->name('order.cancel-group');
+    Route::post('/history/{id}/review', [ReviewController::class, 'store'])->name('order.review')->middleware('throttle:10,1');
+    Route::post('/history/{id}/reorder', [CartController::class, 'reorder'])->name('order.reorder');
 
     // API endpoint untuk polling status pembayaran (dipanggil oleh JavaScript di frontend)
     Route::get('/api/order/{id}/payment-status', [UserOrderController::class, 'paymentStatus'])->name('order.payment-status');
@@ -110,7 +110,7 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
     Route::resource('menu', VendorMenuController::class);
 
     // Laporan Penjualan
-    Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');
+    Route::get('/report', [ReportController::class, 'index'])->name('report.index');
 });
 
 // ---------------------------------------------------------------------------
@@ -120,17 +120,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Manajemen kantin (resource)
-    Route::delete('/kantin/bulk-destroy', [AdminCanteenController::class, 'bulkDestroy'])->name('kantin.bulkDestroy');
-    Route::resource('kantin', AdminCanteenController::class);
+    Route::delete('/canteen/bulk-destroy', [AdminCanteenController::class, 'bulkDestroy'])->name('canteen.bulkDestroy');
+    Route::resource('canteen', AdminCanteenController::class);
 
     // Manajemen pengguna
-    Route::delete('/pengguna/bulk-destroy', [AdminUserController::class, 'bulkDestroy'])->name('pengguna.bulkDestroy');
-    Route::patch('/pengguna/bulk-toggle', [AdminUserController::class, 'bulkToggle'])->name('pengguna.bulkToggle');
-    Route::get('/pengguna/import', [AdminUserController::class, 'importForm'])->name('pengguna.import.form');
-    Route::post('/pengguna/import', [AdminUserController::class, 'import'])->name('pengguna.import');
-    Route::get('/pengguna/import/template', [AdminUserController::class, 'downloadTemplate'])->name('pengguna.import.template');
-    Route::patch('/pengguna/{id}/toggle', [AdminUserController::class, 'toggle'])->name('pengguna.toggle');
-    Route::resource('pengguna', AdminUserController::class)->except(['show']);
+    Route::delete('/users/bulk-destroy', [AdminUserController::class, 'bulkDestroy'])->name('users.bulkDestroy');
+    Route::patch('/users/bulk-toggle', [AdminUserController::class, 'bulkToggle'])->name('users.bulkToggle');
+    Route::get('/users/import', [AdminUserController::class, 'importForm'])->name('users.import.form');
+    Route::post('/users/import', [AdminUserController::class, 'import'])->name('users.import');
+    Route::get('/users/import/template', [AdminUserController::class, 'downloadTemplate'])->name('users.import.template');
+    Route::patch('/users/{id}/toggle', [AdminUserController::class, 'toggle'])->name('users.toggle');
+    Route::resource('users', AdminUserController::class)->except(['show']);
 });
 
 Route::get('/test-429', function () {

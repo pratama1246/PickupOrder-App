@@ -9,7 +9,7 @@
 <aside class="w-64 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
     <nav class="flex-1 px-3 py-4 space-y-1">
 
-        <a href="/admin/dashboard"
+        <a href="{{ route('admin.dashboard') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
        {{ request()->is('admin/dashboard') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
@@ -22,9 +22,9 @@
             Overview
         </a>
 
-        <a href="/admin/kantin"
+        <a href="{{ route('admin.canteen.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('admin/kantin*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('admin/canteen*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
@@ -33,9 +33,9 @@
             Kantin
         </a>
 
-        <a href="/admin/pengguna"
+        <a href="{{ route('admin.users.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('admin/pengguna*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('admin/users*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />

@@ -23,7 +23,7 @@
         </div>
 
         <div class="mb-6 print:hidden">
-            <form method="GET" action="{{ route('vendor.laporan.index') }}"
+            <form method="GET" action="{{ route('vendor.report.index') }}"
                 class="flex flex-col sm:flex-row items-end gap-4">
                 <div class="w-full sm:w-auto">
                     <label class="block text-sm font-bold text-base-content mb-1.5">Dari Tanggal</label>

@@ -20,11 +20,11 @@
             <li><a href="/"
                     class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('/') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Beranda</a>
             </li>
-            <li><a href="/pesan"
-                    class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('pesan*') || request()->is('kantin*') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Pesan</a>
+            <li><a href="{{ route('canteen.index') }}"
+                    class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('browse*') || request()->is('canteen*') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Pesan</a>
             </li>
-            <li><a href="/riwayat"
-                    class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('riwayat*') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Riwayat</a>
+            <li><a href="{{ route('order.index') }}"
+                    class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('history*') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Riwayat</a>
             </li>
             <li><a href="{{ route('about') }}"
                     class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->routeIs('about') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Tentang
@@ -37,7 +37,7 @@
         @php
             $cartCount = count(session('cart', []));
         @endphp
-        <a href="/keranjang" class="btn btn-ghost btn-circle hover:bg-transparent" id="navbar-cart-btn">
+        <a href="{{ route('cart.index') }}" class="btn btn-ghost btn-circle hover:bg-transparent" id="navbar-cart-btn">
             <div class="indicator">
 
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
