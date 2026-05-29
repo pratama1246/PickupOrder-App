@@ -30,7 +30,7 @@ class CanteenController extends Controller
 
         if ($request->hasFile('image')) {
             // Hapus gambar lama jika ada dan bukan dari path bawaan assets/
-            if ($canteen->image && !str_starts_with($canteen->image, 'assets/')) {
+            if ($canteen->image && ! str_starts_with($canteen->image, 'assets/')) {
                 Storage::disk('public')->delete($canteen->image);
             }
             $validated['image'] = $request->file('image')->store('canteen_images', 'public');

@@ -7,6 +7,14 @@
             'bg' => 'bg-[#ffbd59]',
             'text' => 'text-black',
         ],
+        'siap diambil' => [
+            'bg' => 'bg-indigo-200',
+            'text' => 'text-indigo-900',
+        ],
+        'siap_diambil' => [
+            'bg' => 'bg-indigo-200',
+            'text' => 'text-indigo-900',
+        ],
         'selesai' => [
             'bg' => 'bg-emerald-200',
             'text' => 'text-emerald-900',
@@ -24,6 +32,7 @@
     $style = $config[$statusLower] ?? ['bg' => 'bg-gray-200', 'text' => 'text-gray-900'];
 @endphp
 
-<span {{ $attributes->merge(['class' => "{$style['bg']} {$style['text']} text-xs sm:text-sm font-medium px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-md inline-block shadow-sm"]) }}>
+<span
+    {{ $attributes->merge(['class' => "{$style['bg']} {$style['text']} text-xs sm:text-sm font-medium px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-md inline-block shadow-sm"]) }}>
     {{ $status }}
 </span>

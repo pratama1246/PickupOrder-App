@@ -23,10 +23,10 @@ class ReviewController extends Controller
 
         // Validasi input
         $request->validate([
-            'reviews'             => ['required', 'array'],
-            'reviews.*.menu_id'   => ['required', 'exists:menus,id'],
-            'reviews.*.rating'    => ['required', 'integer', 'min:1', 'max:5'],
-            'reviews.*.comment'      => ['nullable', 'string', 'max:500'],
+            'reviews' => ['required', 'array'],
+            'reviews.*.menu_id' => ['required', 'exists:menus,id'],
+            'reviews.*.rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'reviews.*.comment' => ['nullable', 'string', 'max:500'],
             'reviews.*.is_anonymous' => ['nullable', 'boolean'],
         ]);
 
@@ -34,13 +34,13 @@ class ReviewController extends Controller
         foreach ($request->reviews as $reviewData) {
             Review::updateOrCreate(
                 [
-                    'user_id'  => Auth::id(),
+                    'user_id' => Auth::id(),
                     'order_id' => $order->id,
-                    'menu_id'  => $reviewData['menu_id'],
+                    'menu_id' => $reviewData['menu_id'],
                 ],
                 [
-                    'rating'       => $reviewData['rating'],
-                    'comment'      => $reviewData['comment'] ?? null,
+                    'rating' => $reviewData['rating'],
+                    'comment' => $reviewData['comment'] ?? null,
                     'is_anonymous' => isset($reviewData['is_anonymous']) ? (bool) $reviewData['is_anonymous'] : false,
                 ]
             );

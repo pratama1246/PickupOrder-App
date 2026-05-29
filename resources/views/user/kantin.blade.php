@@ -3,12 +3,12 @@
 @section('title', $canteen->name . ' - PNC')
 
 @section('content')
-    <main class="min-h-screen bg-base-100 pb-12" x-data="{ 
-        selectedCategory: 'Semua Kategori', 
+    <main class="min-h-screen bg-base-100 pb-12" x-data="{
+        selectedCategory: 'Semua Kategori',
         searchQuery: '',
         menus: {{ json_encode($canteen->menus->map(fn($m) => ['category' => $m->category ?? '', 'name' => strtolower($m->name), 'desc' => strtolower($m->description ?? '')])) }},
         get hasResults() {
-            return this.menus.some(m => 
+            return this.menus.some(m =>
                 (this.selectedCategory === 'Semua Kategori' || m.category === this.selectedCategory) &&
                 (this.searchQuery === '' || m.name.includes(this.searchQuery.toLowerCase()) || m.desc.includes(this.searchQuery.toLowerCase()))
             );
@@ -134,14 +134,16 @@
                                 :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :actionUrl="route('menu.show', ['canteenId' => $canteen->id, 'id' => $menu->id])" />
                         </div>
                     @empty
-                        <div class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
+                        <div
+                            class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl">
                             <p class="text-base-content/60 font-medium">Menu yang kamu cari tidak ada.</p>
                         </div>
                     @endforelse
                 </div>
 
-                @if($canteen->menus->count() > 0)
-                    <div x-show="!hasResults" style="display: none;" class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl mt-6">
+                @if ($canteen->menus->count() > 0)
+                    <div x-show="!hasResults" style="display: none;"
+                        class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-content/25 rounded-3xl mt-6">
                         <p class="text-base-content/60 font-medium">Menu yang kamu cari tidak ada.</p>
                     </div>
                 @endif

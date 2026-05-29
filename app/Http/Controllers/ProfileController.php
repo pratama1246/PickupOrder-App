@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ProfileController extends Controller
 {
@@ -51,17 +51,17 @@ class ProfileController extends Controller
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
-            
+
             $file = $request->file('avatar');
-            $filename = 'avatars/' . uniqid('avatar_') . '.webp';
-            
+            $filename = 'avatars/'.uniqid('avatar_').'.webp';
+
             // Kompres dan ubah ke webp
             $image = Image::decode($file);
             $image->cover(400, 400);
             $webp = $image->encode(new WebpEncoder(quality: 80));
-            
+
             Storage::disk('public')->put($filename, $webp->toString());
-            
+
             $data['avatar'] = $filename;
         }
 

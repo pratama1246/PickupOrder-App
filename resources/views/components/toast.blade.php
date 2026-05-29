@@ -30,79 +30,78 @@
         } elseif ($status === 'reset-sent') {
             $toasts[] = ['type' => 'success', 'message' => 'Link reset kata sandi telah dikirim ke email Anda.'];
         } elseif ($status === 'no-email') {
-            $toasts[] = ['type' => 'warning', 'message' => 'Akun Anda belum memiliki alamat email terdaftar. Hubungi admin.'];
+            $toasts[] = [
+                'type' => 'warning',
+                'message' => 'Akun Anda belum memiliki alamat email terdaftar. Hubungi admin.',
+            ];
         } else {
             $toasts[] = ['type' => 'info', 'message' => $status];
         }
     }
 @endphp
 
-<div
-    x-data="{
-        toasts: {{ json_encode($toasts) }},
-        addToast(message, type = 'success') {
-            const id = Date.now() + Math.random().toString(36).substr(2, 9);
-            this.toasts.push({ id, message, type, show: false, progress: 100 });
-            
-            this.$nextTick(() => {
-                const toast = this.toasts.find(t => t.id === id);
-                if (toast) {
-                    toast.show = true;
-                    this.startTimer(toast);
-                }
-            });
-        },
-        removeToast(id) {
+<div x-data="{
+    toasts: {{ json_encode($toasts) }},
+    addToast(message, type = 'success') {
+        const id = Date.now() + Math.random().toString(36).substr(2, 9);
+        this.toasts.push({ id, message, type, show: false, progress: 100 });
+
+        this.$nextTick(() => {
             const toast = this.toasts.find(t => t.id === id);
             if (toast) {
-                toast.show = false;
-                setTimeout(() => {
-                    this.toasts = this.toasts.filter(t => t.id !== id);
-                }, 300); // Wait for transition out
+                toast.show = true;
+                this.startTimer(toast);
             }
-        },
-        startTimer(toast) {
-            const duration = 4000;
-            const start = Date.now();
-            
-            const interval = setInterval(() => {
-                const elapsed = Date.now() - start;
-                toast.progress = Math.max(0, 100 - (elapsed / duration) * 100);
-                if (elapsed >= duration) {
-                    clearInterval(interval);
-                    this.removeToast(toast.id);
-                }
-            }, 50);
-        },
-        init() {
-            // Assign IDs to initial session toasts and start their timers
-            this.toasts = this.toasts.map(t => ({
-                id: Date.now() + Math.random().toString(36).substr(2, 9),
-                message: t.message,
-                type: t.type,
-                show: false,
-                progress: 100
-            }));
-
-            this.toasts.forEach(toast => {
-                setTimeout(() => {
-                    toast.show = true;
-                    this.startTimer(toast);
-                }, 100);
-            });
-
-            // Listen for global notification events
-            window.addEventListener('notify', (e) => {
-                this.addToast(e.detail.message, e.detail.type || 'success');
-            });
+        });
+    },
+    removeToast(id) {
+        const toast = this.toasts.find(t => t.id === id);
+        if (toast) {
+            toast.show = false;
+            setTimeout(() => {
+                this.toasts = this.toasts.filter(t => t.id !== id);
+            }, 300); // Wait for transition out
         }
-    }"
-    class="fixed z-[9999] flex flex-col gap-3 w-[calc(100%-2rem)] sm:w-full max-w-sm pointer-events-none bottom-24 left-1/2 -translate-x-1/2 sm:bottom-auto sm:left-auto sm:translate-x-0 sm:top-24 sm:right-4"
->
+    },
+    startTimer(toast) {
+        const duration = 4000;
+        const start = Date.now();
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - start;
+            toast.progress = Math.max(0, 100 - (elapsed / duration) * 100);
+            if (elapsed >= duration) {
+                clearInterval(interval);
+                this.removeToast(toast.id);
+            }
+        }, 50);
+    },
+    init() {
+        // Assign IDs to initial session toasts and start their timers
+        this.toasts = this.toasts.map(t => ({
+            id: Date.now() + Math.random().toString(36).substr(2, 9),
+            message: t.message,
+            type: t.type,
+            show: false,
+            progress: 100
+        }));
+
+        this.toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.show = true;
+                this.startTimer(toast);
+            }, 100);
+        });
+
+        // Listen for global notification events
+        window.addEventListener('notify', (e) => {
+            this.addToast(e.detail.message, e.detail.type || 'success');
+        });
+    }
+}"
+    class="fixed z-[9999] flex flex-col gap-3 w-[calc(100%-2rem)] sm:w-full max-w-sm pointer-events-none bottom-24 left-1/2 -translate-x-1/2 sm:bottom-auto sm:left-auto sm:translate-x-0 sm:top-24 sm:right-4">
     <template x-for="toast in toasts" :key="toast.id">
-        <div
-            x-show="toast.show"
-            x-transition:enter="transition ease-out duration-300 transform"
+        <div x-show="toast.show" x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="translate-y-[20px] sm:translate-y-[-20px] translate-x-0 sm:translate-x-[20px] opacity-0 scale-95"
             x-transition:enter-end="translate-y-0 translate-x-0 opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-200 transform"
@@ -115,28 +114,35 @@
                 'alert alert-error bg-white border-red-200 text-red-800': toast.type === 'error',
                 'alert alert-info bg-white border-blue-200 text-blue-800': toast.type === 'info'
             }"
-            role="alert"
-        >
+            role="alert">
             <!-- SVG Icon -->
             <div class="shrink-0 pt-0.5">
                 <template x-if="toast.type === 'success'">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </template>
                 <template x-if="toast.type === 'warning'">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </template>
                 <template x-if="toast.type === 'error'">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </template>
                 <template x-if="toast.type === 'info'">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        class="h-6 w-6 shrink-0 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </template>
             </div>
@@ -147,15 +153,18 @@
             </div>
 
             <!-- Close Button -->
-            <button @click="removeToast(toast.id)" class="absolute top-3 right-3 text-current/50 hover:text-current active:scale-95 transition-all p-0.5 rounded-full hover:bg-current/10 shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <button @click="removeToast(toast.id)"
+                class="absolute top-3 right-3 text-current/50 hover:text-current active:scale-95 transition-all p-0.5 rounded-full hover:bg-current/10 shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
 
             <!-- Bottom Progress Line -->
             <div class="absolute bottom-0 left-0 right-0 h-1 bg-current/10">
-                <div class="h-full bg-current transition-all linear duration-75" :style="`width: ${toast.progress}%`"></div>
+                <div class="h-full bg-current transition-all linear duration-75" :style="`width: ${toast.progress}%`">
+                </div>
             </div>
         </div>
     </template>

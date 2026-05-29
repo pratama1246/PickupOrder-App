@@ -104,16 +104,16 @@ class DashboardController extends Controller
         }
 
         // 4. Top 5 Best Selling Menus (Platform)
-        $topMenusRaw = \App\Models\OrderItem::whereHas('order', function ($query) {
-                $query->where('status', 'selesai');
-            })
+        $topMenusRaw = OrderItem::whereHas('order', function ($query) {
+            $query->where('status', 'selesai');
+        })
             ->selectRaw('menu_id, SUM(qty) as total_qty')
             ->groupBy('menu_id')
             ->with('menu:id,name')
             ->orderByDesc('total_qty')
             ->limit(5)
             ->get();
-            
+
         $topMenuLabels = [];
         $topMenuSeries = [];
         foreach ($topMenusRaw as $item) {
@@ -129,8 +129,8 @@ class DashboardController extends Controller
 
         // 6. Distribusi Penjualan per Kategori (Platform-wide)
         $categoryDistRaw = OrderItem::whereHas('order', function ($q) {
-                $q->where('status', 'selesai');
-            })
+            $q->where('status', 'selesai');
+        })
             ->join('menus', 'order_items.menu_id', '=', 'menus.id')
             ->selectRaw('menus.category, SUM(order_items.qty) as total_qty')
             ->whereNotNull('menus.category')
@@ -143,9 +143,9 @@ class DashboardController extends Controller
 
         // 7. Rata-rata rating & total ulasan platform
         $platformAvgRating = round((float) (Review::avg('rating') ?? 0), 1);
-        $totalReviews      = Review::count();
-        $stats['avg_rating']    = $platformAvgRating;
-        $stats['total_ulasan']  = $totalReviews;
+        $totalReviews = Review::count();
+        $stats['avg_rating'] = $platformAvgRating;
+        $stats['total_ulasan'] = $totalReviews;
 
         return view('admin.dashboard', compact(
             'stats',

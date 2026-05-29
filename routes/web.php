@@ -12,10 +12,12 @@ use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\MenuController as UserMenuController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\User\PaymentCallbackController;
-use App\Http\Controllers\Vendor\DashboardController as VendorDashboardController;
+use App\Http\Controllers\User\ReviewController;
 use App\Http\Controllers\Vendor\CanteenController as VendorCanteenController;
+use App\Http\Controllers\Vendor\DashboardController as VendorDashboardController;
 use App\Http\Controllers\Vendor\MenuController as VendorMenuController;
 use App\Http\Controllers\Vendor\OrderController as VendorOrderController;
+use App\Http\Controllers\Vendor\ReportController;
 use Illuminate\Support\Facades\Route;
 
 // ---------------------------------------------------------------------------
@@ -72,7 +74,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/riwayat/{id}', [UserOrderController::class, 'show'])->name('order.show');
     Route::delete('/riwayat/{id}', [UserOrderController::class, 'destroy'])->name('order.destroy');
     Route::delete('/riwayat/group/{paymentCode}', [UserOrderController::class, 'cancelGroup'])->name('order.cancel-group');
-    Route::post('/riwayat/{id}/review', [\App\Http\Controllers\User\ReviewController::class, 'store'])->name('order.review')->middleware('throttle:10,1');
+    Route::post('/riwayat/{id}/review', [ReviewController::class, 'store'])->name('order.review')->middleware('throttle:10,1');
+    Route::post('/riwayat/{id}/reorder', [CartController::class, 'reorder'])->name('order.reorder');
 
     // API endpoint untuk polling status pembayaran (dipanggil oleh JavaScript di frontend)
     Route::get('/api/order/{id}/payment-status', [UserOrderController::class, 'paymentStatus'])->name('order.payment-status');
@@ -91,6 +94,7 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
     Route::get('/canteen/edit', [VendorCanteenController::class, 'edit'])->name('canteen.edit');
     Route::put('/canteen', [VendorCanteenController::class, 'update'])->name('canteen.update');
     Route::patch('/canteen/toggle', [VendorDashboardController::class, 'toggleStatus'])->name('canteen.toggle');
+    Route::patch('/canteen/target', [VendorDashboardController::class, 'updateTarget'])->name('canteen.target');
 
     // Transaksi masuk
     Route::get('/order', [VendorOrderController::class, 'index'])->name('order.index');
@@ -103,7 +107,7 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
     Route::resource('menu', VendorMenuController::class);
 
     // Laporan Penjualan
-    Route::get('/laporan', [\App\Http\Controllers\Vendor\ReportController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');
 });
 
 // ---------------------------------------------------------------------------
@@ -124,4 +128,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/pengguna/import/template', [AdminUserController::class, 'downloadTemplate'])->name('pengguna.import.template');
     Route::patch('/pengguna/{id}/toggle', [AdminUserController::class, 'toggle'])->name('pengguna.toggle');
     Route::resource('pengguna', AdminUserController::class)->except(['show']);
+});
+
+Route::get('/test-429', function () {
+    return view('errors.429');
 });

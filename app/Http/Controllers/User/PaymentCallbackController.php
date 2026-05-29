@@ -28,23 +28,23 @@ class PaymentCallbackController extends Controller
             return response()->json(['message' => 'Invalid payload'], 400);
         }
 
-        $orderId           = $payload['order_id'];
+        $orderId = $payload['order_id'];
         $transactionStatus = $payload['transaction_status'] ?? null;
-        $fraudStatus       = $payload['fraud_status'] ?? 'accept';
-        $statusCode        = $payload['status_code'] ?? '200';
-        $grossAmount       = $payload['gross_amount'] ?? '0';
-        $signatureKey      = $payload['signature_key'] ?? '';
+        $fraudStatus = $payload['fraud_status'] ?? 'accept';
+        $statusCode = $payload['status_code'] ?? '200';
+        $grossAmount = $payload['gross_amount'] ?? '0';
+        $signatureKey = $payload['signature_key'] ?? '';
 
         // --- Validasi Signature Key ---
         // Format SHA512: order_id + status_code + gross_amount + server_key
-        $serverKey         = config('services.midtrans.server_key');
+        $serverKey = config('services.midtrans.server_key');
         $expectedSignature = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
 
         if ($signatureKey !== $expectedSignature) {
             Log::warning('Midtrans webhook: signature tidak valid', [
-                'order_id'          => $orderId,
-                'received_sig'      => $signatureKey,
-                'expected_sig'      => $expectedSignature,
+                'order_id' => $orderId,
+                'received_sig' => $signatureKey,
+                'expected_sig' => $expectedSignature,
             ]);
 
             return response()->json(['message' => 'Invalid signature'], 403);
@@ -61,9 +61,9 @@ class PaymentCallbackController extends Controller
         }
 
         Log::info('Midtrans webhook diterima', [
-            'payment_code'       => $orderId,
+            'payment_code' => $orderId,
             'transaction_status' => $transactionStatus,
-            'fraud_status'       => $fraudStatus,
+            'fraud_status' => $fraudStatus,
         ]);
 
         // --- Update status berdasarkan transaction_status ---
@@ -82,12 +82,12 @@ class PaymentCallbackController extends Controller
         } elseif (in_array($transactionStatus, ['deny', 'cancel', 'failure'])) {
             $orders->each->update([
                 'payment_status' => 'failed',
-                'status'         => 'dibatalkan',
+                'status' => 'dibatalkan',
             ]);
         } elseif ($transactionStatus === 'expire') {
             $orders->each->update([
                 'payment_status' => 'expired',
-                'status'         => 'dibatalkan',
+                'status' => 'dibatalkan',
             ]);
         }
 

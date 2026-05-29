@@ -10,7 +10,8 @@
 
         <div class="mb-6 sm:mb-8">
             <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Import Pengguna</h1>
-            <p class="text-base-content/70 text-sm sm:text-lg font-medium">Impor data pengguna secara massal menggunakan file Excel atau CSV.</p>
+            <p class="text-base-content/70 text-sm sm:text-lg font-medium">Impor data pengguna secara massal menggunakan file
+                Excel atau CSV.</p>
         </div>
 
         <!-- Download Template Section -->
@@ -74,7 +75,8 @@
                         <p class="leading-relaxed">Baris pertama pada header wajib bertuliskan <span
                                 class="bg-base-200 px-1.5 py-0.5 rounded text-red-600 font-bold text-xs">nama</span>, <span
                                 class="bg-base-200 px-1.5 py-0.5 rounded text-red-600 font-bold text-xs">nim</span>, dan
-                            <span class="bg-base-200 px-1.5 py-0.5 rounded text-red-600 font-bold text-xs">email</span>.</p>
+                            <span class="bg-base-200 px-1.5 py-0.5 rounded text-red-600 font-bold text-xs">email</span>.
+                        </p>
                     </div>
                 </div>
 
@@ -98,7 +100,8 @@
                                 d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                         <p><strong>Akses & Peran</strong>: Pengguna hasil impor otomatis terdaftar sebagai
-                            <strong>Mahasiswa</strong> dan wajib mengganti kata sandi saat pertama kali login.</p>
+                            <strong>Mahasiswa</strong> dan wajib mengganti kata sandi saat pertama kali login.
+                        </p>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,11 @@
 @section('title', 'Dashboard - Vendor PNC')
 
 @section('content')
+    @php
+        $dailyTarget = $canteen->daily_target ?? 500000;
+        $targetPercentageReal = $dailyTarget > 0 ? round(($stats['pendapatan_hari_ini'] / $dailyTarget) * 100) : 0;
+        $chartSeries = min(100, $targetPercentageReal);
+    @endphp
     <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-10 lg:pb-0">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
@@ -75,7 +80,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <x-stat-card label="Pendapatan Hari Ini"
                 value="Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}" :growth="$stats['pendapatan_growth']"
-                subtext="vs kemarin" iconBg="bg-emerald-50 text-fern-700">
+                subtext="vs kemarin" variant="highlight">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">
@@ -86,7 +91,7 @@
             </x-stat-card>
 
             <x-stat-card label="Pesanan Hari Ini" value="{{ $stats['pesanan_hari_ini'] }}" :growth="$stats['pesanan_growth']"
-                subtext="vs kemarin" iconBg="bg-emerald-50 text-fern-700">
+                subtext="vs kemarin" iconBg="bg-emerald-50 text-fern-700" variant="emerald">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">
@@ -96,8 +101,8 @@
                 </x-slot:icon>
             </x-stat-card>
 
-            <x-stat-card label="Rata-rata Nilai Pesanan"
-                value="Rp{{ number_format($stats['aov_hari_ini'], 0, ',', '.') }}" iconBg="bg-emerald-50 text-fern-700">
+            <x-stat-card label="Rata-rata Nilai Pesanan" value="Rp{{ number_format($stats['aov_hari_ini'], 0, ',', '.') }}"
+                iconBg="bg-emerald-50 text-fern-700" variant="vanilla">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">
@@ -108,7 +113,7 @@
             </x-stat-card>
 
             <x-stat-card label="Tingkat Penyelesaian" value="{{ $stats['completion_rate'] }}%"
-                iconBg="bg-emerald-50 text-fern-700">
+                iconBg="bg-emerald-50 text-fern-700" variant="spruce">
                 <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">
@@ -119,60 +124,21 @@
             </x-stat-card>
         </div>
 
-        <!-- Queue Status -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6">
-            <div class="bg-base-100 rounded-2xl p-4 shadow-sm border border-base-200 text-center">
-                <p class="text-xs sm:text-sm font-bold text-base-content/60 mb-1">Menunggu</p>
-                <p class="text-xl sm:text-2xl font-extrabold text-fern-600">{{ $stats['pesanan_baru'] }}</p>
-            </div>
-            <div class="bg-base-100 rounded-2xl p-4 shadow-sm border border-base-200 text-center">
-                <p class="text-xs sm:text-sm font-bold text-base-content/60 mb-1">Dimasak</p>
-                <p class="text-xl sm:text-2xl font-extrabold text-fern-600">{{ $stats['sedang_dimasak'] }}</p>
-            </div>
-            <div class="col-span-2 md:col-span-1 bg-base-100 rounded-2xl p-4 shadow-sm border border-base-200 text-center">
-                <p class="text-xs sm:text-sm font-bold text-base-content/60 mb-1">Siap Pickup</p>
-                <p class="text-xl sm:text-2xl font-extrabold text-fern-600">{{ $stats['siap_pickup'] }}</p>
-            </div>
-        </div>
-
         <!-- Charts Row -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <!-- Revenue & Orders Chart -->
-            <div class="lg:col-span-2 bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">Tren Transaksi 7 Hari Terakhir</h2>
-                <div id="trendChart" class="w-full h-[300px]"></div>
-            </div>
-
-            <!-- Best Sellers Chart -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">Top 5 Menu Laris</h2>
-                <div id="bestSellerChart" class="w-full h-[300px]"></div>
-            </div>
-        </div>
-
-        <!-- Status & Active Orders -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
-                <h2 class="text-base font-bold text-base-content mb-4">Distribusi Status Pesanan</h2>
-                <div class="flex-1 flex items-center justify-center min-h-[300px]">
-                    <div id="statusChart" class="w-full"></div>
-                </div>
-            </div>
-
             <!-- Active Orders Table -->
-            <div
-                class="lg:col-span-2 bg-base-100 rounded-3xl border border-base-200 shadow-sm overflow-hidden flex flex-col">
-                <div class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-base-100/50">
+            <div class="lg:col-span-2 bg-base-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+                <div class="p-4 sm:p-5 border-b border-base-200 flex justify-between items-center bg-sunrise-gold-500">
                     <h2 class="text-sm sm:text-base font-bold text-base-content">Pesanan Aktif</h2>
                     <a href="{{ route('vendor.order.index') }}"
                         class="text-xs sm:text-sm text-fern-600 hover:text-fern-700 font-medium px-3 py-1.5 bg-fern-50 rounded-lg hover:bg-fern-100 transition-colors">Lihat
                         Semua</a>
                 </div>
-                <div class="overflow-auto flex-1 max-h-[310px] p-0">
+                <div class="overflow-auto flex-1 p-0">
                     <table class="table table-sm w-full min-w-[500px] table-pin-rows">
                         <thead class="bg-base-200 text-xs">
                             <tr>
-                                <th class="font-medium text-base-content/70 py-3 px-4">Order Code & Waktu</th>
+                                <th class="font-medium text-base-content/70 py-3 px-4">No. Order & Waktu</th>
                                 <th class="font-medium text-base-content/70 py-3 px-4">Mahasiswa</th>
                                 <th class="font-medium text-base-content/70 py-3 px-4 text-center">Status</th>
                                 <th class="font-medium text-base-content/70 py-3 px-4 text-center">Aksi</th>
@@ -217,57 +183,243 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Status Antrean (Queue Status) -->
+            <div class="flex flex-col gap-3 sm:gap-4 h-full">
+                <!-- Card Menunggu (Bold / Highlighted) -->
+                <a href="{{ route('vendor.order.index', ['status' => 'menunggu']) }}"
+                    class="flex-1 bg-linear-to-tl from-emerald-800 to-fern-600 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between transition-all duration-300">
+                    <p class="text-sm font-medium text-fern-200 tracking-wider">Menunggu</p>
+                    <div class="flex items-center justify-between gap-4 my-auto py-2">
+                        <p class="text-3xl sm:text-4xl font-bold text-white">
+                            {{ $stats['pesanan_baru'] }}
+                        </p>
+                        <div class="bg-fern-800 text-fern-100 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="pt-3 text-[11px] sm:text-xs text-fern-200 font-medium">
+                        Pesanan baru masuk dan belum diproses
+                    </div>
+                </a>
+
+                <!-- Card Dimasak -->
+                <a href="{{ route('vendor.order.index', ['status' => 'dimasak']) }}"
+                    class="flex-1 bg-linear-to-br from-vanilla-custard-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
+                    <p class="text-sm font-medium text-base-content/60 tracking-wider">Dimasak</p>
+                    <div class="flex items-center justify-between gap-4 my-auto py-2">
+                        <p class="text-3xl sm:text-4xl font-extrabold text-vanilla-custard-700">
+                            {{ $stats['sedang_dimasak'] }}
+                        </p>
+                        <div class="bg-vanilla-custard-100 text-vanilla-custard-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-base-200/60 text-[11px] sm:text-xs text-base-content/50 font-medium">
+                        Makanan sedang disiapkan di dapur
+                    </div>
+                </a>
+
+                <!-- Card Siap Pickup -->
+                <a href="{{ route('vendor.order.index', ['status' => 'siap_diambil']) }}"
+                    class="flex-1 bg-linear-to-br from-emerald-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
+                    <p class="text-sm font-medium text-base-content/60 tracking-wider">Siap Pickup</p>
+                    <div class="flex items-center justify-between gap-4 my-auto py-2">
+                        <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600">
+                            {{ $stats['siap_pickup'] }}
+                        </p>
+                        <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-base-200/60 text-[11px] sm:text-xs text-base-content/50 font-medium">
+                        Makanan siap diserahkan ke pembeli
+                    </div>
+                </a>
+
+                <!-- Card Dibatalkan -->
+                <a href="{{ route('vendor.order.index', ['status' => 'dibatalkan']) }}"
+                    class="flex-1 bg-linear-to-br from-rose-50 to-base-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-base-200 flex flex-col justify-between transition-all duration-300">
+                    <p class="text-sm font-medium text-base-content/60 tracking-wider">Dibatalkan</p>l
+                    <div class="flex items-center justify-between gap-4 my-auto py-2">
+                        <p class="text-3xl sm:text-4xl font-extrabold text-rose-700">
+                            {{ $stats['pesanan_batal'] }}
+                        </p>
+                        <div class="bg-rose-100 text-rose-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-base-200/60 text-[11px] sm:text-xs text-base-content/50 font-medium">
+                        Pesanan batal &amp; tidak selesai diproses
+                    </div>
+                </a>
+            </div>
         </div>
 
-        <!-- Rating & Distribusi Kategori -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
+        <!-- Best Sellers & Category Distribution -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <!-- Best Sellers Chart -->
+            <div
+                class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
+                <h2 class="text-base font-bold text-base-content mb-4">Top 5 Menu Laris</h2>
+                <div id="bestSellerChart" class="w-full h-75"></div>
+            </div>
 
-            <!-- Rating Kantin -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">Performa Ulasan</h2>
-                <div class="flex items-center gap-6 mb-5">
-                    <div class="text-center shrink-0">
-                        <p class="text-5xl font-bold text-fern-700">{{ $avgRating > 0 ? number_format($avgRating, 1) : '5.0' }}</p>
-                        <div class="flex items-center justify-center gap-0.5 mt-1">
-                            @for($i = 1; $i <= 5; $i++)
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 {{ $i <= round($avgRating ?: 5) ? 'text-amber-400' : 'text-base-content/20' }}" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                            @endfor
+            <!-- Target Pendapatan Harian -->
+            <div
+                class="lg:col-span-1 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+                <!-- Background decoration glow -->
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-vanilla-custard-100/50 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-50 rounded-full blur-2xl"></div>
+
+                <div class="relative z-10 w-full flex flex-col h-full justify-between">
+                    <div class="w-full mb-6 flex items-start justify-between relative">
+                        <div>
+                            <h2 class="text-base font-bold text-base-content">Target Pendapatan</h2>
+                            <p class="text-xs text-base-content/50 font-medium mt-1">Harian:
+                                Rp{{ number_format($dailyTarget, 0, ',', '.') }}</p>
                         </div>
-                        <p class="text-xs text-base-content/50 mt-1 font-medium">{{ $totalReviews }} ulasan</p>
+                        <button onclick="document.getElementById('editTargetModal').showModal()"
+                            class="btn btn-sm btn-circle btn-ghost text-fern-600 hover:text-fern-800 hover:bg-fern-50 transition-colors tooltip tooltip-left"
+                            data-tip="Ubah Target">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
                     </div>
-                    <div class="flex-1 min-w-0 space-y-2">
-                        @foreach([5,4,3,2,1] as $star)
-                            @php $pct = $totalReviews > 0 ? (int) (\App\Models\Review::whereHas('menu', fn($q) => $q->where('canteen_id', $canteen->id))->where('rating', $star)->count() / $totalReviews * 100) : 0; @endphp
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-base-content/60 w-3">{{ $star }}</span>
-                                <div class="flex-1 bg-base-200 rounded-full h-2 overflow-hidden">
-                                    <div class="h-full bg-amber-400 rounded-full transition-all" style="width: {{ $pct }}%"></div>
-                                </div>
-                                <span class="text-xs text-base-content/50 w-7 text-right">{{ $pct }}%</span>
+
+                    <div class="flex-1 flex items-center justify-center py-2">
+                        <div class="radial-progress text-fern-600"
+                            style="--value:{{ $chartSeries }}; --size:10rem; --thickness: 1.25rem;" role="progressbar">
+                            <div class="flex flex-col items-center justify-center">
+                                <span class="text-3xl font-bold text-base-content">{{ $targetPercentageReal }}%</span>
                             </div>
-                        @endforeach
+                        </div>
+                    </div>
+
+                    <div class="w-full mt-6 bg-base-200/40 rounded-xl p-3 text-center">
+                        <p class="text-[11px] text-base-content/60 font-semibold tracking-wider mb-0.5">Tercapai</p>
+                        <p class="text-xl font-bold text-fern-700">
+                            Rp{{ number_format($stats['pendapatan_hari_ini'], 0, ',', '.') }}</p>
+
+                        @if ($targetPercentageReal >= 100)
+                            <p class="text-[11px] text-emerald-600 font-bold mt-1">Luar biasa! Target tercapai</p>
+                        @else
+                            <p class="text-[11px] text-base-content/60 font-medium mt-1">Kurang
+                                Rp{{ number_format(max(0, $dailyTarget - $stats['pendapatan_hari_ini']), 0, ',', '.') }}
+                                lagi</p>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Modal Edit Target (Menggunakan Bawaan Proyek) -->
+                <x-modal id="editTargetModal" title="Atur Target Harian" :showFooter="false">
+                    <form action="{{ route('vendor.canteen.target') }}" method="POST" class="mt-2">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="form-control mb-5">
+                            <label class="label px-0 pt-0 pb-2">
+                                <span class="label-text font-bold">Nominal Target (Rp)</span>
+                            </label>
+                            <input type="number" name="daily_target" value="{{ $dailyTarget }}"
+                                class="input input-bordered w-full rounded-xl focus:outline-fern-600 focus:border-fern-600"
+                                min="1" required />
+                            <label class="label px-0 pb-0 pt-2">
+                                <span class="label-text-alt text-base-content/50 font-medium">Masukkan tanpa titik. Contoh:
+                                    500000</span>
+                            </label>
+                        </div>
+
+                        <button type="submit"
+                            class="btn bg-fern-700 hover:bg-fern-800 text-white w-full rounded-xl border-none">
+                            Simpan Perubahan
+                        </button>
+                    </form>
+                </x-modal>
+            </div>
+        </div>
+
+        <!-- Rating & Trend Penjualan -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 mb-6">
+            <!-- Rating Kantin -->
+            <div
+                class="lg:col-span-2 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-base-content mb-4">Performa Ulasan</h2>
+                    <div class="flex items-center gap-6 mb-5">
+                        <div class="text-center shrink-0">
+                            <p class="text-5xl font-bold text-fern-700">
+                                {{ $avgRating > 0 ? number_format($avgRating, 1) : '5.0' }}</p>
+                            <div class="flex items-center justify-center gap-0.5 mt-1">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-4 h-4 {{ $i <= round($avgRating ?: 5) ? 'text-amber-400' : 'text-base-content/20' }}"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                @endfor
+                            </div>
+                            <p class="text-xs text-base-content/50 mt-1 font-medium">{{ $totalReviews }} ulasan</p>
+                        </div>
+                        <div class="flex-1 min-w-0 space-y-2">
+                            @foreach ([5, 4, 3, 2, 1] as $star)
+                                @php $pct = $totalReviews > 0 ? (int) (\App\Models\Review::whereHas('menu', fn($q) => $q->where('canteen_id', $canteen->id))->where('rating', $star)->count() / $totalReviews * 100) : 0; @endphp
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-base-content/60 w-3">{{ $star }}</span>
+                                    <div class="flex-1 bg-base-200 rounded-full h-2 overflow-hidden">
+                                        <div class="h-full bg-amber-400 rounded-full transition-all"
+                                            style="width: {{ $pct }}%"></div>
+                                    </div>
+                                    <span class="text-xs text-base-content/50 w-7 text-right">{{ $pct }}%</span>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
                 <!-- Recent Reviews -->
-                <div class="space-y-3 max-h-48 overflow-y-auto pr-1">
+                <div class="space-y-3 max-h-56 overflow-y-auto pr-1">
                     @forelse($recentReviews as $review)
                         <div class="flex items-start gap-3 p-3 bg-base-200/40 rounded-2xl">
-                            <img src="{{ $review->reviewer_avatar }}"
-                                 class="w-8 h-8 rounded-full object-cover shrink-0" alt="{{ $review->reviewer_name }}">
+                            <img src="{{ $review->reviewer_avatar }}" class="w-8 h-8 rounded-full object-cover shrink-0"
+                                alt="{{ $review->reviewer_name }}">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between gap-2">
-                                    <p class="text-xs font-bold text-base-content truncate">{{ $review->reviewer_name }}</p>
+                                    <p class="text-xs font-bold text-base-content truncate">{{ $review->reviewer_name }}
+                                    </p>
                                     <div class="flex items-center gap-0.5 shrink-0">
-                                        @for($s = 1; $s <= 5; $s++)
-                                            <svg class="w-3 h-3 {{ $s <= $review->rating ? 'text-amber-400' : 'text-base-content/20' }}" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        @for ($s = 1; $s <= 5; $s++)
+                                            <svg class="w-3 h-3 {{ $s <= $review->rating ? 'text-amber-400' : 'text-base-content/20' }}"
+                                                viewBox="0 0 20 20" fill="currentColor">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
                                         @endfor
                                     </div>
                                 </div>
-                                <p class="text-[11px] text-base-content/50 font-medium">{{ $review->menu->name ?? '-' }}</p>
-                                @if($review->comment)
+                                <p class="text-[11px] text-base-content/50 font-medium">{{ $review->menu->name ?? '-' }}
+                                </p>
+                                @if ($review->comment)
                                     <p class="text-xs text-base-content/70 mt-0.5 line-clamp-1">{{ $review->comment }}</p>
                                 @endif
                             </div>
@@ -278,16 +430,11 @@
                 </div>
             </div>
 
-            <!-- Distribusi Kategori Penjualan -->
-            <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-4 sm:p-5">
-                <h2 class="text-base font-bold text-base-content mb-4">Distribusi Penjualan per Kategori</h2>
-                @if(count($categoryLabels) > 0)
-                    <div id="categoryChart" class="w-full h-[300px]"></div>
-                @else
-                    <div class="flex items-center justify-center h-[300px] text-base-content/40">
-                        <p class="text-sm font-medium">Belum ada data penjualan per kategori.</p>
-                    </div>
-                @endif
+            <!-- Revenue & Orders Chart -->
+            <div
+                class="lg:col-span-3 bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between">
+                <h2 class="text-base font-bold text-base-content mb-4">Tren Transaksi 7 Hari Terakhir</h2>
+                <div id="trendChart" class="w-full h-75"></div>
             </div>
         </div>
 
@@ -296,7 +443,6 @@
 
 
 @push('scripts')
-
     <script>
         window.addEventListener("load", function() {
             // Trend Chart
@@ -400,45 +546,6 @@
             const bestSellerChart = new ApexCharts(document.querySelector("#bestSellerChart"), bestSellerOptions);
             bestSellerChart.render();
 
-            // Status Chart
-            const statusOptions = {
-                series: @json($statusSeries),
-                labels: @json($statusLabels),
-                chart: {
-                    type: 'donut',
-                    height: 320,
-                    fontFamily: 'Poppins, sans-serif'
-                },
-                colors: ['#f59e0b', '#3b82f6', '#10b981', '#4d9959', '#ef4444'],
-                stroke: {
-                    width: 0
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                legend: {
-                    position: 'bottom'
-                },
-            };
-            const statusChart = new ApexCharts(document.querySelector("#statusChart"), statusOptions);
-            statusChart.render();
-
-            // Category Distribution Chart
-            @if(count($categoryLabels) > 0)
-            const categoryOptions = {
-                series: @json($categorySeries),
-                labels: @json($categoryLabels),
-                chart: { type: 'donut', height: 300, fontFamily: 'Poppins, sans-serif' },
-                colors: ['#f97316', '#0ea5e9', '#f59e0b', '#4d9959', '#a855f7'],
-                stroke: { width: 0 },
-                dataLabels: { enabled: true, formatter: (val) => Math.round(val) + '%' },
-                legend: { position: 'bottom' },
-                tooltip: { y: { formatter: (val) => val + ' porsi' } }
-            };
-            const categoryChart = new ApexCharts(document.querySelector("#categoryChart"), categoryOptions);
-            categoryChart.render();
-            @endif
         });
     </script>
 @endpush
-

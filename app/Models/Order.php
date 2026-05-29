@@ -47,7 +47,7 @@ class Order extends Model
     public static function generateOrderCode(): string
     {
         do {
-            $code = 'PNC-ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+            $code = 'PNC-ORD-'.now()->format('Ymd').'-'.strtoupper(Str::random(6));
         } while (self::where('order_code', $code)->exists());
 
         return $code;
@@ -59,6 +59,7 @@ class Order extends Model
     public function getPickupCodeAttribute(): string
     {
         $parts = explode('-', $this->order_code);
+
         return end($parts);
     }
 
@@ -103,7 +104,8 @@ class Order extends Model
     {
         return match ($this->status) {
             'menunggu' => 'Menunggu',
-            'dimasak', 'siap_diambil' => 'Diproses',
+            'dimasak' => 'Diproses',
+            'siap_diambil' => 'Siap Diambil',
             'selesai' => 'Selesai',
             'dibatalkan' => 'Dibatalkan',
             default => 'Menunggu',
@@ -157,7 +159,7 @@ class Order extends Model
      */
     public function getQueuePositionAttribute(): int
     {
-        if (!in_array($this->status, ['menunggu', 'dimasak'])) {
+        if (! in_array($this->status, ['menunggu', 'dimasak'])) {
             return 0;
         }
 

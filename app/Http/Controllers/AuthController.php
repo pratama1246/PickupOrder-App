@@ -59,9 +59,6 @@ class AuthController extends Controller
         ])->onlyInput('identifier');
     }
 
-
-    
-
     /**
      * Logout user dan hapus session.
      */
@@ -125,8 +122,8 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('nim', $request->identifier)
-                    ->orWhere('email', $request->identifier)
-                    ->first();
+            ->orWhere('email', $request->identifier)
+            ->first();
 
         if (! $user) {
             return back()->withErrors([

@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
@@ -66,7 +66,7 @@ class UserController extends Controller
             $validated['nim'] = null;
         }
 
-        $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        $validated['password'] = Hash::make($validated['password']);
         $validated['password_changed'] = false;
 
         User::create($validated);
@@ -94,8 +94,8 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'nim' => [$request->role === 'vendor' ? 'nullable' : 'required', 'string', 'max:50', 'unique:users,nim,' . $id],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $id],
+            'nim' => [$request->role === 'vendor' ? 'nullable' : 'required', 'string', 'max:50', 'unique:users,nim,'.$id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'in:mahasiswa,vendor'],
             'is_first_login' => ['required', 'boolean'],
@@ -106,7 +106,7 @@ class UserController extends Controller
         }
 
         if (! empty($validated['password'])) {
-            $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+            $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
         }
@@ -168,7 +168,7 @@ class UserController extends Controller
 
         User::whereIn('id', $ids)->whereIn('role', ['mahasiswa', 'vendor'])->delete();
 
-        return back()->with('success', count($ids) . ' akun pengguna berhasil dihapus.');
+        return back()->with('success', count($ids).' akun pengguna berhasil dihapus.');
     }
 
     /**
@@ -196,7 +196,8 @@ class UserController extends Controller
         ]);
 
         $status = $request->action === 'activate' ? 'diaktifkan' : 'dinonaktifkan';
-        return back()->with('success', count($ids) . " akun pengguna berhasil $status.");
+
+        return back()->with('success', count($ids)." akun pengguna berhasil $status.");
     }
 
     /**
@@ -219,14 +220,14 @@ class UserController extends Controller
 
         return response()->stream(function () {
             $handle = fopen('php://output', 'w');
-            
+
             // Header kolom
             fputcsv($handle, ['nama', 'nim', 'email']);
-            
+
             // Contoh baris data untuk panduan admin
             fputcsv($handle, ['Ahmad Dani', '22030101', 'ahmaddani@pnc.ac.id']);
             fputcsv($handle, ['Budi Santoso', '22030102', 'budi@pnc.ac.id']);
-            
+
             fclose($handle);
         }, 200, $headers);
     }
@@ -250,7 +251,7 @@ class UserController extends Controller
         if (($handle = fopen($filePath, 'r')) !== false) {
             // Read header
             $header = fgetcsv($handle, 1000, ',');
-            
+
             // Normalisasi header (hapus BOM jika ada, trim whitespace, lowercase)
             if ($header) {
                 // Hapus UTF-8 BOM jika ada di kolom pertama
@@ -260,8 +261,9 @@ class UserController extends Controller
 
             // Validasi format header
             $expectedHeader = ['nama', 'nim', 'email'];
-            if (!$header || count(array_intersect($expectedHeader, $header)) !== 3) {
+            if (! $header || count(array_intersect($expectedHeader, $header)) !== 3) {
                 fclose($handle);
+
                 return back()->withErrors(['file' => 'Format kolom CSV tidak sesuai. Harus berisi kolom: nama, nim, email.']);
             }
 
@@ -305,6 +307,7 @@ class UserController extends Controller
                     if ($validator->fails()) {
                         $rowErrors = implode(' ', $validator->errors()->all());
                         $errors[] = "Baris {$line} ({$nama}): {$rowErrors}";
+
                         continue;
                     }
 
@@ -313,7 +316,7 @@ class UserController extends Controller
                         'name' => $nama,
                         'nim' => $nim,
                         'email' => $email,
-                        'password' => Hash::make('Pnc_' . $nim),
+                        'password' => Hash::make('Pnc_'.$nim),
                         'role' => 'mahasiswa',
                         'is_first_login' => true,
                         'password_changed' => false,
@@ -326,6 +329,7 @@ class UserController extends Controller
                     // Jika semua gagal, rollback saja
                     DB::rollBack();
                     fclose($handle);
+
                     return back()->withInput()->with('error_list', $errors)->withErrors(['file' => 'Gagal mengimpor data. Semua baris data tidak valid.']);
                 }
 
@@ -333,7 +337,8 @@ class UserController extends Controller
             } catch (\Exception $e) {
                 DB::rollBack();
                 fclose($handle);
-                return back()->withErrors(['file' => 'Terjadi kesalahan sistem saat membaca file: ' . $e->getMessage()]);
+
+                return back()->withErrors(['file' => 'Terjadi kesalahan sistem saat membaca file: '.$e->getMessage()]);
             }
 
             fclose($handle);
@@ -343,7 +348,8 @@ class UserController extends Controller
 
         $message = "Berhasil mengimpor {$successCount} pengguna.";
         if (count($errors) > 0) {
-            $message .= " Namun ada " . count($errors) . " baris data yang dilewati karena tidak valid.";
+            $message .= ' Namun ada '.count($errors).' baris data yang dilewati karena tidak valid.';
+
             return redirect()->route('admin.pengguna.index')
                 ->with('success', $message)
                 ->with('error_list', $errors);

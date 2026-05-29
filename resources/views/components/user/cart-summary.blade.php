@@ -1,11 +1,12 @@
 @props([
-    'canteens'    => [],
-    'total'       => 0,
+    'canteens' => [],
+    'total' => 0,
     'checkoutUrl' => '/checkout',
-    'isSubmit'    => false,
+    'isSubmit' => false,
 ])
 
-<div {{ $attributes->merge(['class' => 'bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm lg:sticky lg:top-24']) }}>
+<div
+    {{ $attributes->merge(['class' => 'bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm lg:sticky lg:top-24']) }}>
 
     <h3 class="text-lg sm:text-xl font-bold text-base-content mb-5">Ringkasan Belanja</h3>
 
@@ -19,7 +20,7 @@
                     </span>
                 </div>
                 <span class="text-sm font-bold text-base-content whitespace-nowrap shrink-0"
-                      x-text="'Rp. ' + getCanteenTotal({{ $canteenId }}).toLocaleString('id-ID')">
+                    x-text="'Rp. ' + getCanteenTotal({{ $canteenId }}).toLocaleString('id-ID')">
                     Rp. {{ number_format(array_sum(array_column($canteen['items'], 'subtotal')), 0, ',', '.') }}
                 </span>
             </div>
@@ -33,21 +34,21 @@
     <div class="mb-6">
         <p class="text-sm font-bold text-base-content/60 mb-1">Total</p>
         <p class="text-2xl sm:text-3xl font-extrabold text-base-content"
-           x-text="'Rp. ' + getGrandTotal().toLocaleString('id-ID') + ',00'">
+            x-text="'Rp. ' + getGrandTotal().toLocaleString('id-ID') + ',00'">
             Rp. {{ number_format($total, 0, ',', '.') }},00
         </p>
     </div>
 
-    @if($isSubmit)
+    @if ($isSubmit)
         <button type="submit" form="checkout-prepare-form"
-           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all h-12 min-h-0"
-           :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
+            class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all h-12 min-h-0"
+            :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
             Bayar Sekarang
         </button>
     @else
         <a href="{{ $checkoutUrl }}"
-           class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center h-12 min-h-0"
-           :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
+            class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center h-12 min-h-0"
+            :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
             Bayar Sekarang
         </a>
     @endif

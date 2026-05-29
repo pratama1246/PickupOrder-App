@@ -1,5 +1,5 @@
 @props([
-    'group' {{-- Collection of Order objects sharing the same payment_code (all pending online) --}}
+    'group'
 ])
 
 @php
@@ -12,7 +12,6 @@
 
 <div class="bg-vanilla-custard-50 border border-amber-300 rounded-3xl p-4 sm:p-8 shadow-sm">
     
-    {{-- Header grup: info transaksi + badge --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6">
         <div>
             <div class="flex items-center gap-2 mb-1">

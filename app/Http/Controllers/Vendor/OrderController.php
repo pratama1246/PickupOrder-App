@@ -54,10 +54,10 @@ class OrderController extends Controller
         $canteen = Auth::user()->canteen;
 
         $order = Order::where('canteen_id', $canteen->id)
-            ->where('order_code', 'LIKE', '%' . strtoupper($code))
+            ->where('order_code', 'LIKE', '%'.strtoupper($code))
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             return redirect()->route('vendor.order.index')->with('error', 'Pesanan dengan kode tersebut tidak ditemukan atau bukan milik kantin Anda.');
         }
 

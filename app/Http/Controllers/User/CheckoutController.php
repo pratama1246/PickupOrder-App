@@ -28,11 +28,14 @@ class CheckoutController extends Controller
     public function prepare(Request $request): RedirectResponse
     {
         $request->validate([
-            'notes'   => ['nullable', 'array'],
+            'notes' => ['nullable', 'array'],
             'notes.*' => ['nullable', 'string', 'max:500'],
+            'selected_menu_ids' => ['nullable', 'array'],
+            'selected_menu_ids.*' => ['nullable', 'integer'],
         ]);
 
         session(['checkout_notes' => $request->input('notes', [])]);
+        session(['checkout_selected_ids' => $request->input('selected_menu_ids', [])]);
 
         return redirect()->route('checkout.index');
     }
@@ -49,6 +52,17 @@ class CheckoutController extends Controller
 
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Keranjang belanja kosong.');
+        }
+
+        // Filter hanya item yang dipilih user dari keranjang
+        $selectedIds = session('checkout_selected_ids', []);
+        if (! empty($selectedIds)) {
+            $selectedIds = array_map('intval', $selectedIds);
+            $cart = array_filter($cart, fn ($item) => in_array((int) $item['menu_id'], $selectedIds));
+        }
+
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Pilih setidaknya satu menu untuk checkout.');
         }
 
         // Kelompokkan per kantin untuk ditampilkan di kolom kanan
@@ -71,21 +85,30 @@ class CheckoutController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pickup_time'    => ['required', 'string'],
-            'custom_time'    => ['nullable', 'required_if:pickup_time,custom', 'string', 'regex:/^\d{2}:\d{2}$/'],
+            'pickup_time' => ['required', 'string'],
+            'custom_time' => ['nullable', 'required_if:pickup_time,custom', 'string', 'regex:/^\d{2}:\d{2}$/'],
             'payment_method' => ['required', 'in:qris,bayar_di_warung'],
-            'notes'          => ['nullable', 'array'],
-            'notes.*'        => ['nullable', 'string', 'max:500'],
+            'notes' => ['nullable', 'array'],
+            'notes.*' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $cart = $this->syncCartWithMenus(session(self::SESSION_KEY, []));
-        session([self::SESSION_KEY => $cart]);
+        $fullCart = $this->syncCartWithMenus(session(self::SESSION_KEY, []));
+        session([self::SESSION_KEY => $fullCart]);
+
+        // Filter hanya item yang dipilih untuk di-checkout
+        $selectedIds = session('checkout_selected_ids', []);
+        if (! empty($selectedIds)) {
+            $selectedIds = array_map('intval', $selectedIds);
+            $cart = array_filter($fullCart, fn ($item) => in_array((int) $item['menu_id'], $selectedIds));
+        } else {
+            $cart = $fullCart;
+        }
 
         if (empty($cart)) {
             if ($request->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Keranjang belanja kosong.'], 422);
+                return response()->json(['success' => false, 'message' => 'Tidak ada item yang dipilih untuk checkout.'], 422);
             }
-            abort(422, 'Keranjang belanja kosong.');
+            abort(422, 'Tidak ada item yang dipilih.');
         }
 
         // --- Parser pickup_time ---
@@ -95,6 +118,7 @@ class CheckoutController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'errors' => ['pickup_time' => [$errorMsg]]], 422);
             }
+
             return back()->withErrors(['pickup_time' => $errorMsg])->withInput();
         }
 
@@ -111,6 +135,7 @@ class CheckoutController extends Controller
                 if ($request->wantsJson()) {
                     return response()->json(['success' => false, 'errors' => ['payment_method' => [$errorMsg]]], 422);
                 }
+
                 return back()->withErrors(['payment_method' => $errorMsg])->withInput();
             }
         }
@@ -122,7 +147,7 @@ class CheckoutController extends Controller
         }
 
         $paymentMethod = $request->payment_method === 'qris' ? 'midtrans' : 'cash';
-        $notes         = $request->input('notes', []);
+        $notes = $request->input('notes', []);
 
         if ($paymentMethod === 'midtrans') {
             return $this->processMidtransCheckout($request, $grouped, $pickupTime, $notes, $cart);
@@ -130,32 +155,32 @@ class CheckoutController extends Controller
 
         // --- Proses pembayaran tunai ---
         $sharedOrderCode = Order::generateOrderCode();
-        $lastOrder       = null;
+        $lastOrder = null;
 
         DB::transaction(function () use ($grouped, $pickupTime, $notes, $sharedOrderCode, &$lastOrder) {
             foreach ($grouped as $canteenId => $items) {
                 $total = array_sum(array_column($items, 'subtotal'));
 
                 $order = Order::create([
-                    'user_id'        => Auth::id(),
-                    'canteen_id'     => $canteenId,
-                    'order_code'     => $sharedOrderCode,
-                    'status'         => 'menunggu',
-                    'pickup_time'    => $pickupTime,
-                    'total_price'    => $total,
-                    'notes'          => $notes[$canteenId] ?? null,
+                    'user_id' => Auth::id(),
+                    'canteen_id' => $canteenId,
+                    'order_code' => $sharedOrderCode,
+                    'status' => 'menunggu',
+                    'pickup_time' => $pickupTime,
+                    'total_price' => $total,
+                    'notes' => $notes[$canteenId] ?? null,
                     'payment_method' => 'cash',
                     'payment_status' => 'pending',
-                    'payment_code'   => null,
-                    'snap_token'     => null,
+                    'payment_code' => null,
+                    'snap_token' => null,
                 ]);
 
                 foreach ($items as $item) {
                     OrderItem::create([
                         'order_id' => $order->id,
-                        'menu_id'  => $item['menu_id'],
-                        'qty'      => $item['quantity'],
-                        'price'    => $item['price'],
+                        'menu_id' => $item['menu_id'],
+                        'qty' => $item['quantity'],
+                        'price' => $item['price'],
                     ]);
                 }
 
@@ -163,14 +188,19 @@ class CheckoutController extends Controller
             }
         });
 
-        session()->forget(self::SESSION_KEY);
+        // Hapus hanya item yang sudah di-checkout dari keranjang session
+        foreach (array_keys($cart) as $menuId) {
+            unset($fullCart[$menuId]);
+        }
+        session([self::SESSION_KEY => $fullCart]);
         session()->forget('checkout_notes');
+        session()->forget('checkout_selected_ids');
 
         if ($request->wantsJson()) {
             return response()->json([
-                'success'  => true,
+                'success' => true,
                 'redirect' => route('order.index'),
-                'message'  => 'Pesanan berhasil dibuat! Silakan bayar saat mengambil pesanan.',
+                'message' => 'Pesanan berhasil dibuat! Silakan bayar saat mengambil pesanan.',
             ]);
         }
 
@@ -213,13 +243,13 @@ class CheckoutController extends Controller
             Order::where('payment_code', $paymentCode)->update(['snap_token' => $snapToken]);
 
             return response()->json([
-                'success'    => true,
+                'success' => true,
                 'snap_token' => $snapToken,
             ]);
         } catch (\Exception $e) {
             Log::error('Midtrans retry token error', [
                 'payment_code' => $paymentCode,
-                'error'        => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
@@ -244,17 +274,17 @@ class CheckoutController extends Controller
             $paymentCode = 'PAY-'.now()->format('Ymd').'-'.strtoupper(Str::random(6));
         } while (Order::where('payment_code', $paymentCode)->exists());
 
-        $user  = Auth::user();
+        $user = Auth::user();
         $gross = (int) array_sum(array_column($cart, 'subtotal'));
 
         // Bangun item_details untuk Midtrans dari seluruh item di keranjang
         $itemDetails = [];
         foreach ($cart as $item) {
             $itemDetails[] = [
-                'id'       => (string) $item['menu_id'],
-                'price'    => (int) $item['price'],
+                'id' => (string) $item['menu_id'],
+                'price' => (int) $item['price'],
                 'quantity' => (int) $item['quantity'],
-                'name'     => mb_substr($item['name'], 0, 50), // Midtrans max 50 chars
+                'name' => mb_substr($item['name'], 0, 50), // Midtrans max 50 chars
             ];
         }
 
@@ -265,7 +295,7 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             Log::error('Midtrans Snap token error saat checkout', [
                 'payment_code' => $paymentCode,
-                'error'        => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
 
             $errorMsg = 'Gagal terhubung ke sistem pembayaran. Silakan coba lagi atau pilih metode lain.';
@@ -278,32 +308,32 @@ class CheckoutController extends Controller
         }
 
         $sharedOrderCode = Order::generateOrderCode();
-        $lastOrder       = null;
+        $lastOrder = null;
 
         DB::transaction(function () use ($grouped, $pickupTime, $notes, $paymentCode, $snapToken, $sharedOrderCode, &$lastOrder) {
             foreach ($grouped as $canteenId => $items) {
                 $total = array_sum(array_column($items, 'subtotal'));
 
                 $order = Order::create([
-                    'user_id'        => Auth::id(),
-                    'canteen_id'     => $canteenId,
-                    'order_code'     => $sharedOrderCode,
-                    'status'         => 'menunggu',
-                    'pickup_time'    => $pickupTime,
-                    'total_price'    => $total,
-                    'notes'          => $notes[$canteenId] ?? null,
+                    'user_id' => Auth::id(),
+                    'canteen_id' => $canteenId,
+                    'order_code' => $sharedOrderCode,
+                    'status' => 'menunggu',
+                    'pickup_time' => $pickupTime,
+                    'total_price' => $total,
+                    'notes' => $notes[$canteenId] ?? null,
                     'payment_method' => 'midtrans',
                     'payment_status' => 'pending',
-                    'payment_code'   => $paymentCode,
-                    'snap_token'     => $snapToken,
+                    'payment_code' => $paymentCode,
+                    'snap_token' => $snapToken,
                 ]);
 
                 foreach ($items as $item) {
                     OrderItem::create([
                         'order_id' => $order->id,
-                        'menu_id'  => $item['menu_id'],
-                        'qty'      => $item['quantity'],
-                        'price'    => $item['price'],
+                        'menu_id' => $item['menu_id'],
+                        'qty' => $item['quantity'],
+                        'price' => $item['price'],
                     ]);
                 }
 
@@ -311,17 +341,23 @@ class CheckoutController extends Controller
             }
         });
 
-        session()->forget(self::SESSION_KEY);
+        // Hapus hanya item yang sudah di-checkout dari keranjang session
+        $fullCart = session(self::SESSION_KEY, []);
+        foreach (array_keys($cart) as $menuId) {
+            unset($fullCart[$menuId]);
+        }
+        session([self::SESSION_KEY => $fullCart]);
         session()->forget('checkout_notes');
+        session()->forget('checkout_selected_ids');
 
         // Jika request via AJAX: kembalikan snap_token ke JS agar popup Midtrans
         // muncul langsung di atas halaman checkout (tidak ada redirect sebelum bayar)
         if ($request->wantsJson()) {
             return response()->json([
-                'success'    => true,
+                'success' => true,
                 'snap_token' => $snapToken,
-                'redirect'   => route('order.index'),
-                'message'    => 'Pesanan berhasil dibuat! Silakan selesaikan pembayaran.',
+                'redirect' => route('order.index'),
+                'message' => 'Pesanan berhasil dibuat! Silakan selesaikan pembayaran.',
             ]);
         }
 
@@ -336,24 +372,24 @@ class CheckoutController extends Controller
     private function generateSnapToken(string $paymentCode, $user, ?int $gross = null, array $itemDetails = []): string
     {
         // Inisialisasi konfigurasi Midtrans dari config/services.php
-        MidtransConfig::$serverKey    = config('services.midtrans.server_key');
+        MidtransConfig::$serverKey = config('services.midtrans.server_key');
         MidtransConfig::$isProduction = config('services.midtrans.is_production');
-        MidtransConfig::$isSanitized  = config('services.midtrans.is_sanitized');
-        MidtransConfig::$is3ds        = config('services.midtrans.is_3ds');
+        MidtransConfig::$isSanitized = config('services.midtrans.is_sanitized');
+        MidtransConfig::$is3ds = config('services.midtrans.is_3ds');
 
         // Jika gross dan itemDetails tidak diberikan (skenario retry),
         // hitung ulang dari orders yang ada di DB
         if ($gross === null) {
             $orders = Order::where('payment_code', $paymentCode)->get();
-            $gross  = (int) $orders->sum('total_price');
+            $gross = (int) $orders->sum('total_price');
 
             foreach ($orders as $ord) {
                 foreach ($ord->items as $item) {
                     $itemDetails[] = [
-                        'id'       => (string) $item->menu_id,
-                        'price'    => (int) $item->price,
+                        'id' => (string) $item->menu_id,
+                        'price' => (int) $item->price,
                         'quantity' => (int) $item->qty,
-                        'name'     => mb_substr($item->menu->name ?? 'Menu', 0, 50),
+                        'name' => mb_substr($item->menu->name ?? 'Menu', 0, 50),
                     ];
                 }
             }
@@ -361,20 +397,20 @@ class CheckoutController extends Controller
 
         $params = [
             'transaction_details' => [
-                'order_id'     => $paymentCode,
+                'order_id' => $paymentCode,
                 'gross_amount' => $gross,
             ],
-            'item_details'     => $itemDetails,
+            'item_details' => $itemDetails,
             'customer_details' => [
                 'first_name' => $user->name,
-                'email'      => $user->email ?? ($user->nim.'@mhs.pnc.ac.id'),
-                'phone'      => '-',
+                'email' => $user->email ?? ($user->nim.'@mhs.pnc.ac.id'),
+                'phone' => '-',
             ],
             // Batas waktu pembayaran: 30 menit dari sekarang
             'expiry' => [
                 'start_time' => now()->format('Y-m-d H:i:s O'),
-                'unit'       => 'minute',
-                'duration'   => 30,
+                'unit' => 'minute',
+                'duration' => 30,
             ],
         ];
 
@@ -387,7 +423,7 @@ class CheckoutController extends Controller
      */
     private function parsePickupTime(string $pickupTime, ?string $customTime): ?Carbon
     {
-        $now  = Carbon::now();
+        $now = Carbon::now();
         $date = $now->toDateString(); // YYYY-MM-DD hari ini
 
         if ($pickupTime === 'now') {
@@ -411,7 +447,7 @@ class CheckoutController extends Controller
         // Slot waktu preset: "09.20", "11.30", dst.
         // Ubah titik ke titik dua agar bisa di-parse sebagai H:i
         $timeString = str_replace('.', ':', $pickupTime);
-        $parsed     = Carbon::createFromFormat('Y-m-d H:i', $date.' '.$timeString);
+        $parsed = Carbon::createFromFormat('Y-m-d H:i', $date.' '.$timeString);
 
         // Tolak jika waktu preset sudah lewat hari ini
         if ($parsed->lessThan($now->copy()->subMinute())) {
@@ -440,6 +476,7 @@ class CheckoutController extends Controller
 
             if (! $menu || ! $menu->isInStock()) {
                 unset($cart[$menuId]);
+
                 continue;
             }
 

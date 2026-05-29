@@ -1,46 +1,79 @@
 @props([
-    'image'       => '',
-    'name'        => '',
+    'image' => '',
+    'name' => '',
     'description' => null,
-    'price'       => 0,
-    'quantity'    => 1,
-    'itemId'      => null,
+    'price' => 0,
+    'quantity' => 1,
+    'itemId' => null,
+    'cartId' => null,
 ])
 
-<div class="cart-item-card bg-white border border-base-content/20 rounded-2xl p-4 sm:p-5">
+<div class="cart-item-card bg-white border border-base-content/20 rounded-2xl p-4 sm:p-5 cursor-pointer select-none"
+     x-data="{
+         toggleCard(e) {
+             // Abaikan jika klik mengenai tombol, form, input, label checkbox, atau di dalam dialog modal
+             if (e.target.closest('button') || e.target.closest('form') || e.target.closest('input') || e.target.closest('label') || e.target.closest('dialog')) {
+                 return;
+             }
+             const cb = $el.querySelector('input[name=\'selected_menu_ids[]\']');
+             if (cb) {
+                 cb.checked = !cb.checked;
+                 cb.dispatchEvent(new Event('change'));
+             }
+         }
+     }"
+     @click="toggleCard($event)">
     <!-- Responsive Flex Layout: Kolom di Mobile, Baris Tunggal di Desktop -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        
+    <div class="flex items-start sm:items-center gap-3">
+
+        {{-- Checkbox Pilih Item --}}
+        <label class="flex items-center justify-center pt-0.5 sm:pt-0 shrink-0 cursor-pointer">
+            <input
+                type="checkbox"
+                name="selected_menu_ids[]"
+                value="{{ $cartId ?? $itemId }}"
+                form="checkout-prepare-form"
+                checked
+                class="checkbox checkbox-sm rounded-md border-base-content/30 checked:bg-fern-700 checked:border-fern-700 checked:text-white focus:ring-0"
+                @change="toggleItem({{ $cartId ?? $itemId }}, $event.target.checked)"
+            >
+        </label>
+
+        {{-- Konten Item --}}
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-1 min-w-0">
+
         {{-- Kiri/Atas: Gambar & Info (Nama, Deskripsi) --}}
         <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10">
-                <img
-                    src="{{ $image }}"
+            <div
+                class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10">
+                <img src="{{ $image }}"
                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'"
-                    alt="{{ $name }}"
-                    class="w-full h-full object-cover"
-                />
+                    alt="{{ $name }}" class="w-full h-full object-cover" />
             </div>
 
             <div class="min-w-0 flex-1">
                 <h4 class="font-bold text-sm sm:text-base text-base-content leading-tight">{{ $name }}</h4>
-                @if($description)
-                    <p class="text-xs text-base-content/60 font-medium mt-0.5 leading-snug line-clamp-1">{{ $description }}</p>
+                @if ($description)
+                    <p class="text-xs text-base-content/60 font-medium mt-0.5 leading-snug line-clamp-1">
+                        {{ $description }}</p>
                 @endif
                 {{-- Harga Desktop: Sembunyi di mobile, muncul di desktop --}}
                 <p class="hidden sm:block text-xs sm:text-sm font-semibold text-base-content/70 mt-1">
-                    Rp. <span x-text="(items[{{ $itemId }}].qty * items[{{ $itemId }}].price).toLocaleString('id-ID')">{{ number_format($price * $quantity, 0, ',', '.') }}</span>,00
+                    Rp. <span
+                        x-text="(items[{{ $itemId }}].qty * items[{{ $itemId }}].price).toLocaleString('id-ID')">{{ number_format($price * $quantity, 0, ',', '.') }}</span>,00
                 </p>
             </div>
         </div>
 
         {{-- Kanan/Bawah: Harga (Mobile) & Kontrol Kuantitas + Tombol Hapus --}}
-        <div class="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t border-base-content/5 pt-3 sm:pt-0 sm:border-none">
+        <div
+            class="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t border-base-content/5 pt-3 sm:pt-0 sm:border-none">
             {{-- Harga Mobile: Muncul hanya di mobile --}}
             <div class="block sm:hidden">
                 <p class="text-[10px] text-base-content/50 font-bold uppercase tracking-wider mb-0.5">Subtotal</p>
                 <p class="text-sm font-bold text-base-content">
-                    Rp. <span x-text="(items[{{ $itemId }}].qty * items[{{ $itemId }}].price).toLocaleString('id-ID')">{{ number_format($price * $quantity, 0, ',', '.') }}</span>,00
+                    Rp. <span
+                        x-text="(items[{{ $itemId }}].qty * items[{{ $itemId }}].price).toLocaleString('id-ID')">{{ number_format($price * $quantity, 0, ',', '.') }}</span>,00
                 </p>
             </div>
 
@@ -48,37 +81,61 @@
                 <!-- Quantity Controls via Parent Alpine State -->
                 <div class="flex items-center gap-1.5 sm:gap-2.5">
                     <button type="button" @click="changeQty({{ $itemId }}, -1)"
-                            class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95"
-                            :disabled="items[{{ $itemId }}].qty <= 1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content" :class="items[{{ $itemId }}].qty <= 1 ? 'opacity-30' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95"
+                        :disabled="items[{{ $itemId }}].qty <= 1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content"
+                            :class="items[{{ $itemId }}].qty <= 1 ? 'opacity-30' : ''" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
                         </svg>
                     </button>
-                    
-                    <span class="w-5 text-center font-bold text-base-content text-sm sm:text-base select-none" x-text="items[{{ $itemId }}].qty">{{ $quantity }}</span>
-                    
+
+                    <span class="w-5 text-center font-bold text-base-content text-sm sm:text-base select-none"
+                        x-text="items[{{ $itemId }}].qty">{{ $quantity }}</span>
+
                     <button type="button" @click="changeQty({{ $itemId }}, 1)"
-                            class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95"
-                            :disabled="items[{{ $itemId }}].qty >= 20">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content" :class="items[{{ $itemId }}].qty >= 20 ? 'opacity-30' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95"
+                        :disabled="items[{{ $itemId }}].qty >= 20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content"
+                            :class="items[{{ $itemId }}].qty >= 20 ? 'opacity-30' : ''" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
                     </button>
                 </div>
 
-                <!-- Delete Button Form -->
-                <form action="{{ route('cart.destroy', $itemId) }}" method="POST" class="m-0 p-0">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit"
-                            class="w-8 h-8 flex items-center justify-center text-base-content/35 hover:text-red-500 transition-colors active:scale-90">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                        </svg>
-                    </button>
-                </form>
+                <!-- Delete Button (Triggers Modal) -->
+                <button type="button"
+                    onclick="document.getElementById('delete_modal_{{ $itemId }}').showModal()"
+                    class="w-8 h-8 flex items-center justify-center text-base-content/35 hover:text-red-500 transition-colors active:scale-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+
+                <!-- Modal Konfirmasi Hapus -->
+                <x-modal id="delete_modal_{{ $itemId }}" type="warning" title="Hapus Menu Dari Keranjang?">
+                    Apakah Anda yakin ingin menghapus menu <strong>{{ $name }}</strong> dari keranjang belanja?
+                    <x-slot:footer>
+                        <button type="button"
+                            onclick="document.getElementById('delete_modal_{{ $itemId }}').close()"
+                            class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">
+                            Batal
+                        </button>
+                        <form action="{{ route('cart.destroy', $itemId) }}" method="POST" class="m-0 p-0 inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold active:scale-95 transition-all">
+                                Ya, Hapus
+                            </button>
+                        </form>
+                    </x-slot:footer>
+                </x-modal>
             </div>
         </div>
-
+        </div>{{-- end konten item --}}
     </div>
 </div>

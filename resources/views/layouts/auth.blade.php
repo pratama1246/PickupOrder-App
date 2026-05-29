@@ -55,7 +55,8 @@
         {{-- PANEL KIRI --}}
         <div class="bg-shadow-grey-900 text-white p-8 md:p-10 flex flex-col justify-between md:w-5/12 shrink-0">
             <div>
-                <div class="inline-block bg-brand-gradient text-white px-4 py-1.5 rounded-md text-xs font-bold shadow-sm mb-4">
+                <div
+                    class="inline-block bg-brand-gradient text-white px-4 py-1.5 rounded-md text-xs font-bold shadow-sm mb-4">
                     Sistem Pickup Order PNC
                 </div>
 

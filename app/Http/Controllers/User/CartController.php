@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
+use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -90,7 +91,7 @@ class CartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Jumlah item diperbarui.',
-                'cart'    => $cart,
+                'cart' => $cart,
             ]);
         }
 
@@ -110,11 +111,68 @@ class CartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Item dihapus dari keranjang.',
-                'cart'    => $cart,
+                'cart' => $cart,
             ]);
         }
 
         return back()->with('success', 'Item dihapus dari keranjang.');
+    }
+
+    /**
+     * Masukkan kembali item dari pesanan lama ke keranjang (Beli Lagi).
+     */
+    public function reorder(Request $request, int $id): RedirectResponse
+    {
+        $order = Order::with('items.menu.canteen')
+            ->where('user_id', $request->user()->id)
+            ->findOrFail($id);
+
+        $cart = session(self::SESSION_KEY, []);
+        $addedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($order->items as $item) {
+            $menu = $item->menu;
+
+            // Lewati jika menu sudah dihapus vendor atau tidak tersedia
+            if (! $menu || ! $menu->isInStock()) {
+                $skippedCount++;
+                continue;
+            }
+
+            $key = $menu->id;
+            if (isset($cart[$key])) {
+                $cart[$key]['quantity'] += $item->qty;
+            } else {
+                $cart[$key] = [
+                    'menu_id' => $menu->id,
+                    'name' => $menu->name,
+                    'image' => $menu->image,
+                    'description' => $menu->description,
+                    'price' => (float) $menu->price,
+                    'canteen_id' => $menu->canteen_id,
+                    'canteen_name' => $menu->canteen->name,
+                    'quantity' => $item->qty,
+                ];
+            }
+
+            $cart[$key]['subtotal'] = $cart[$key]['price'] * $cart[$key]['quantity'];
+            $addedCount++;
+        }
+
+        session([self::SESSION_KEY => $cart]);
+
+        if ($addedCount === 0) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Semua menu dari pesanan ini sudah tidak tersedia.');
+        }
+
+        $message = "{$addedCount} menu berhasil ditambahkan ke keranjang.";
+        if ($skippedCount > 0) {
+            $message .= " {$skippedCount} menu dilewati karena tidak tersedia.";
+        }
+
+        return redirect()->route('cart.index')->with('success', $message);
     }
 
     /**
@@ -150,6 +208,7 @@ class CartController extends Controller
 
             if (! $menu) {
                 unset($cart[$menuId]);
+
                 continue;
             }
 

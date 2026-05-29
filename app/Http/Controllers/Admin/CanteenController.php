@@ -7,7 +7,9 @@ use App\Models\Canteen;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\Laravel\Facades\Image;
@@ -78,14 +80,14 @@ class CanteenController extends Controller
         ]);
 
         // Generate base email (tanpa spasi/dash, e.g. kantinharmoni)
-        $cleanName = \Illuminate\Support\Str::slug($validated['name'], '');
-        $baseEmail = $cleanName . '@pnc.ac.id';
+        $cleanName = Str::slug($validated['name'], '');
+        $baseEmail = $cleanName.'@pnc.ac.id';
         $email = $baseEmail;
         $counter = 1;
-        
+
         // Ensure email is unique
         while (User::where('email', $email)->exists()) {
-            $email = $cleanName . $counter . '@pnc.ac.id';
+            $email = $cleanName.$counter.'@pnc.ac.id';
             $counter++;
         }
 
@@ -93,9 +95,9 @@ class CanteenController extends Controller
 
         // Auto-create vendor user
         $user = User::create([
-            'name' => 'Vendor ' . $validated['name'],
+            'name' => 'Vendor '.$validated['name'],
             'email' => $email,
-            'password' => \Illuminate\Support\Facades\Hash::make($password),
+            'password' => Hash::make($password),
             'role' => 'vendor',
             'is_first_login' => true,
             'password_changed' => false,

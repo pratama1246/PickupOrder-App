@@ -1,5 +1,4 @@
-<header
-    class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50 shadow-md">
+<header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50 shadow-md">
     <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
         <div class="bg-fern-700 text-white font-bold text-lg px-3 py-1 rounded-lg tracking-wide shrink-0">
             LOGO

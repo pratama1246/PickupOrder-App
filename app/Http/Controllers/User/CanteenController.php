@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Canteen;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -22,13 +23,13 @@ class CanteenController extends Controller
             }
             if ($request->filled('search')) {
                 $search = $request->search;
-                $q->where(function($q3) use ($search) {
+                $q->where(function ($q3) use ($search) {
                     $q3->where('name', 'like', "%{$search}%")
-                       ->orWhere('description', 'like', "%{$search}%")
-                       ->orWhereHas('canteen', function($q4) use ($search) {
-                           $q4->where('name', 'like', "%{$search}%")
-                              ->orWhere('description', 'like', "%{$search}%");
-                       });
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhereHas('canteen', function ($q4) use ($search) {
+                            $q4->where('name', 'like', "%{$search}%")
+                                ->orWhere('description', 'like', "%{$search}%");
+                        });
                 });
             }
         }])->withCount(['availableMenus' => function ($q) use ($request) {
@@ -37,13 +38,13 @@ class CanteenController extends Controller
             }
             if ($request->filled('search')) {
                 $search = $request->search;
-                $q->where(function($q3) use ($search) {
+                $q->where(function ($q3) use ($search) {
                     $q3->where('name', 'like', "%{$search}%")
-                       ->orWhere('description', 'like', "%{$search}%")
-                       ->orWhereHas('canteen', function($q4) use ($search) {
-                           $q4->where('name', 'like', "%{$search}%")
-                              ->orWhere('description', 'like', "%{$search}%");
-                       });
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhereHas('canteen', function ($q4) use ($search) {
+                            $q4->where('name', 'like', "%{$search}%")
+                                ->orWhere('description', 'like', "%{$search}%");
+                        });
                 });
             }
         }]);
@@ -53,11 +54,11 @@ class CanteenController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhereHas('menus', function ($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%")
-                         ->orWhere('description', 'like', "%{$search}%");
-                  });
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('menus', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -79,9 +80,9 @@ class CanteenController extends Controller
         }
 
         $canteens = $query->latest()->paginate(9)->withQueryString();
-        
-        $categories = \App\Models\Menu::select('category')->distinct()->whereNotNull('category')->pluck('category');
-        $allCanteens = \App\Models\Canteen::where('is_open', true)->select('id', 'name')->get();
+
+        $categories = Menu::select('category')->distinct()->whereNotNull('category')->pluck('category');
+        $allCanteens = Canteen::where('is_open', true)->select('id', 'name')->get();
 
         return view('user.pesanan', compact('canteens', 'categories', 'allCanteens'));
     }

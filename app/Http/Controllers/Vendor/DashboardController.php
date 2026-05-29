@@ -3,32 +3,47 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Review;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function toggleStatus(\Illuminate\Http\Request $request)
+    public function toggleStatus(Request $request)
     {
         $canteen = Auth::user()->canteen;
         abort_if(is_null($canteen), 403, 'Akun vendor ini belum memiliki kantin terdaftar.');
-        
-        $isOpen = $request->has('is_open') ? $request->boolean('is_open') : !$canteen->is_open;
+
+        $isOpen = $request->has('is_open') ? $request->boolean('is_open') : ! $canteen->is_open;
         $canteen->update(['is_open' => $isOpen]);
-        
+
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'is_open' => $canteen->is_open,
-                'message' => $canteen->is_open ? 'Kantin berhasil dibuka!' : 'Kantin telah ditutup.'
+                'message' => $canteen->is_open ? 'Kantin berhasil dibuka!' : 'Kantin telah ditutup.',
             ]);
         }
-        
+
         return back()->with('success', $canteen->is_open ? 'Kantin berhasil dibuka!' : 'Kantin telah ditutup.');
+    }
+
+    public function updateTarget(Request $request)
+    {
+        $canteen = Auth::user()->canteen;
+        abort_if(is_null($canteen), 403, 'Akun vendor ini belum memiliki kantin terdaftar.');
+
+        $request->validate([
+            'daily_target' => 'required|numeric|min:1',
+        ]);
+
+        $canteen->update(['daily_target' => $request->daily_target]);
+
+        return back()->with('success', 'Target pendapatan harian berhasil diperbarui!');
     }
 
     public function index(): View
@@ -65,14 +80,15 @@ class DashboardController extends Controller
             'pesanan_baru' => Order::where('canteen_id', $canteen->id)->where('status', 'menunggu')->count(),
             'sedang_dimasak' => Order::where('canteen_id', $canteen->id)->where('status', 'dimasak')->count(),
             'siap_pickup' => Order::where('canteen_id', $canteen->id)->where('status', 'siap_diambil')->count(),
-            'menu_habis' => \App\Models\Menu::where('canteen_id', $canteen->id)->where(function ($query) {
+            'pesanan_batal' => Order::where('canteen_id', $canteen->id)->where('status', 'dibatalkan')->count(),
+            'menu_habis' => Menu::where('canteen_id', $canteen->id)->where(function ($query) {
                 $query->where('stock', '<=', 0)->orWhere('is_available', false);
             })->count(),
         ];
 
         // 1. Canteen Revenue & Order Trend (Last 7 Days)
         $currentStart = now()->subDays(6)->startOfDay();
-        
+
         $revenueTrendRaw = Order::where('canteen_id', $canteen->id)
             ->where('status', 'selesai')
             ->where('created_at', '>=', $currentStart)
@@ -107,7 +123,7 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
-        
+
         $statusLabels = ['Menunggu', 'Dimasak', 'Siap Pickup', 'Selesai', 'Dibatalkan'];
         $statusSeries = [
             (int) ($statusRaw['menunggu'] ?? 0),
@@ -119,15 +135,15 @@ class DashboardController extends Controller
 
         // 3. Top 5 Best Selling Menus (Bar Chart)
         $topMenusRaw = OrderItem::whereHas('order', function ($query) use ($canteen) {
-                $query->where('canteen_id', $canteen->id)->where('status', 'selesai');
-            })
+            $query->where('canteen_id', $canteen->id)->where('status', 'selesai');
+        })
             ->selectRaw('menu_id, SUM(qty) as total_qty')
             ->groupBy('menu_id')
             ->with('menu:id,name')
             ->orderByDesc('total_qty')
             ->limit(5)
             ->get();
-            
+
         $topMenuLabels = [];
         $topMenuSeries = [];
         foreach ($topMenusRaw as $item) {
@@ -147,14 +163,14 @@ class DashboardController extends Controller
         $recentReviews = Review::whereHas('menu', function ($q) use ($canteen) {
             $q->where('canteen_id', $canteen->id);
         })->with(['user:id,name,avatar', 'menu:id,name'])
-          ->latest()
-          ->take(5)
-          ->get();
+            ->latest()
+            ->take(5)
+            ->get();
 
         // 5. Distribusi Penjualan per Kategori
         $categoryDistRaw = OrderItem::whereHas('order', function ($q) use ($canteen) {
-                $q->where('canteen_id', $canteen->id)->where('status', 'selesai');
-            })
+            $q->where('canteen_id', $canteen->id)->where('status', 'selesai');
+        })
             ->join('menus', 'order_items.menu_id', '=', 'menus.id')
             ->selectRaw('menus.category, SUM(order_items.qty) as total_qty')
             ->whereNotNull('menus.category')

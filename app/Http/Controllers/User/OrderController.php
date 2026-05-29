@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -35,18 +37,19 @@ class OrderController extends Controller
             ->where('user_id', $userId)
             ->where(function ($q) {
                 $q->where('payment_method', '!=', 'midtrans')
-                  ->orWhere('payment_status', '!=', 'pending');
+                    ->orWhere('payment_status', '!=', 'pending');
             })
             ->latest();
 
         // Filter berdasarkan status label UI
         if ($request->filled('status')) {
             $dbStatuses = match ($request->status) {
-                'Menunggu'   => ['menunggu'],
-                'Diproses'   => ['dimasak', 'siap_diambil'],
-                'Selesai'    => ['selesai'],
+                'Menunggu' => ['menunggu'],
+                'Diproses' => ['dimasak'],
+                'Siap Diambil' => ['siap_diambil'],
+                'Selesai' => ['selesai'],
                 'Dibatalkan' => ['dibatalkan'],
-                default      => [],
+                default => [],
             };
             if (! empty($dbStatuses)) {
                 $query->whereIn('status', $dbStatuses);
@@ -74,14 +77,14 @@ class OrderController extends Controller
      * API endpoint untuk polling status pembayaran dari frontend JavaScript.
      * GET /api/order/{id}/payment-status
      */
-    public function paymentStatus(int $id): \Illuminate\Http\JsonResponse
+    public function paymentStatus(int $id): JsonResponse
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
         return response()->json([
             'payment_status' => $order->payment_status,
-            'status'         => $order->status,
-            'is_paid'        => $order->isPaid(),
+            'status' => $order->status,
+            'is_paid' => $order->isPaid(),
         ]);
     }
 
@@ -89,7 +92,7 @@ class OrderController extends Controller
      * Batalkan satu pesanan oleh mahasiswa.
      * Hanya diizinkan jika belum dibayar (payment_status == 'pending') dan status 'menunggu'.
      */
-    public function destroy(int $id): \Illuminate\Http\RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
@@ -102,18 +105,18 @@ class OrderController extends Controller
         }
 
         $order->update([
-            'status'         => 'dibatalkan',
+            'status' => 'dibatalkan',
             'payment_status' => 'failed',
         ]);
 
-        return redirect()->route('order.index')->with('success', 'Pesanan #' . $order->order_code . ' berhasil dibatalkan.');
+        return redirect()->route('order.index')->with('success', 'Pesanan #'.$order->order_code.' berhasil dibatalkan.');
     }
 
     /**
      * Batalkan seluruh grup transaksi berdasarkan payment_code.
      * Digunakan ketika user menekan "Batalkan Semua" pada kontainer grouped pending order.
      */
-    public function cancelGroup(string $paymentCode): \Illuminate\Http\RedirectResponse
+    public function cancelGroup(string $paymentCode): RedirectResponse
     {
         $orders = Order::where('user_id', Auth::id())
             ->where('payment_code', $paymentCode)
@@ -127,12 +130,11 @@ class OrderController extends Controller
 
         foreach ($orders as $order) {
             $order->update([
-                'status'         => 'dibatalkan',
+                'status' => 'dibatalkan',
                 'payment_status' => 'failed',
             ]);
         }
 
-        return redirect()->route('order.index')->with('success', 'Seluruh transaksi dengan kode ' . $paymentCode . ' berhasil dibatalkan.');
+        return redirect()->route('order.index')->with('success', 'Seluruh transaksi dengan kode '.$paymentCode.' berhasil dibatalkan.');
     }
-
 }

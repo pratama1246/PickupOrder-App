@@ -84,7 +84,7 @@ class DatabaseSeeder extends Seeder
                 'image' => 'assets/food/esteh.jpg',
                 'stock' => 100,
                 'is_available' => true,
-            ])
+            ]),
         ]);
 
         // 3. Seed Vendor User 2
@@ -136,7 +136,7 @@ class DatabaseSeeder extends Seeder
                 'image' => 'assets/food/esteh.jpg',
                 'stock' => 50,
                 'is_available' => true,
-            ])
+            ]),
         ]);
 
         // 4. Seed Mahasiswa User
@@ -163,17 +163,23 @@ class DatabaseSeeder extends Seeder
             $daysAgo = rand(0, 6);
             $randomDate = Carbon::now()->subDays($daysAgo)->subHours(rand(1, 10));
             $selectedCanteen = $canteens[array_rand($canteens)];
-            
+
             do {
                 $code = 'PNC-ORD-'.$randomDate->format('Ymd').'-'.strtoupper(Str::random(4));
             } while (Order::where('order_code', $code)->exists());
 
             $statusChoice = rand(1, 100);
-            if ($statusChoice <= 50) $status = 'selesai';
-            elseif ($statusChoice <= 65) $status = 'dibatalkan';
-            elseif ($statusChoice <= 80) $status = 'menunggu';
-            elseif ($statusChoice <= 90) $status = 'dimasak';
-            else $status = 'siap_diambil';
+            if ($statusChoice <= 50) {
+                $status = 'selesai';
+            } elseif ($statusChoice <= 65) {
+                $status = 'dibatalkan';
+            } elseif ($statusChoice <= 80) {
+                $status = 'menunggu';
+            } elseif ($statusChoice <= 90) {
+                $status = 'dimasak';
+            } else {
+                $status = 'siap_diambil';
+            }
 
             $order = Order::create([
                 'user_id' => $mahasiswa->id,
@@ -181,8 +187,8 @@ class DatabaseSeeder extends Seeder
                 'order_code' => $code,
                 'status' => $status,
                 'pickup_time' => $randomDate->copy()->addMinutes(rand(15, 60)),
-                'total_price' => 0, 
-                'notes' => 'Pesanan dummy ' . $i,
+                'total_price' => 0,
+                'notes' => 'Pesanan dummy '.$i,
                 'created_at' => $randomDate,
                 'updated_at' => $randomDate,
             ]);
