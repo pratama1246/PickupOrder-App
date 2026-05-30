@@ -19,9 +19,9 @@
         </section>
 
         <section class="px-3 sm:px-10 md:px-16 lg:px-24">
-            <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 md:gap-8 lg:gap-12 items-start">
 
-                <div class="w-full lg:max-w-sm xl:max-w-md shrink-0">
+                <div class="w-full md:max-w-xs lg:max-w-sm xl:max-w-md shrink-0">
                     <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 shadow-sm">
 
                         <div class="w-full aspect-square rounded-2xl overflow-hidden mb-5 bg-base-200 relative">
@@ -80,7 +80,7 @@
                         {{ $menu->canteen->name }}</h2>
 
                     <div
-                        class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-3 px-3 sm:-mx-10 sm:px-10 md:-mx-16 md:px-16 lg:mx-0 lg:px-0">
+                        class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-3 px-3 sm:-mx-10 sm:px-10 md:mx-0 md:px-0">
                         @forelse($otherMenus as $otherMenu)
                             <div class="snap-start shrink-0 w-80 sm:w-72">
                                 <x-foodcard :id="$otherMenu->id" :name="$otherMenu->name" :canteenName="$otherMenu->canteen->name" :description="$otherMenu->description"

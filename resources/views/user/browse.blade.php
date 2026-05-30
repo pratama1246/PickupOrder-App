@@ -29,7 +29,7 @@
                         <input type="text" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-2"
                             placeholder="Cari kantin atau menu favoritmu..." />
                     </label>
-                    <button type="button" @click="triggerSearch()"
+                    <button type="button" @click="if(keyword.trim()) triggerSearch()"
                         class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer"
                         title="Cari">
                         <svg x-show="!loading" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"

@@ -32,19 +32,20 @@
                     Politeknik Negeri Cilacap.
                 </p>
 
-                <form action="{{ route('canteen.index') }}" method="GET" class="w-full max-w-md mx-auto lg:mx-0 mb-8">
-                    <label class="input input-bordered flex items-center w-full shadow-sm rounded-3xl input-md gap-2 px-2">
-                        <div
-                            class="bg-base-content/10 text-base-content rounded-full w-8 h-8 flex items-center justify-center shrink-0 pointer-events-none select-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <circle cx="11" cy="11" r="8" />
-                                <path d="m21 21-4.35-4.35" />
-                            </svg>
-                        </div>
-                        <input type="text" name="search" class="grow text-sm sm:text-base font-medium pl-1"
+                <form action="{{ route('canteen.index') }}" method="GET" onsubmit="if(!document.getElementById('search-input').value.trim()) { event.preventDefault(); return false; }" class="w-full max-w-md mx-auto lg:mx-0 mb-8 relative">
+                    <label class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
+                        <input type="text" id="search-input" name="search" class="grow text-sm sm:text-base font-medium pl-2"
                             placeholder="Cari menu atau kantin..." />
                     </label>
+                    <button type="submit" onclick="if(!document.getElementById('search-input').value.trim()) { event.preventDefault(); return false; }"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer"
+                        title="Cari">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
+                    </button>
                 </form>
 
                 <div

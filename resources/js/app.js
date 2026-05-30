@@ -25,7 +25,7 @@ function handleAvatarSelect(event) {
     }
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         openCropperModal(e.target.result);
     };
     reader.readAsDataURL(file);
@@ -34,7 +34,7 @@ function handleAvatarSelect(event) {
 function openCropperModal(imageSrc) {
     const imageEl = document.getElementById('cropper_image');
     if (!imageEl) return;
-    
+
     imageEl.src = imageSrc;
 
     const modal = document.getElementById('cropper_modal');
@@ -92,7 +92,7 @@ function applyCrop() {
         imageSmoothingQuality: 'high',
     });
 
-    canvas.toBlob(function(blob) {
+    canvas.toBlob(function (blob) {
         if (!blob) return;
 
         // Bungkus blob menjadi objek File
@@ -154,23 +154,23 @@ function initTypewriter() {
     let j = 0;
     let currentWord = "";
     let isDeleting = false;
- 
+
     function typeEffect() {
         const el = document.getElementById("typing-text");
         if (!el) return;
 
         currentWord = words[i];
- 
+
         if (isDeleting) {
             j--;
         } else {
             j++;
         }
- 
+
         el.textContent = currentWord.substring(0, j);
- 
+
         let speed = isDeleting ? 50 : 100;
- 
+
         if (!isDeleting && j === currentWord.length) {
             speed = 1200;
             isDeleting = true;
@@ -179,10 +179,10 @@ function initTypewriter() {
             i = (i + 1) % words.length;
             speed = 300;
         }
- 
+
         setTimeout(typeEffect, speed);
     }
- 
+
     typeEffect();
 }
 
@@ -203,19 +203,19 @@ document.addEventListener('submit', (e) => {
             // 1. Nonaktifkan tombol submit utama & tampilkan loading
             submitBtn.disabled = true;
             if (!submitBtn.querySelector('.loading')) {
-                const isCircleBtn = submitBtn.classList.contains('btn-circle') || 
-                                   submitBtn.classList.contains('rounded-full') || 
-                                   (submitBtn.offsetWidth > 0 && submitBtn.offsetWidth === submitBtn.offsetHeight && submitBtn.offsetWidth < 50);
-                
+                const isCircleBtn = submitBtn.classList.contains('btn-circle') ||
+                    submitBtn.classList.contains('rounded-full') ||
+                    (submitBtn.offsetWidth > 0 && submitBtn.offsetWidth === submitBtn.offsetHeight && submitBtn.offsetWidth < 50);
+
                 submitBtn.innerHTML = '';
                 const spinner = document.createElement('span');
-                spinner.className = isCircleBtn ? 'loading loading-spinner loading-xs text-base-content' : 'loading loading-bars loading-md';
+                spinner.className = isCircleBtn ? 'loading loading-spinner loading-xs text-white' : 'loading loading-bars loading-md text-white';
                 submitBtn.appendChild(spinner);
             }
 
             // 2. Nonaktifkan tombol-tombol lain yang berjejer (sibling) di grup/modal yang sama
             const groupContainer = form.closest('.modal-action, dialog, .modal, .flex, .grid, .modal-box') || form.parentElement;
-            
+
             if (groupContainer) {
                 groupContainer.querySelectorAll('button, a.btn, input[type="button"], input[type="submit"]').forEach(otherBtn => {
                     if (otherBtn !== submitBtn) {
@@ -250,7 +250,7 @@ document.addEventListener('click', (e) => {
 });
 
 // Helper AJAX Live Search dengan Alpine.js dan skeleton transisi DaisyUI
-window.initLiveSearch = function(targetSelector) {
+window.initLiveSearch = function (targetSelector) {
     return {
         keyword: new URLSearchParams(window.location.search).get('search') || '',
         category: new URLSearchParams(window.location.search).get('category') || '',
@@ -261,7 +261,7 @@ window.initLiveSearch = function(targetSelector) {
             this.$watch('keyword', value => this.triggerSearch());
             this.$watch('category', value => this.triggerSearch());
             this.$watch('canteen', value => this.triggerSearch());
-            
+
             // Handle pagination clicks within the target container
             const container = document.querySelector(targetSelector);
             if (container) {
@@ -281,7 +281,7 @@ window.initLiveSearch = function(targetSelector) {
         },
         fetchData(url = null) {
             this.loading = true;
-            
+
             const target = document.querySelector(targetSelector);
             if (target) {
                 target.classList.add('transition-all', 'duration-200', 'ease-out');
@@ -308,7 +308,7 @@ window.initLiveSearch = function(targetSelector) {
                 const queryString = params.toString();
                 fetchUrl = window.location.pathname + (queryString ? '?' + queryString : '');
             }
-            
+
             // Update browser URL (tanpa reload) agar status pencarian tersimpan jika halaman di-refresh
             if (!url) {
                 window.history.pushState({}, '', fetchUrl);
@@ -319,40 +319,40 @@ window.initLiveSearch = function(targetSelector) {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(res => res.text())
-            .then(html => {
-                completed = true;
-                clearTimeout(showSkeletonTimeout);
+                .then(res => res.text())
+                .then(html => {
+                    completed = true;
+                    clearTimeout(showSkeletonTimeout);
 
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newContent = doc.querySelector(targetSelector);
-                if (target && newContent) {
-                    // Check if content actually changed
-                    if (target.innerHTML.trim() !== newContent.innerHTML.trim()) {
-                        // Restore animation for smooth content swap
-                        target.classList.add('opacity-0', 'scale-95', 'transform');
-                        setTimeout(() => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.querySelector(targetSelector);
+                    if (target && newContent) {
+                        // Check if content actually changed
+                        if (target.innerHTML.trim() !== newContent.innerHTML.trim()) {
+                            // Restore animation for smooth content swap
+                            target.classList.add('opacity-0', 'scale-95', 'transform');
+                            setTimeout(() => {
+                                target.classList.remove('opacity-50', 'pointer-events-none');
+                                target.innerHTML = newContent.innerHTML;
+                                target.classList.remove('opacity-0', 'scale-95');
+                            }, 200);
+                        } else {
+                            // Content is the same, just remove loading state
                             target.classList.remove('opacity-50', 'pointer-events-none');
-                            target.innerHTML = newContent.innerHTML;
-                            target.classList.remove('opacity-0', 'scale-95');
-                        }, 200);
-                    } else {
-                        // Content is the same, just remove loading state
+                        }
+                    }
+                })
+                .catch(() => {
+                    completed = true;
+                    clearTimeout(showSkeletonTimeout);
+                    if (target) {
                         target.classList.remove('opacity-50', 'pointer-events-none');
                     }
-                }
-            })
-            .catch(() => {
-                completed = true;
-                clearTimeout(showSkeletonTimeout);
-                if (target) {
-                    target.classList.remove('opacity-50', 'pointer-events-none');
-                }
-            })
-            .finally(() => {
-                this.loading = false;
-            });
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
         }
     };
 };
