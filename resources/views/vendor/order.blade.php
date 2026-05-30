@@ -15,25 +15,32 @@
 
         <div class="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <div class="relative flex-1 sm:max-w-sm">
-                <input type="text" id="manual_code_input" placeholder="Kode pesanan"
-                    class="input bg-white border-base-content/20 rounded-xl w-full font-bold uppercase tracking-widest pl-4 pr-20 shadow-sm placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-sm"
-                    maxlength="6">
+                <label
+                    class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
+                    <input type="text" id="manual_code_input" placeholder="Masukkan kode pesanan"
+                        class="grow text-sm sm:text-base font-bold uppercase pl-2 placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-sm"
+                        maxlength="6">
+                </label>
                 <button type="button" onclick="searchManualCode()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-fern-700 hover:bg-fern-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors active:scale-95 flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2.5">
+                    class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer"
+                    title="Cari">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.35-4.35" />
                     </svg>
-                    Cari
                 </button>
             </div>
 
-            <span class="text-xs font-medium text-base-content/30 text-center block">atau</span>
+            <div class="flex items-center gap-3 w-full sm:w-auto my-1 sm:my-0">
+                <div class="h-px bg-base-content/15 grow sm:hidden"></div>
+                <span class="text-xs font-bold text-base-content/30 shrink-0">Atau</span>
+                <div class="h-px bg-base-content/15 grow sm:hidden"></div>
+            </div>
 
             <button type="button" onclick="document.getElementById('scan_qr_modal').showModal(); startScanner();"
-                class="btn bg-white hover:bg-base-200 text-base-content border border-base-content/20 rounded-xl font-bold shadow-sm active:scale-95 transition-all flex items-center gap-2 w-full sm:w-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-fern-700" fill="none" viewBox="0 0 24 24"
+                class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-3xl font-bold shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
@@ -127,10 +134,18 @@
 
         function searchManualCode() {
             const code = document.getElementById('manual_code_input').value.trim();
+            if (code.length === 0) {
+                return;
+            }
             if (code.length === 6) {
                 window.location.href = "{{ url('/vendor/order/scan') }}/" + code;
             } else {
-                alert('Kode pesanan harus 6 karakter alphanumeric!');
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: {
+                        message: 'Kode pesanan harus 6 karakter alphanumeric!',
+                        type: 'error'
+                    }
+                }));
             }
         }
 
