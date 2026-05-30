@@ -13,16 +13,24 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    /**
+     * Menampilkan dashboard utama administrator platform.
+     * Melakukan kompilasi statistik bisnis makro (pertumbuhan pendapatan, pangsa pasar kantin,
+     * tren transaksi 7 hari terakhir, dan diagram distribusi kategori) dalam satu halaman.
+     */
     public function index(): View
     {
+        // Menentukan range waktu 7 hari terakhir vs 7 hari sebelumnya untuk perbandingan persentase performa.
         $currentStart = now()->subDays(6)->startOfDay();
         $previousStart = now()->subDays(13)->startOfDay();
         $previousEnd = now()->subDays(7)->endOfDay();
 
+        // Penghitungan pertumbuhan pendapatan (Revenue Growth).
         $currentRevenue = Order::where('status', 'selesai')->where('created_at', '>=', $currentStart)->sum('total_price');
         $previousRevenue = Order::where('status', 'selesai')->whereBetween('created_at', [$previousStart, $previousEnd])->sum('total_price');
         $revenueGrowth = $previousRevenue > 0 ? (($currentRevenue - $previousRevenue) / $previousRevenue) * 100 : ($currentRevenue > 0 ? 100 : 0);
 
+        // Penghitungan pertumbuhan volume transaksi.
         $currentOrders = Order::where('status', 'selesai')->where('created_at', '>=', $currentStart)->count();
         $previousOrders = Order::where('status', 'selesai')->whereBetween('created_at', [$previousStart, $previousEnd])->count();
         $ordersGrowth = $previousOrders > 0 ? (($currentOrders - $previousOrders) / $previousOrders) * 100 : ($currentOrders > 0 ? 100 : 0);
@@ -42,7 +50,7 @@ class DashboardController extends Controller
             'total_menu' => Menu::count(),
         ];
 
-        // 1. Platform Revenue & Order Trend (Last 7 Days)
+        // 1. Tren Pendapatan & Volume Transaksi Platform (7 Hari Terakhir).
         $revenueTrendRaw = Order::where('status', 'selesai')
             ->where('created_at', '>=', $currentStart)
             ->selectRaw('DATE(created_at) as date, SUM(total_price) as total')
@@ -62,6 +70,9 @@ class DashboardController extends Controller
         $trendDates = [];
         $trendRevenues = [];
         $trendOrders = [];
+        
+        // Perulangan mundur 7 hari ke belakang untuk memastikan setiap hari terwakili dalam grafik,
+        // meskipun ada hari yang menghasilkan transaksi senilai nol (zero-filling).
         for ($i = 6; $i >= 0; $i--) {
             $dateStr = now()->subDays($i)->format('Y-m-d');
             $trendDates[] = now()->subDays($i)->translatedFormat('d M');
@@ -69,7 +80,8 @@ class DashboardController extends Controller
             $trendOrders[] = (int) ($ordersTrendRaw[$dateStr] ?? 0);
         }
 
-        // 2. Canteen Market Share (Donut Chart)
+        // 2. Pangsa Pasar Kontin (Canteen Market Share) untuk Donut Chart.
+        // Dihitung berdasarkan persentase total omzet riil dari masing-masing kantin.
         $canteenSharesRaw = Order::where('status', 'selesai')
             ->selectRaw('canteen_id, SUM(total_price) as total_revenue')
             ->groupBy('canteen_id')
@@ -84,7 +96,7 @@ class DashboardController extends Controller
             $shareSeries[] = (float) $share->total_revenue;
         }
 
-        // 3. Top Canteens Performance Table & Bar Chart
+        // 3. Data Performa 5 Kantin Teratas untuk Tabel Pembanding dan Bar Chart.
         $topCanteens = Canteen::withCount('orders')
             ->withCount(['orders as completed_orders_count' => function ($query) {
                 $query->where('status', 'selesai');
@@ -103,7 +115,7 @@ class DashboardController extends Controller
             $topCanteenSeries[] = (float) $canteen->total_revenue;
         }
 
-        // 4. Top 5 Best Selling Menus (Platform)
+        // 4. Data 5 Menu Terlaris di Seluruh Platform (Top 5 Best Sellers).
         $topMenusRaw = OrderItem::whereHas('order', function ($query) {
             $query->where('status', 'selesai');
         })
@@ -121,13 +133,13 @@ class DashboardController extends Controller
             $topMenuSeries[] = (int) $item->total_qty;
         }
 
-        // 5. Recent Transactions Log
+        // 5. Log 5 Transaksi Terkini.
         $recentOrders = Order::with(['user:id,name', 'canteen:id,name'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
-        // 6. Distribusi Penjualan per Kategori (Platform-wide)
+        // 6. Grafik Distribusi Penjualan per Kategori Menu (Platform-wide).
         $categoryDistRaw = OrderItem::whereHas('order', function ($q) {
             $q->where('status', 'selesai');
         })
@@ -141,7 +153,7 @@ class DashboardController extends Controller
         $categoryLabels = $categoryDistRaw->pluck('category')->toArray();
         $categorySeries = $categoryDistRaw->pluck('total_qty')->map(fn ($v) => (int) $v)->toArray();
 
-        // 7. Rata-rata rating & total ulasan platform
+        // 7. Pengumpulan metrik review eksternal.
         $platformAvgRating = round((float) (Review::avg('rating') ?? 0), 1);
         $totalReviews = Review::count();
         $stats['avg_rating'] = $platformAvgRating;

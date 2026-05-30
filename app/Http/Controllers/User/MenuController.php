@@ -9,11 +9,13 @@ use Illuminate\View\View;
 class MenuController extends Controller
 {
     /**
-     * Halaman detail satu menu makanan (/canteen/{canteenId}/menu/{id}).
-     * Menampilkan info lengkap menu + daftar menu lain dari kantin yang sama.
+     * Menampilkan halaman detail lengkap sebuah menu makanan (/canteen/{canteenId}/menu/{id}).
+     * Memuat ulasan terkini, menghitung akumulasi penjualan 30 hari terakhir sebagai bukti sosial (social proof),
+     * serta merekomendasikan menu sejenis dari kantin yang sama.
      */
     public function show(int $canteenId, int $id): View
     {
+        // Menghitung jumlah pesanan selesai dalam 30 hari terakhir untuk menampilkan label "Terjual X" di antarmuka.
         $menu = Menu::with('canteen')
             ->withAvg('reviews', 'rating')
             ->withCount(['orderItems as recent_orders_count' => function ($query) {
@@ -24,10 +26,11 @@ class MenuController extends Controller
             }])
             ->findOrFail($id);
 
-        // Pastikan menu memang milik kantin yang diminta
+        // Validasi silang untuk memastikan menu benar-benar milik kantin yang sedang dijelajahi.
         abort_if($menu->canteen_id !== $canteenId, 404);
 
-        // Menu lain dari kantin yang sama (tidak termasuk menu yang sedang dilihat)
+        // Mengambil menu lain dari kantin yang sama sebagai rekomendasi alternatif,
+        // mengecualikan menu yang saat ini sedang dibuka agar tidak redundan.
         $otherMenus = Menu::where('canteen_id', $canteenId)
             ->where('id', '!=', $id)
             ->where('is_available', true)
@@ -36,7 +39,7 @@ class MenuController extends Controller
             ->take(6)
             ->get();
 
-        // Mengambil daftar ulasan beserta user pengulas (maksimal 20 terbaru)
+        // Membatasi ulasan hanya 20 terbaru untuk menjaga kecepatan loading dan kebersihan tampilan.
         $reviews = $menu->reviews()->with('user')->latest()->take(20)->get();
 
         return view('user.menu-detail', compact('menu', 'otherMenus', 'reviews'));

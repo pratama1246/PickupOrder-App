@@ -15,13 +15,14 @@ use Intervention\Image\Laravel\Facades\Image;
 class MenuController extends Controller
 {
     /**
-     * Daftar menu milik kantin vendor (/vendor/menu).
-     * Mendukung pencarian dan filter ketersediaan.
+     * Menampilkan daftar menu makanan khusus milik kantin vendor bersangkutan (/vendor/menu).
+     * Menerapkan pembatasan query (tenant isolation) untuk menjamin keamanan akses data antar-pemilik kantin.
      */
     public function index(Request $request): View
     {
         $canteen = Auth::user()->canteen;
 
+        // Membatasi akses query hanya pada menu yang berelasi dengan kantin vendor bersangkutan.
         $query = $canteen->menus()->latest();
 
         if ($request->filled('search')) {
@@ -38,7 +39,7 @@ class MenuController extends Controller
     }
 
     /**
-     * Form tambah menu baru.
+     * Menampilkan formulir pendaftaran menu baru.
      */
     public function create(): View
     {
@@ -46,7 +47,9 @@ class MenuController extends Controller
     }
 
     /**
-     * Simpan menu baru ke database.
+     * Menyimpan menu baru ke dalam database.
+     * Mengompresi dan mengubah format gambar secara real-time ke format WebP untuk menghemat bandwidth
+     * bandwidth jaringan kampus dan media penyimpanan server (storage).
      */
     public function store(Request $request): RedirectResponse
     {
@@ -63,6 +66,8 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
+            // Pemrosesan Gambar: Konversi ke WebP, batasi lebar maksimal 800px untuk menghemat ruang disk,
+            // serta atur kualitas kompresi ke 75% untuk menjaga kualitas visual yang optimal.
             $filename = uniqid('menu_').'.webp';
             $image = Image::decode($request->file('image'));
             $image->scale(width: 800);
@@ -78,7 +83,7 @@ class MenuController extends Controller
     }
 
     /**
-     * Form edit menu.
+     * Menampilkan formulir sunting menu berdasarkan ID.
      */
     public function edit(int $id): View
     {
@@ -89,7 +94,8 @@ class MenuController extends Controller
     }
 
     /**
-     * Update data menu.
+     * Memperbarui detail informasi dan gambar menu makanan milik vendor.
+     * Membersihkan berkas gambar lama dari penyimpanan lokal apabila pengguna mengganti gambar.
      */
     public function update(Request $request, int $id): RedirectResponse
     {
@@ -107,7 +113,7 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
+            // Menghapus gambar lama di disk jika ada untuk mencegah sampah berkas tidak terpakai.
             if ($menu->image) {
                 Storage::disk('public')->delete($menu->image);
             }
@@ -126,7 +132,8 @@ class MenuController extends Controller
     }
 
     /**
-     * Hapus menu dari database.
+     * Menghapus secara permanen record menu makanan dari database.
+     * Secara otomatis menghapus gambar terkait dari server penyimpanan.
      */
     public function destroy(int $id): RedirectResponse
     {

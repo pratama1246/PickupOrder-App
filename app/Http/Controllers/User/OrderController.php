@@ -13,16 +13,16 @@ use Illuminate\View\View;
 class OrderController extends Controller
 {
     /**
-     * Daftar riwayat pesanan mahasiswa (/history).
-     * Pesanan online yang masih pending dikelompokkan per payment_code (1 kontainer).
-     * Pesanan lainnya (sudah lunas atau tunai) ditampilkan per-item.
+     * Menampilkan daftar riwayat transaksi kuliner mahasiswa (/history).
+     * Memisahkan pesanan online yang belum lunas (pending) untuk dikelompokkan berdasarkan payment_code,
+     * sehingga pesanan dari multi-kantin yang dibayar sekaligus tetap tampil dalam satu kartu tagihan di UI.
      */
     public function index(Request $request): View
     {
         $userId = Auth::id();
 
-        // Ambil semua pesanan online yang masih pending milik user ini
-        // Kelompokkan per payment_code agar tampil sebagai 1 kontainer di riwayat
+        // Mengambil pesanan online yang belum diselesaikan pembayarannya.
+        // Dikelompokkan per payment_code agar siswa dapat melunasi seluruh keranjang belanja dalam satu klik pembayaran.
         $pendingOnlineGroups = Order::with(['canteen', 'items.menu'])
             ->where('user_id', $userId)
             ->where('payment_method', 'midtrans')
@@ -32,7 +32,7 @@ class OrderController extends Controller
             ->get()
             ->groupBy('payment_code');
 
-        // Ambil pesanan selain pending online (tunai atau sudah dibayar)
+        // Mengambil transaksi yang sudah dibayar atau menggunakan metode tunai untuk dirender biasa per item.
         $query = Order::with(['canteen', 'items.menu'])
             ->where('user_id', $userId)
             ->where(function ($q) {
@@ -41,7 +41,7 @@ class OrderController extends Controller
             })
             ->latest();
 
-        // Filter berdasarkan status label UI
+        // Pemetaan label status antarmuka pengguna (UI) ke kolom status database yang sesuai.
         if ($request->filled('status')) {
             $dbStatuses = match ($request->status) {
                 'Menunggu' => ['menunggu'],
@@ -62,7 +62,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Detail satu pesanan dari riwayat (/history/{id}).
+     * Menampilkan rincian struk belanja digital per pesanan (/history/{id}).
      */
     public function show(int $id): View
     {
@@ -74,8 +74,8 @@ class OrderController extends Controller
     }
 
     /**
-     * API endpoint untuk polling status pembayaran dari frontend JavaScript.
-     * GET /api/order/{id}/payment-status
+     * API Endpoint untuk memantau (polling) perubahan status pembayaran secara asinkron dari JS frontend.
+     * Mengeliminasi keharusan pengguna melakukan refresh halaman manual pasca pembayaran Midtrans berhasil.
      */
     public function paymentStatus(int $id): JsonResponse
     {
@@ -89,13 +89,14 @@ class OrderController extends Controller
     }
 
     /**
-     * Batalkan satu pesanan oleh mahasiswa.
-     * Hanya diizinkan jika belum dibayar (payment_status == 'pending') dan status 'menunggu'.
+     * Membatalkan satu pesanan oleh mahasiswa secara sepihak.
+     * Dibatasi ketat hanya untuk pesanan yang belum lunas (pending) dan belum mulai diolah oleh vendor (menunggu).
      */
     public function destroy(int $id): RedirectResponse
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
+        // Mencegah kerugian finansial/stok bahan mentah kantin dengan memblokir pembatalan menu yang sudah dimasak/dibayar.
         if ($order->payment_status !== 'pending') {
             return back()->with('error', 'Pesanan yang sudah dibayar tidak dapat dibatalkan.');
         }
@@ -113,8 +114,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Batalkan seluruh grup transaksi berdasarkan payment_code.
-     * Digunakan ketika user menekan "Batalkan Semua" pada kontainer grouped pending order.
+     * Membatalkan seluruh paket pesanan multi-kantin yang tergabung dalam satu kode pembayaran pending.
      */
     public function cancelGroup(string $paymentCode): RedirectResponse
     {

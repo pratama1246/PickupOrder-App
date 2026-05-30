@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Storage;
 
 class CanteenController extends Controller
 {
+    /**
+     * Menampilkan halaman penyuntingan profil kantin khusus untuk pemilik kantin (vendor).
+     * Melakukan pengecekan apakah relasi kantin terdaftar untuk mengantisipasi vendor yatim (orphaned vendor).
+     */
     public function edit()
     {
         $canteen = Auth::user()->canteen;
@@ -17,6 +21,10 @@ class CanteenController extends Controller
         return view('vendor.canteen-edit', compact('canteen'));
     }
 
+    /**
+     * Memperbarui informasi nama, deskripsi, dan banner gambar kantin milik vendor.
+     * Memiliki filter pelindung agar berkas gambar default di folder assets/ tidak ikut terhapus dari disk.
+     */
     public function update(Request $request)
     {
         $canteen = Auth::user()->canteen;
@@ -25,11 +33,11 @@ class CanteenController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // max 10MB
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada dan bukan dari path bawaan assets/
+            // Melindungi file aset gambar bawaan sistem (default template assets) agar tidak terhapus secara tidak sengaja.
             if ($canteen->image && ! str_starts_with($canteen->image, 'assets/')) {
                 Storage::disk('public')->delete($canteen->image);
             }

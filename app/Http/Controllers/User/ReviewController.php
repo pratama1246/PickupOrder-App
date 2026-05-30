@@ -12,16 +12,18 @@ use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
 {
     /**
-     * Simpan ulasan untuk pesanan yang sudah selesai.
+     * Menyimpan ulasan (review) masukan untuk setiap menu makanan dari pesanan yang telah selesai.
+     * Menggunakan filter order berstatus 'selesai' dan milik user bersangkutan untuk mencegah ulasan palsu,
+     * serta menggunakan updateOrCreate agar bersifat idempoten jika formulir dikirim berulang kali.
      */
     public function store(Request $request, $orderId): RedirectResponse
     {
+        // Memastikan mahasiswa hanya bisa menilai makanan dari pesanan milik sendiri yang benar-benar telah tuntas.
         $order = Order::where('id', $orderId)
             ->where('user_id', Auth::id())
             ->where('status', 'selesai')
             ->firstOrFail();
 
-        // Validasi input
         $request->validate([
             'reviews' => ['required', 'array'],
             'reviews.*.menu_id' => ['required', 'exists:menus,id'],
@@ -30,7 +32,8 @@ class ReviewController extends Controller
             'reviews.*.is_anonymous' => ['nullable', 'boolean'],
         ]);
 
-        // Simpan ulasan untuk setiap menu
+        // Menyimpan ulasan terpisah untuk masing-masing menu dalam satu transaksi pesanan.
+        // updateOrCreate digunakan agar pengguna dapat memperbarui ulasan lama jika mengirimkan form edit ulasan.
         foreach ($request->reviews as $reviewData) {
             Review::updateOrCreate(
                 [

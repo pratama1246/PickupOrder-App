@@ -11,11 +11,14 @@ use Illuminate\View\View;
 
 class CartController extends Controller
 {
+    // Kunci session untuk menyimpan data keranjang belanja secara lokal per sesi pengguna.
+    // Menghindari penulisan database berlebih untuk item yang bersifat temporer/cepat berubah.
     private const SESSION_KEY = 'cart';
 
     /**
-     * Tampilkan isi keranjang belanja (/cart).
-     * Data keranjang disimpan di session, dikelompokkan per kantin.
+     * Menampilkan isi keranjang belanja pengguna (/cart).
+     * Melakukan sinkronisasi data harga dan stok riil dari database terlebih dahulu sebelum dirender
+     * guna menghindari pemesanan dengan harga usang (stale prices).
      */
     public function index(): View
     {
@@ -31,8 +34,8 @@ class CartController extends Controller
     }
 
     /**
-     * Tambah item menu ke keranjang.
-     * Jika sudah ada, tambahkan qty-nya.
+     * Menambahkan item menu makanan ke dalam keranjang belanja.
+     * Melakukan verifikasi ketersediaan stok fisik dan status aktif operasional kantin induk.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -43,6 +46,7 @@ class CartController extends Controller
 
         $menu = Menu::with('canteen')->findOrFail($request->menu_id);
 
+        // Validasi ketersediaan barang secara real-time untuk menghindari kegagalan proses di sisi vendor.
         abort_if(! $menu->isInStock(), 422, 'Menu tidak tersedia saat ini.');
         abort_if(! $menu->canteen || ! $menu->canteen->is_open, 422, 'Kantin sedang tutup.');
 
@@ -72,7 +76,8 @@ class CartController extends Controller
     }
 
     /**
-     * Update qty satu item di keranjang.
+     * Memperbarui kuantitas item dalam keranjang belanja.
+     * Menerima request AJAX (Wants JSON) untuk memodifikasi keranjang tanpa memicu muat ulang halaman.
      */
     public function update(Request $request, int $menuId)
     {
@@ -100,7 +105,8 @@ class CartController extends Controller
     }
 
     /**
-     * Hapus satu item dari keranjang.
+     * Menghapus satu baris item makanan dari daftar keranjang belanja.
+     * Mendukung pemrosesan asinkron untuk interaktivitas tombol hapus di UI.
      */
     public function destroy(Request $request, int $menuId)
     {
@@ -120,7 +126,8 @@ class CartController extends Controller
     }
 
     /**
-     * Masukkan kembali item dari pesanan lama ke keranjang (Beli Lagi).
+     * Menyalin kembali item dari riwayat transaksi lama pengguna ke keranjang belanja (fitur "Beli Lagi").
+     * Menyaring menu yang sudah tidak lagi dijual oleh pemilik kantin agar tidak menimbulkan error harga.
      */
     public function reorder(Request $request, int $id): RedirectResponse
     {
@@ -135,7 +142,7 @@ class CartController extends Controller
         foreach ($order->items as $item) {
             $menu = $item->menu;
 
-            // Lewati jika menu sudah dihapus vendor atau tidak tersedia
+            // Melewati item jika menu telah dihapus atau persediaan fisiknya sedang kosong.
             if (! $menu || ! $menu->isInStock()) {
                 $skippedCount++;
                 continue;
@@ -177,7 +184,7 @@ class CartController extends Controller
     }
 
     /**
-     * Kelompokkan item keranjang berdasarkan kantin.
+     * Mengelompokkan item belanja berdasarkan ID Kantin agar dapat dirender terpisah dalam sub-kontainer di antarmuka.
      */
     private function groupByCanteen(array $cart): array
     {
@@ -191,7 +198,8 @@ class CartController extends Controller
     }
 
     /**
-     * Sinkronkan data keranjang dengan harga menu terbaru.
+     * Melakukan kueri ulang ke database untuk memperbarui detail nama, gambar, dan nominal harga teranyar menu.
+     * Berfungsi menghapus item keranjang jika data menu aslinya telah dihapus dari sistem.
      */
     private function syncCartWithMenus(array $cart): array
     {

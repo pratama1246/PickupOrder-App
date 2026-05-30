@@ -13,6 +13,10 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    /**
+     * Mengatur status buka/tutup warung kantin secara real-time.
+     * Mendukung permintaan asinkron (AJAX/JSON) agar toggle status di navbar dashboard berjalan seamless.
+     */
     public function toggleStatus(Request $request)
     {
         $canteen = Auth::user()->canteen;
@@ -32,6 +36,10 @@ class DashboardController extends Controller
         return back()->with('success', $canteen->is_open ? 'Kantin berhasil dibuka!' : 'Kantin telah ditutup.');
     }
 
+    /**
+     * Memperbarui nominal target omzet harian kantin.
+     * Nilai ini digunakan oleh widget KPI "Target Pendapatan Hari Ini" di antarmuka vendor.
+     */
     public function updateTarget(Request $request)
     {
         $canteen = Auth::user()->canteen;
@@ -46,6 +54,11 @@ class DashboardController extends Controller
         return back()->with('success', 'Target pendapatan harian berhasil diperbarui!');
     }
 
+    /**
+     * Menampilkan dashboard utama monitoring performa kantin milik vendor.
+     * Mengompilasi statistik antrean, omzet harian vs target harian,
+     * laju penyelesaian pesanan (completion rate), dan ulasan pelanggan.
+     */
     public function index(): View
     {
         $canteen = Auth::user()->canteen;
@@ -56,16 +69,20 @@ class DashboardController extends Controller
         $yesterdayStart = now()->subDay()->startOfDay();
         $yesterdayEnd = now()->subDay()->endOfDay();
 
+        // Penghitungan pertumbuhan omzet pendapatan harian dibanding hari kemarin.
         $todayRevenue = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->where('created_at', '>=', $todayStart)->sum('total_price');
         $yesterdayRevenue = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])->sum('total_price');
         $revenueGrowth = $yesterdayRevenue > 0 ? (($todayRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100 : ($todayRevenue > 0 ? 100 : 0);
 
+        // Penghitungan pertumbuhan total kuantitas order selesai.
         $todayOrders = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->where('created_at', '>=', $todayStart)->count();
         $yesterdayOrders = Order::where('canteen_id', $canteen->id)->where('status', 'selesai')->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])->count();
         $ordersGrowth = $yesterdayOrders > 0 ? (($todayOrders - $yesterdayOrders) / $yesterdayOrders) * 100 : ($todayOrders > 0 ? 100 : 0);
 
         $aovToday = $todayOrders > 0 ? $todayRevenue / $todayOrders : 0;
 
+        // Completion Rate: Menilai persentase pesanan masuk hari ini yang sukses diselesaikan
+        // dibanding total pesanan masuk (termasuk yang dibatalkan/ditolak).
         $totalToday = Order::where('canteen_id', $canteen->id)->where('created_at', '>=', $todayStart)->count();
         $completionRate = $totalToday > 0 ? ($todayOrders / $totalToday) * 100 : 0;
 
@@ -76,7 +93,6 @@ class DashboardController extends Controller
             'pesanan_growth' => round($ordersGrowth, 1),
             'aov_hari_ini' => $aovToday,
             'completion_rate' => round($completionRate, 1),
-            // Keeping active ones for the queue view
             'pesanan_baru' => Order::where('canteen_id', $canteen->id)->where('status', 'menunggu')->count(),
             'sedang_dimasak' => Order::where('canteen_id', $canteen->id)->where('status', 'dimasak')->count(),
             'siap_pickup' => Order::where('canteen_id', $canteen->id)->where('status', 'siap_diambil')->count(),
@@ -86,7 +102,7 @@ class DashboardController extends Controller
             })->count(),
         ];
 
-        // 1. Canteen Revenue & Order Trend (Last 7 Days)
+        // 1. Tren Pendapatan & Jumlah Transaksi Kantin (7 Hari Terakhir).
         $currentStart = now()->subDays(6)->startOfDay();
 
         $revenueTrendRaw = Order::where('canteen_id', $canteen->id)
@@ -117,7 +133,7 @@ class DashboardController extends Controller
             $trendOrders[] = (int) ($ordersTrendRaw[$dateStr] ?? 0);
         }
 
-        // 2. Order Status Distribution (Donut Chart)
+        // 2. Grafik Donut Distribusi Status Seluruh Pesanan Kantin.
         $statusRaw = Order::where('canteen_id', $canteen->id)
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
@@ -133,7 +149,7 @@ class DashboardController extends Controller
             (int) ($statusRaw['dibatalkan'] ?? 0),
         ];
 
-        // 3. Top 5 Best Selling Menus (Bar Chart)
+        // 3. Diagram Bar 5 Menu Terlaris di Kantin Ini.
         $topMenusRaw = OrderItem::whereHas('order', function ($query) use ($canteen) {
             $query->where('canteen_id', $canteen->id)->where('status', 'selesai');
         })
@@ -151,7 +167,7 @@ class DashboardController extends Controller
             $topMenuSeries[] = (int) $item->total_qty;
         }
 
-        // 4. Statistik Rating & Ulasan Kantin
+        // 4. Rating Rata-rata dan Ulasan Khusus untuk Kantin Ini.
         $avgRating = Review::whereHas('menu', function ($q) use ($canteen) {
             $q->where('canteen_id', $canteen->id);
         })->avg('rating') ?? 0;
@@ -167,7 +183,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // 5. Distribusi Penjualan per Kategori
+        // 5. Grafik Distribusi Penjualan Menu Berdasarkan Kategori.
         $categoryDistRaw = OrderItem::whereHas('order', function ($q) use ($canteen) {
             $q->where('canteen_id', $canteen->id)->where('status', 'selesai');
         })
@@ -181,7 +197,7 @@ class DashboardController extends Controller
         $categoryLabels = $categoryDistRaw->pluck('category')->toArray();
         $categorySeries = $categoryDistRaw->pluck('total_qty')->map(fn ($v) => (int) $v)->toArray();
 
-        // 6. Active Orders Feed
+        // 6. Umpan Pesanan Aktif (Active Orders Feed) untuk pemantauan antrean real-time di dapur.
         $activeOrders = Order::with('user:id,name')
             ->where('canteen_id', $canteen->id)
             ->whereIn('status', ['menunggu', 'dimasak', 'siap_diambil'])
@@ -208,3 +224,4 @@ class DashboardController extends Controller
         ));
     }
 }
+

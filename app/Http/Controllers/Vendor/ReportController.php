@@ -14,17 +14,21 @@ use Illuminate\View\View;
 class ReportController extends Controller
 {
     /**
-     * Tampilkan halaman laporan penjualan vendor.
+     * Menampilkan halaman rekapitulasi laporan penjualan untuk pemilik kantin (vendor).
+     * Menerapkan batas waktu default (awal bulan hingga akhir bulan berjalan) jika tidak disediakan parameter,
+     * serta memperhitungkan batas ujung hari (startOfDay/endOfDay) untuk keakuratan agregasi omzet.
      */
     public function index(Request $request): View
     {
         $canteen = Auth::user()->canteen;
         abort_if(! $canteen, 403, 'Anda tidak memiliki kantin.');
 
+        // Penggunaan tanggal default awal & akhir bulan berjalan untuk mencegah pemuatan data berlebih.
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
 
-        // Query pesanan selesai pada rentang tanggal
+        // Menghitung data penjualan hanya dari pesanan berstatus 'selesai'.
+        // Menerapkan startOfDay & endOfDay agar pesanan di jam-jam ekstrem malam hari tidak terpotong (truncated).
         $ordersQuery = Order::where('canteen_id', $canteen->id)
             ->where('status', 'selesai')
             ->whereBetween('created_at', [
@@ -36,7 +40,7 @@ class ReportController extends Controller
         $totalRevenue = $ordersQuery->sum('total_price');
         $averageOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
 
-        // Query produk terlaris
+        // Mengagregasi daftar 10 produk dengan total kuantitas penjualan tertinggi dalam rentang waktu terpilih.
         $topMenus = OrderItem::select('menu_id', DB::raw('SUM(qty) as total_qty'), DB::raw('SUM(qty * price) as total_sales'))
             ->whereHas('order', function ($q) use ($canteen, $startDate, $endDate) {
                 $q->where('canteen_id', $canteen->id)

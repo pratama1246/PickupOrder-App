@@ -43,7 +43,7 @@
 
             <div class="space-y-4">
                 <div>
-                    <h4 class="text-xxs font-bold uppercase text-base-content/50 mb-2">Struktur Kolom</h4>
+                    <h4 class="text-xxs font-bold text-base-content/50 mb-2">Format kolom CSV</h4>
                     <div class="grid grid-cols-3 gap-2 bg-base-100 p-2 rounded-xl border border-base-content/10 text-xs">
                         <div class="bg-white p-2 rounded-lg border border-base-content/5 text-center shadow-3xs">
                             <span class="font-bold text-fern-700">nama</span>

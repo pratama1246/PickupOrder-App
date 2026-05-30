@@ -20,10 +20,13 @@ use Midtrans\Snap;
 
 class CheckoutController extends Controller
 {
+    // Kunci session untuk data keranjang belanja lokal.
     private const SESSION_KEY = 'cart';
 
     /**
-     * Persiapkan checkout dari keranjang (menyimpan catatan ke session).
+     * Mempersiapkan metadata checkout (catatan per kantin & ID menu yang dipilih).
+     * Disimpan sementara di session untuk diolah di halaman konfirmasi pembayaran final,
+     * menghindari penulisan record draft sampah di database.
      */
     public function prepare(Request $request): RedirectResponse
     {
@@ -41,8 +44,8 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Tampilkan halaman checkout (/checkout).
-     * Berisi time slot picker, payment method picker, dan ringkasan order.
+     * Menampilkan halaman ringkasan checkout (/checkout).
+     * Menyaring item keranjang agar hanya memproses menu yang dicentang (dipilih) oleh mahasiswa.
      */
     public function index(): View
     {
@@ -54,7 +57,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Keranjang belanja kosong.');
         }
 
-        // Filter hanya item yang dipilih user dari keranjang
+        // Membatasi item checkout hanya pada menu yang dipilih (dicentang) pada halaman keranjang.
         $selectedIds = session('checkout_selected_ids', []);
         if (! empty($selectedIds)) {
             $selectedIds = array_map('intval', $selectedIds);
@@ -65,7 +68,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Pilih setidaknya satu menu untuk checkout.');
         }
 
-        // Kelompokkan per kantin untuk ditampilkan di kolom kanan
+        // Mengelompokkan item belanja berdasarkan kantin agar mahasiswa dapat melihat subtotal per warung.
         $grouped = [];
         foreach ($cart as $item) {
             $grouped[$item['canteen_id']]['canteen_name'] = $item['canteen_name'];
@@ -79,8 +82,9 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Proses checkout: validasi, simpan ke DB, kosongkan keranjang.
-     * Mendukung request AJAX (wantsJson) maupun request biasa.
+     * Memproses finalisasi pemesanan makanan.
+     * Mendukung metode tunai ("Bayar di Warung") dengan pengaman anti-spam,
+     * serta memisahkan pesanan multi-kantin menjadi baris transaksi independen di database (DB Transaction).
      */
     public function store(Request $request)
     {
@@ -95,7 +99,6 @@ class CheckoutController extends Controller
         $fullCart = $this->syncCartWithMenus(session(self::SESSION_KEY, []));
         session([self::SESSION_KEY => $fullCart]);
 
-        // Filter hanya item yang dipilih untuk di-checkout
         $selectedIds = session('checkout_selected_ids', []);
         if (! empty($selectedIds)) {
             $selectedIds = array_map('intval', $selectedIds);
@@ -111,7 +114,6 @@ class CheckoutController extends Controller
             abort(422, 'Tidak ada item yang dipilih.');
         }
 
-        // --- Parser pickup_time ---
         $pickupTime = $this->parsePickupTime($request->pickup_time, $request->custom_time);
         if (! $pickupTime) {
             $errorMsg = 'Waktu pengambilan tidak valid. Pastikan waktu yang dipilih belum terlewat.';
@@ -122,7 +124,8 @@ class CheckoutController extends Controller
             return back()->withErrors(['pickup_time' => $errorMsg])->withInput();
         }
 
-        // --- Proteksi spam untuk metode tunai ---
+        // Pengaman Anti-Spam: Membatasi mahasiswa agar tidak bisa membuat pesanan cash baru
+        // apabila masih memiliki pesanan tunai aktif yang belum diambil atau dibayar di kantin.
         if ($request->payment_method === 'bayar_di_warung') {
             $hasActiveCashOrder = Order::where('user_id', Auth::id())
                 ->where('payment_method', 'cash')
@@ -140,7 +143,7 @@ class CheckoutController extends Controller
             }
         }
 
-        // Kelompokkan per kantin
+        // Pengelompokan data per kantin untuk pemisahan order tiket.
         $grouped = [];
         foreach ($cart as $item) {
             $grouped[$item['canteen_id']][] = $item;
@@ -153,7 +156,9 @@ class CheckoutController extends Controller
             return $this->processMidtransCheckout($request, $grouped, $pickupTime, $notes, $cart);
         }
 
-        // --- Proses pembayaran tunai ---
+        // --- Transaksi Pembayaran Tunai (Cash) ---
+        // Menggunakan satu order_code induk yang sama agar mahasiswa menganggap ini satu transaksi terpadu,
+        // namun di DB terbagi menjadi beberapa baris order berdasarkan kantin untuk kemudahan klaim vendor.
         $sharedOrderCode = Order::generateOrderCode();
         $lastOrder = null;
 
@@ -188,7 +193,7 @@ class CheckoutController extends Controller
             }
         });
 
-        // Hapus hanya item yang sudah di-checkout dari keranjang session
+        // Menghapus item terpilih dari keranjang belanja global setelah sukses checkout.
         foreach (array_keys($cart) as $menuId) {
             unset($fullCart[$menuId]);
         }
@@ -209,17 +214,15 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Retry payment: generate ulang Snap token jika user belum membayar.
-     * Mengembalikan JSON berisi snap_token baru.
+     * Meminta ulang (regenerate) Snap Token Midtrans untuk pesanan online tertunda yang belum lunas.
+     * Berguna jika sesi pembayaran sebelumnya terputus atau ditutup secara tidak sengaja oleh mahasiswa.
      */
     public function retry(string $paymentCode): JsonResponse
     {
-        // Ambil salah satu order dari grup payment_code ini
         $order = Order::where('payment_code', $paymentCode)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        // Tolak jika pesanan sudah dibatalkan
         if ($order->status === 'dibatalkan') {
             return response()->json([
                 'success' => false,
@@ -227,7 +230,6 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        // Tolak jika sudah lunas
         if ($order->isPaid()) {
             return response()->json([
                 'success' => false,
@@ -235,11 +237,10 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        // Generate Snap token baru
         try {
             $snapToken = $this->generateSnapToken($paymentCode, $order->user);
 
-            // Update snap_token di semua order dengan payment_code yang sama
+            // Memperbarui token pembayaran baru ke seluruh order dengan kode pembayaran yang sama.
             Order::where('payment_code', $paymentCode)->update(['snap_token' => $snapToken]);
 
             return response()->json([
@@ -264,12 +265,12 @@ class CheckoutController extends Controller
     // -----------------------------------------------------------------------
 
     /**
-     * Proses checkout dengan Midtrans: generate payment_code, Snap token, simpan orders.
-     * Mendukung request AJAX (wantsJson) untuk menampilkan Snap popup di halaman checkout.
+     * Mengatur proses integrasi Midtrans Snap API.
+     * Membuat 'payment_code' unik gabungan dan menghasilkan token pembayaran sebelum menyimpan record order.
      */
     private function processMidtransCheckout(Request $request, array $grouped, Carbon $pickupTime, array $notes, array $cart)
     {
-        // Generate payment_code unik yang menghubungkan semua order dalam satu transaksi
+        // Membuat kode pelunasan unik (PAY-...) yang merepresentasikan gabungan nominal seluruh kantin.
         do {
             $paymentCode = 'PAY-'.now()->format('Ymd').'-'.strtoupper(Str::random(6));
         } while (Order::where('payment_code', $paymentCode)->exists());
@@ -277,14 +278,13 @@ class CheckoutController extends Controller
         $user = Auth::user();
         $gross = (int) array_sum(array_column($cart, 'subtotal'));
 
-        // Bangun item_details untuk Midtrans dari seluruh item di keranjang
         $itemDetails = [];
         foreach ($cart as $item) {
             $itemDetails[] = [
                 'id' => (string) $item['menu_id'],
                 'price' => (int) $item['price'],
                 'quantity' => (int) $item['quantity'],
-                'name' => mb_substr($item['name'], 0, 50), // Midtrans max 50 chars
+                'name' => mb_substr($item['name'], 0, 50),
             ];
         }
 
@@ -341,7 +341,6 @@ class CheckoutController extends Controller
             }
         });
 
-        // Hapus hanya item yang sudah di-checkout dari keranjang session
         $fullCart = session(self::SESSION_KEY, []);
         foreach (array_keys($cart) as $menuId) {
             unset($fullCart[$menuId]);
@@ -350,8 +349,7 @@ class CheckoutController extends Controller
         session()->forget('checkout_notes');
         session()->forget('checkout_selected_ids');
 
-        // Jika request via AJAX: kembalikan snap_token ke JS agar popup Midtrans
-        // muncul langsung di atas halaman checkout (tidak ada redirect sebelum bayar)
+        // wantsJson true mengindikasikan modal Snap akan memicu callback JS secara seamless di halaman checkout.
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -366,19 +364,17 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Generate Snap token dari Midtrans.
-     * Dipakai oleh processMidtransCheckout() dan retry().
+     * Memanggil Snap API Midtrans untuk mendapatkan token transaksi pembayaran.
+     * Mengatur batas kedaluwarsa pembayaran online (expiry duration) selama 30 menit.
      */
     private function generateSnapToken(string $paymentCode, $user, ?int $gross = null, array $itemDetails = []): string
     {
-        // Inisialisasi konfigurasi Midtrans dari config/services.php
         MidtransConfig::$serverKey = config('services.midtrans.server_key');
         MidtransConfig::$isProduction = config('services.midtrans.is_production');
         MidtransConfig::$isSanitized = config('services.midtrans.is_sanitized');
         MidtransConfig::$is3ds = config('services.midtrans.is_3ds');
 
-        // Jika gross dan itemDetails tidak diberikan (skenario retry),
-        // hitung ulang dari orders yang ada di DB
+        // Jika gross null (dipanggil dari alur retry), hitung ulang total belanja langsung dari DB.
         if ($gross === null) {
             $orders = Order::where('payment_code', $paymentCode)->get();
             $gross = (int) $orders->sum('total_price');
@@ -406,7 +402,7 @@ class CheckoutController extends Controller
                 'email' => $user->email ?? ($user->nim.'@mhs.pnc.ac.id'),
                 'phone' => '-',
             ],
-            // Batas waktu pembayaran: 30 menit dari sekarang
+            // Membatasi waktu pembayaran maksimal 30 menit untuk melepaskan reservasi menu sesegera mungkin.
             'expiry' => [
                 'start_time' => now()->format('Y-m-d H:i:s O'),
                 'unit' => 'minute',
@@ -418,16 +414,16 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Parse nilai pickup_time dari radio button ke Carbon datetime yang valid.
-     * Mengembalikan null jika waktu sudah terlewat.
+     * Mengubah opsi input 'pickup_time' mahasiswa menjadi format DateTime Carbon.
+     * Opsi 'now' diberikan jeda persiapan default selama 15 menit.
+     * Pilihan custom divalidasi dengan toleransi 1 menit dari waktu sekarang untuk mencegah pemesanan di masa lalu.
      */
     private function parsePickupTime(string $pickupTime, ?string $customTime): ?Carbon
     {
         $now = Carbon::now();
-        $date = $now->toDateString(); // YYYY-MM-DD hari ini
+        $date = $now->toDateString();
 
         if ($pickupTime === 'now') {
-            // "Sekarang" = 15 menit dari saat ini
             return $now->copy()->addMinutes(15);
         }
 
@@ -436,7 +432,6 @@ class CheckoutController extends Controller
                 return null;
             }
             $parsed = Carbon::createFromFormat('Y-m-d H:i', $date.' '.$customTime);
-            // Tolak jika waktu sudah lewat (berikan toleransi 1 menit)
             if ($parsed->lessThan($now->copy()->subMinute())) {
                 return null;
             }
@@ -444,12 +439,9 @@ class CheckoutController extends Controller
             return $parsed;
         }
 
-        // Slot waktu preset: "09.20", "11.30", dst.
-        // Ubah titik ke titik dua agar bisa di-parse sebagai H:i
         $timeString = str_replace('.', ':', $pickupTime);
         $parsed = Carbon::createFromFormat('Y-m-d H:i', $date.' '.$timeString);
 
-        // Tolak jika waktu preset sudah lewat hari ini
         if ($parsed->lessThan($now->copy()->subMinute())) {
             return null;
         }
@@ -458,7 +450,8 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Sinkronkan harga keranjang dengan data menu terbaru sebelum checkout.
+     * Memastikan item checkout memiliki harga terkini, stok mencukupi, dan kantin berstatus buka.
+     * Jika tidak valid, item otomatis dibersihkan dari keranjang session.
      */
     private function syncCartWithMenus(array $cart): array
     {

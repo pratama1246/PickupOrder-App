@@ -11,7 +11,7 @@ use Illuminate\View\View;
 class AuthController extends Controller
 {
     /**
-     * Tampilkan halaman form login.
+     * Menampilkan halaman formulir login utama.
      */
     public function showLogin(): View
     {
@@ -19,8 +19,9 @@ class AuthController extends Controller
     }
 
     /**
-     * Proses autentikasi user.
-     * Menggunakan NIM/NIP sebagai identifier.
+     * Memproses data autentikasi masuk pengguna.
+     * Mendukung pengenal ganda (NIM/NIP untuk internal kampus atau Email untuk admin/external).
+     * Melakukan regenerasi session ID demi menghindari celah keamanan Session Fixation.
      */
     public function login(Request $request): RedirectResponse
     {
@@ -32,7 +33,7 @@ class AuthController extends Controller
         $identifier = $request->identifier;
         $remember = $request->boolean('remember');
 
-        // Check if identifier matches email or nim
+        // Melakukan pengecekan ganda di kolom NIM dan Email agar mahasiswa tidak bingung saat login.
         $credentialsByNim = ['nim' => $identifier, 'password' => $request->password];
         $credentialsByEmail = ['email' => $identifier, 'password' => $request->password];
 
@@ -42,7 +43,7 @@ class AuthController extends Controller
             /** @var User $user */
             $user = Auth::user()->fresh();
 
-            // Paksa ganti password jika login pertama kali
+            // Memaksa pengguna mengganti password bawaan jika ini adalah login pertama kali untuk mematuhi kebijakan keamanan.
             if ($user->is_first_login) {
                 return redirect()->route('password.change.form');
             }
@@ -60,7 +61,8 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout user dan hapus session.
+     * Mengeluarkan pengguna dari sistem dan membersihkan data session.
+     * Menggunakan session invalidation dan regenerasi CSRF token untuk memutus akses lama secara absolut.
      */
     public function logout(Request $request): RedirectResponse
     {
@@ -73,7 +75,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Tampilkan form ganti password pertama kali.
+     * Menampilkan formulir pergantian kata sandi wajib untuk pengguna baru.
      */
     public function showChangePassword(): View
     {
@@ -81,7 +83,8 @@ class AuthController extends Controller
     }
 
     /**
-     * Proses ganti password pertama kali.
+     * Memproses pembaruan kata sandi awal pengguna baru.
+     * Mengubah flag 'is_first_login' menjadi false sehingga pengguna tidak diarahkan kembali ke formulir ini pada sesi berikutnya.
      */
     public function changePassword(Request $request): RedirectResponse
     {
@@ -105,7 +108,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Tampilkan form lupa password.
+     * Menampilkan formulir pemulihan kata sandi (lupa password).
      */
     public function showForgotPassword(): View
     {
@@ -113,7 +116,9 @@ class AuthController extends Controller
     }
 
     /**
-     * Proses pengajuan lupa password (NIM/NIP check).
+     * Memproses pengajuan pemulihan kata sandi.
+     * Melakukan mock status pengiriman link ke layar tanpa integrasi SMTP asli
+     * guna menghindari overhead konfigurasi server surat eksternal pada lingkungan lokal.
      */
     public function forgotPassword(Request $request): RedirectResponse
     {
@@ -131,12 +136,11 @@ class AuthController extends Controller
             ])->onlyInput('identifier');
         }
 
-        // Cek jika akun belum ada email terdaftar
+        // Akun bawaan generator NIM terkadang belum memiliki email aktif.
         if (empty($user->email)) {
             return back()->with('status', 'no-email');
         }
 
-        // Mock status link terkirim untuk menghindari overengineering email server
         return back()->with('status', 'reset-sent');
     }
 }

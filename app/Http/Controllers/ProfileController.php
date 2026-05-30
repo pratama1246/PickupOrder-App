@@ -14,7 +14,8 @@ use Intervention\Image\Laravel\Facades\Image;
 class ProfileController extends Controller
 {
     /**
-     * Menampilkan halaman profil dan pengaturan.
+     * Menampilkan halaman profil dan pengaturan akun.
+     * Mengembalikan tampilan yang disesuaikan secara dinamis untuk masing-masing role pengguna.
      */
     public function edit(Request $request): View
     {
@@ -24,7 +25,9 @@ class ProfileController extends Controller
     }
 
     /**
-     * Memperbarui informasi profil pengguna (Nama & Email).
+     * Memperbarui informasi nama, email, dan avatar pengguna.
+     * Menggunakan Intervention Image untuk memotong (cover 400x400) dan mengonversi gambar ke format WebP
+     * dengan kualitas 80% guna menghemat memori penyimpanan server dan mengoptimalkan kecepatan muat halaman.
      */
     public function update(Request $request): RedirectResponse
     {
@@ -48,6 +51,7 @@ class ProfileController extends Controller
         ];
 
         if ($request->hasFile('avatar')) {
+            // Menghapus avatar lama dari penyimpanan agar disk server tidak lekas penuh.
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
@@ -55,7 +59,7 @@ class ProfileController extends Controller
             $file = $request->file('avatar');
             $filename = 'avatars/'.uniqid('avatar_').'.webp';
 
-            // Kompres dan ubah ke webp
+            // Memotong gambar dengan rasio persegi 400x400 dan dikompresi ke WebP.
             $image = Image::decode($file);
             $image->cover(400, 400);
             $webp = $image->encode(new WebpEncoder(quality: 80));
@@ -71,7 +75,9 @@ class ProfileController extends Controller
     }
 
     /**
-     * Memperbarui password pengguna.
+     * Memperbarui kata sandi pengguna.
+     * Menggunakan 'validateWithBag' agar pesan kesalahan tidak tercampur dengan formulir profil umum di view.
+     * Hashing kata sandi ditangani secara otomatis oleh Eloquent model User (casts hashed).
      */
     public function updatePassword(Request $request): RedirectResponse
     {
@@ -81,7 +87,7 @@ class ProfileController extends Controller
         ]);
 
         $request->user()->update([
-            'password' => $validated['password'], // Hash is automatically handled by the User model's casts
+            'password' => $validated['password'],
         ]);
 
         return redirect()->route('profile.edit')->with('status', 'password-updated');

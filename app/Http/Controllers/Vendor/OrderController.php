@@ -12,13 +12,14 @@ use Illuminate\View\View;
 class OrderController extends Controller
 {
     /**
-     * Daftar semua transaksi masuk ke kantin vendor (/vendor/transaksi).
-     * Mendukung filter berdasarkan status.
+     * Menampilkan daftar antrean transaksi kuliner masuk khusus untuk kantin vendor (/vendor/transaksi).
+     * Menerapkan filter status pesanan untuk memantau progress pengerjaan dapur.
      */
     public function index(Request $request): View
     {
         $canteen = Auth::user()->canteen;
 
+        // Membatasi transaksi hanya untuk kantin vendor yang masuk (tenant isolation).
         $query = Order::with(['user', 'items.menu'])
             ->where('canteen_id', $canteen->id)
             ->latest();
@@ -33,7 +34,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Detail satu transaksi (/vendor/transaksi/{id}).
+     * Menampilkan rincian pesanan kuliner mahasiswa (/vendor/transaksi/{id}).
      */
     public function show(int $id): View
     {
@@ -47,7 +48,9 @@ class OrderController extends Controller
     }
 
     /**
-     * Proses kode pesanan dari pemindai QR atau input manual.
+     * Memproses pencarian kode pesanan (order_code) baik dari input manual maupun hasil scan QR code.
+     * Menggunakan pencarian berbasis akhiran (LIKE %code) agar vendor cukup mengetik 4-6 karakter terakhir
+     * dari kode pesanan untuk memverifikasi pelanggan.
      */
     public function scan(string $code): RedirectResponse
     {
@@ -65,8 +68,9 @@ class OrderController extends Controller
     }
 
     /**
-     * Update status pesanan oleh vendor (Ubah Status).
-     * Alur maju: menunggu -> dimasak -> siap_diambil -> selesai
+     * Mengubah status kemajuan (progress) pesanan dalam siklus persiapan makanan.
+     * Alur linear: menunggu (pending) -> dimasak (cooking) -> siap_diambil (ready) -> selesai (picked up).
+     * Otomatis melunasi status pembayaran pesanan tunai (cash) begitu status pesanan diubah ke 'selesai'.
      */
     public function update(Request $request, int $id): RedirectResponse
     {
@@ -74,6 +78,7 @@ class OrderController extends Controller
 
         $order = Order::where('canteen_id', $canteen->id)->findOrFail($id);
 
+        // Aturan transisi linear status pesanan makanan.
         $nextStatus = match ($order->status) {
             'menunggu' => 'dimasak',
             'dimasak' => 'siap_diambil',
@@ -85,8 +90,8 @@ class OrderController extends Controller
 
         $updateData = ['status' => $nextStatus];
 
-        // Jika pesanan tunai mencapai 'selesai', tandai sebagai lunas
-        // karena pembayaran tunai diterima saat makanan diserahkan ke mahasiswa
+        // Sinkronisasi Pembayaran Tunai: Pada metode cash, uang diterima langsung saat serah terima
+        // makanan di outlet. Maka, menandai order 'selesai' sekaligus mengubah payment_status menjadi 'paid'.
         if ($nextStatus === 'selesai' && $order->payment_method === 'cash') {
             $updateData['payment_status'] = 'paid';
         }
@@ -97,12 +102,14 @@ class OrderController extends Controller
     }
 
     /**
-     * Batalkan pesanan oleh vendor.
+     * Membatalkan pesanan masuk oleh pemilik kantin (misal bahan baku habis).
+     * Membatasi pembatalan hanya ketika pesanan masih dalam status 'menunggu' atau 'dimasak'.
      */
     public function destroy(int $id): RedirectResponse
     {
         $canteen = Auth::user()->canteen;
 
+        // Membatasi pembatalan agar tidak dapat membatalkan pesanan yang sudah siap diambil atau selesai.
         $order = Order::where('canteen_id', $canteen->id)
             ->whereIn('status', ['menunggu', 'dimasak'])
             ->findOrFail($id);

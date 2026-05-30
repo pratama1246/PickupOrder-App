@@ -11,11 +11,14 @@ use Illuminate\View\View;
 class CanteenController extends Controller
 {
     /**
-     * Browse semua kantin dan menu (halaman /browse).
-     * Mendukung pencarian dan filter status kantin.
+     * Menampilkan halaman pencarian/jelajah kantin dan menu secara interaktif (/browse).
+     * Mendukung filter pencarian nama makanan/kantin, filter kategori, status buka,
+     * serta menggunakan nested eager loading untuk menyaring isi menu yang ditampilkan di bawah kartu kantin.
      */
     public function index(Request $request): View
     {
+        // Membatasi menu yang dimuat hanya yang berstatus aktif dan stoknya tersedia.
+        // Menerapkan pencarian dan filter kategori secara rekursif ke dalam relasi menus.
         $query = Canteen::withAvg('reviews', 'rating')->with(['menus' => function ($q) use ($request) {
             $q->where('is_available', true)->where('stock', '>', 0);
             if ($request->filled('category')) {
@@ -49,7 +52,7 @@ class CanteenController extends Controller
             }
         }]);
 
-        // Pencarian berdasarkan nama/deskripsi kantin atau nama/deskripsi menu
+        // Melakukan penelusuran nama/deskripsi kantin atau nama/deskripsi menu pada level query utama.
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -62,23 +65,21 @@ class CanteenController extends Controller
             });
         }
 
-        // Filter kantin spesifik
         if ($request->filled('canteen')) {
             $query->where('id', $request->canteen);
         }
 
-        // Filter kategori spesifik
         if ($request->filled('category')) {
             $query->whereHas('availableMenus', function ($q) use ($request) {
                 $q->where('category', $request->category);
             });
         }
 
-        // Filter status: buka / tutup
         if ($request->filled('status')) {
             $query->where('is_open', $request->status === 'buka');
         }
 
+        // Paginate dengan angka 9 agar pas terbagi dalam grid 3 kolom pada desktop (3 baris sempurna).
         $canteens = $query->latest()->paginate(9)->withQueryString();
 
         $categories = Menu::select('category')->distinct()->whereNotNull('category')->pluck('category');
@@ -88,7 +89,8 @@ class CanteenController extends Controller
     }
 
     /**
-     * Detail satu kantin beserta daftar menu-nya (halaman /canteen/{id}).
+     * Menampilkan informasi detail satu kantin beserta katalog menu miliknya (/canteen/{id}).
+     * Hanya memuat menu-menu aktif dan diurutkan secara alfabetis (A-Z) untuk mempermudah pembacaan.
      */
     public function show(int $id): View
     {

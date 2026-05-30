@@ -17,8 +17,9 @@ use Intervention\Image\Laravel\Facades\Image;
 class CanteenController extends Controller
 {
     /**
-     * Daftar semua kantin terdaftar (/admin/canteen).
-     * Mendukung pencarian dan filter status buka/tutup.
+     * Menampilkan daftar seluruh kantin terdaftar (/admin/canteen).
+     * Mendukung penelusuran nama dan pemfilteran status buka/tutup warung.
+     * Menggunakan pagination terintegrasi filter query string untuk menjaga parameter pencarian aktif.
      */
     public function index(Request $request): View
     {
@@ -38,7 +39,8 @@ class CanteenController extends Controller
     }
 
     /**
-     * Detail satu kantin (/admin/canteen/{id}).
+     * Menampilkan informasi detail performa satu kantin (/admin/canteen/{id}).
+     * Memuat statistik keuangan dan performa transaksi lewat agregasi Eloquent dalam satu kueri.
      */
     public function show(int $id): View
     {
@@ -53,6 +55,8 @@ class CanteenController extends Controller
             }], 'total_price')
             ->findOrFail($id);
 
+        // Membagi parameter halaman menjadi 'menus_page' dan 'orders_page' agar aksi pagination
+        // pada salah satu tabel tidak mereset status indeks pagination tabel lainnya di view yang sama.
         $menus = $canteen->menus()->latest()->paginate(5, ['*'], 'menus_page')->withQueryString();
         $orders = $canteen->orders()->with('user')->latest()->paginate(5, ['*'], 'orders_page')->withQueryString();
 
@@ -60,7 +64,7 @@ class CanteenController extends Controller
     }
 
     /**
-     * Form tambah kantin baru (/admin/canteen/create).
+     * Menampilkan formulir pendaftaran kantin baru (/admin/canteen/create).
      */
     public function create(): View
     {
@@ -68,7 +72,9 @@ class CanteenController extends Controller
     }
 
     /**
-     * Simpan kantin baru ke database.
+     * Menyimpan data kantin baru serta mendaftarkan akun Vendor secara otomatis.
+     * Membuat email vendor secara dinamis berbasis slug nama kantin dan kata sandi bawaan,
+     * untuk mempercepat proses onboarding vendor oleh administrator kampus.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -79,13 +85,13 @@ class CanteenController extends Controller
             'is_open' => ['boolean'],
         ]);
 
-        // Generate base email (tanpa spasi/dash, e.g. kantinharmoni)
+        // Mengonversi nama kantin menjadi slug tanpa spasi untuk membentuk base email institusi.
         $cleanName = Str::slug($validated['name'], '');
         $baseEmail = $cleanName.'@pnc.ac.id';
         $email = $baseEmail;
         $counter = 1;
 
-        // Ensure email is unique
+        // Loop pengecekan di database untuk memastikan email vendor unik dan mencegah collision data.
         while (User::where('email', $email)->exists()) {
             $email = $cleanName.$counter.'@pnc.ac.id';
             $counter++;
@@ -93,7 +99,7 @@ class CanteenController extends Controller
 
         $password = 'pncpickup123';
 
-        // Auto-create vendor user
+        // Pendaftaran otomatis user ber-role vendor untuk pengelolaan mandiri oleh pemilik warung.
         $user = User::create([
             'name' => 'Vendor '.$validated['name'],
             'email' => $email,
@@ -121,7 +127,7 @@ class CanteenController extends Controller
     }
 
     /**
-     * Form edit data kantin (/admin/canteen/{id}/edit).
+     * Menampilkan formulir penyuntingan data kantin (/admin/canteen/{id}/edit).
      */
     public function edit(int $id): View
     {
@@ -131,7 +137,7 @@ class CanteenController extends Controller
     }
 
     /**
-     * Update data kantin.
+     * Memperbarui data profil kantin dan memperbarui banner gambar jika diunggah.
      */
     public function update(Request $request, int $id): RedirectResponse
     {
@@ -163,7 +169,7 @@ class CanteenController extends Controller
     }
 
     /**
-     * Hapus kantin dari sistem (cascade delete ke menus & orders).
+     * Menghapus kantin dan membersihkan file aset gambarnya secara tuntas dari disk server.
      */
     public function destroy(int $id): RedirectResponse
     {
@@ -179,7 +185,8 @@ class CanteenController extends Controller
     }
 
     /**
-     * Hapus beberapa kantin sekaligus.
+     * Menghapus banyak kantin sekaligus berdasarkan array ID yang dipilih.
+     * Menggunakan perulangan manual agar penghapusan aset gambar di disk server tetap tereksekusi sebelum baris data dihapus.
      */
     public function bulkDestroy(Request $request): RedirectResponse
     {

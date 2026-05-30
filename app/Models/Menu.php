@@ -89,7 +89,9 @@ class Menu extends Model
     }
 
     /**
-     * Memeriksa apakah menu siap untuk dipesan (stok tersedia & kantin sedang buka).
+     * Mengevaluasi kelayakan beli menu secara komprehensif.
+     * Menggabungkan pengecekan sisa stok fisik dan status buka/tutup warung kantin induk
+     * agar mahasiswa tidak dapat memesan makanan dari kantin yang sedang tutup.
      */
     public function isOrderable(): bool
     {

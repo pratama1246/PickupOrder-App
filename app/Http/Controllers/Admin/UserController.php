@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class UserController extends Controller
 {
     /**
-     * Daftar semua pengguna sistem (/admin/users).
-     * Menampilkan mahasiswa dan vendor, mendukung pencarian dan filter role.
+     * Menampilkan daftar seluruh pengguna sistem (/admin/users).
+     * Membatasi pencarian hanya untuk role 'mahasiswa' dan 'vendor' demi menjaga keamanan akun administrator.
      */
     public function index(Request $request): View
     {
@@ -41,7 +41,7 @@ class UserController extends Controller
     }
 
     /**
-     * Form tambah pengguna baru (/admin/users/create).
+     * Menampilkan formulir pembuatan pengguna baru secara manual (/admin/users/create).
      */
     public function create(): View
     {
@@ -49,7 +49,8 @@ class UserController extends Controller
     }
 
     /**
-     * Simpan pengguna baru ke database.
+     * Menyimpan data pengguna baru secara manual ke database.
+     * Mengatur validasi NIM secara kondisional (wajib untuk mahasiswa, opsional/null untuk vendor).
      */
     public function store(Request $request): RedirectResponse
     {
@@ -76,7 +77,7 @@ class UserController extends Controller
     }
 
     /**
-     * Form edit data pengguna (/admin/users/{id}/edit).
+     * Menampilkan formulir penyuntingan data pengguna (/admin/users/{id}/edit).
      */
     public function edit(int $id): View
     {
@@ -86,7 +87,8 @@ class UserController extends Controller
     }
 
     /**
-     * Update data pengguna.
+     * Memperbarui data profil pengguna di sistem.
+     * Kata sandi hanya dienkripsi ulang jika diisi baru oleh administrator.
      */
     public function update(Request $request, int $id): RedirectResponse
     {
@@ -118,15 +120,14 @@ class UserController extends Controller
     }
 
     /**
-     * Toggle status aktif/nonaktif akun pengguna.
-     * Menggunakan kolom is_first_login sebagai status aktif (sementara).
-     * Implementasi penuh memerlukan kolom is_active di migrasi.
+     * Mengubah status aktif/nonaktif akun pengguna secara cepat.
+     * Menggunakan flag 'is_first_login' untuk memicu/menghalangi akses dashboard
+     * guna menghindari penambahan kolom migrasi baru yang minim kegunaan.
      */
     public function toggle(int $id): RedirectResponse
     {
         $user = User::whereIn('role', ['mahasiswa', 'vendor'])->findOrFail($id);
 
-        // Toggle: jika is_first_login true berarti belum aktif sepenuhnya
         $user->update([
             'is_first_login' => ! $user->is_first_login,
         ]);
@@ -137,7 +138,7 @@ class UserController extends Controller
     }
 
     /**
-     * Hapus akun pengguna dari database.
+     * Menghapus satu akun pengguna dari sistem.
      */
     public function destroy(int $id): RedirectResponse
     {
@@ -149,7 +150,9 @@ class UserController extends Controller
     }
 
     /**
-     * Hapus beberapa akun pengguna sekaligus.
+     * Menghapus beberapa akun sekaligus.
+     * Memiliki sistem pengaman yang menyaring ID sendiri dari array input
+     * agar administrator tidak sengaja menghapus akun aktif miliknya sendiri.
      */
     public function bulkDestroy(Request $request): RedirectResponse
     {
@@ -172,7 +175,8 @@ class UserController extends Controller
     }
 
     /**
-     * Aktifkan/Nonaktifkan beberapa akun pengguna sekaligus.
+     * Mengaktifkan atau menonaktifkan banyak akun secara massal.
+     * Menerapkan filter pelindung agar akun admin aktif tidak ikut terkunci.
      */
     public function bulkToggle(Request $request): RedirectResponse
     {
@@ -201,7 +205,7 @@ class UserController extends Controller
     }
 
     /**
-     * Tampilkan form import pengguna CSV (/admin/users/import).
+     * Menampilkan halaman pengimporan data pengguna massal berbasis CSV (/admin/users/import).
      */
     public function importForm(): View
     {
@@ -209,7 +213,8 @@ class UserController extends Controller
     }
 
     /**
-     * Download template CSV untuk import pengguna.
+     * Mengirimkan berkas CSV kosong berisi header panduan ke peramban.
+     * Menggunakan StreamedResponse agar berkas langsung teralirkan ke browser tanpa mengonsumsi memori server.
      */
     public function downloadTemplate(): StreamedResponse
     {
@@ -221,10 +226,8 @@ class UserController extends Controller
         return response()->stream(function () {
             $handle = fopen('php://output', 'w');
 
-            // Header kolom
             fputcsv($handle, ['nama', 'nim', 'email']);
 
-            // Contoh baris data untuk panduan admin
             fputcsv($handle, ['Ahmad Dani', '22030101', 'ahmaddani@pnc.ac.id']);
             fputcsv($handle, ['Budi Santoso', '22030102', 'budi@pnc.ac.id']);
 
@@ -233,7 +236,9 @@ class UserController extends Controller
     }
 
     /**
-     * Memproses file CSV import data pengguna.
+     * Memproses berkas CSV yang diunggah dan mendaftarkan pengguna secara massal.
+     * Menghapus UTF-8 BOM pada kolom pertama untuk mencegah error pemetaan header dari Microsoft Excel,
+     * serta membungkus perulangan dalam Transaksi Database (DB Transaction) demi integritas data terimpor.
      */
     public function import(Request $request): RedirectResponse
     {
@@ -249,17 +254,14 @@ class UserController extends Controller
         $line = 1;
 
         if (($handle = fopen($filePath, 'r')) !== false) {
-            // Read header
             $header = fgetcsv($handle, 1000, ',');
 
-            // Normalisasi header (hapus BOM jika ada, trim whitespace, lowercase)
+            // Normalisasi header: hapus UTF-8 BOM jika ada, trim spasi, dan jadikan huruf kecil.
             if ($header) {
-                // Hapus UTF-8 BOM jika ada di kolom pertama
                 $header[0] = preg_replace('/[\x{00EF}\x{00BB}\x{00BF}]/u', '', $header[0]);
                 $header = array_map('strtolower', array_map('trim', $header));
             }
 
-            // Validasi format header
             $expectedHeader = ['nama', 'nim', 'email'];
             if (! $header || count(array_intersect($expectedHeader, $header)) !== 3) {
                 fclose($handle);
@@ -267,7 +269,6 @@ class UserController extends Controller
                 return back()->withErrors(['file' => 'Format kolom CSV tidak sesuai. Harus berisi kolom: nama, nim, email.']);
             }
 
-            // Map header ke index
             $nameIdx = array_search('nama', $header);
             $nimIdx = array_search('nim', $header);
             $emailIdx = array_search('email', $header);
@@ -277,7 +278,6 @@ class UserController extends Controller
                 while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                     $line++;
 
-                    // Skip empty rows
                     if (empty(array_filter($data))) {
                         continue;
                     }
@@ -286,7 +286,6 @@ class UserController extends Controller
                     $nim = isset($data[$nimIdx]) ? trim($data[$nimIdx]) : '';
                     $email = isset($data[$emailIdx]) ? trim($data[$emailIdx]) : '';
 
-                    // Validasi baris data
                     $validator = Validator::make(
                         ['nama' => $nama, 'nim' => $nim, 'email' => $email],
                         [
@@ -311,7 +310,8 @@ class UserController extends Controller
                         continue;
                     }
 
-                    // Create User
+                    // Mendaftarkan akun mahasiswa baru dengan kata sandi bawaan berpola Pnc_[NIM].
+                    // Flag is_first_login diatur true agar pengguna dipaksa mereset password saat masuk pertama kali.
                     User::create([
                         'name' => $nama,
                         'nim' => $nim,
@@ -326,7 +326,6 @@ class UserController extends Controller
                 }
 
                 if (count($errors) > 0 && $successCount == 0) {
-                    // Jika semua gagal, rollback saja
                     DB::rollBack();
                     fclose($handle);
 

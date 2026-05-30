@@ -11,15 +11,13 @@ use Illuminate\Support\Facades\Log;
 class PaymentCallbackController extends Controller
 {
     /**
-     * Tangani notifikasi webhook dari Midtrans (POST /payment/notification).
-     *
-     * Midtrans mengirim JSON payload langsung ke endpoint ini.
-     * Kita baca manual dari php://input agar tidak bergantung
-     * pada Midtrans\Notification yang butuh API call tambahan.
+     * Menangani notifikasi webhook pembaruan transaksi dari Midtrans (POST /payment/notification).
+     * Melakukan verifikasi keamanan signature key secara mandiri tanpa SDK eksternal untuk menghindari
+     * overhead latensi koneksi balik (back-channel API call) ke server Midtrans.
      */
     public function handle(Request $request): JsonResponse
     {
-        // Baca raw JSON dari body request
+        // Membaca isi raw JSON langsung dari body request.
         $payload = json_decode($request->getContent(), true);
 
         if (empty($payload) || ! isset($payload['order_id'])) {
@@ -35,8 +33,9 @@ class PaymentCallbackController extends Controller
         $grossAmount = $payload['gross_amount'] ?? '0';
         $signatureKey = $payload['signature_key'] ?? '';
 
-        // --- Validasi Signature Key ---
-        // Format SHA512: order_id + status_code + gross_amount + server_key
+        // --- Verifikasi Signature Key (Keamanan Webhook) ---
+        // Formula SHA512: order_id + status_code + gross_amount + server_key.
+        // Melindungi sistem dari eksploitasi payload palsu oleh pihak ketiga tidak dikenal.
         $serverKey = config('services.midtrans.server_key');
         $expectedSignature = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
 
@@ -50,13 +49,13 @@ class PaymentCallbackController extends Controller
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        // Cari semua order yang terkait dengan payment_code ini
+        // Mencari seluruh relasi pesanan di database yang dibayar bersama dalam grup payment_code ini.
         $orders = Order::where('payment_code', $orderId)->get();
 
         if ($orders->isEmpty()) {
             Log::warning('Midtrans webhook: payment_code tidak ditemukan', ['payment_code' => $orderId]);
 
-            // Return 200 agar Midtrans tidak retry terus-menerus
+            // Mengembalikan status 200 OK agar Midtrans menghentikan antrean retry notifikasi (webhook throttling).
             return response()->json(['message' => 'Order not found, ignored'], 200);
         }
 
@@ -66,14 +65,13 @@ class PaymentCallbackController extends Controller
             'fraud_status' => $fraudStatus,
         ]);
 
-        // --- Update status berdasarkan transaction_status ---
+        // --- Sinkronisasi Status Transaksi dengan Database Lokal ---
         if ($transactionStatus === 'capture') {
             if ($fraudStatus === 'accept') {
                 $orders->each->update(['payment_status' => 'paid']);
             }
-            // challenge: biarkan pending, tunggu keputusan manual di dashboard Midtrans
         } elseif ($transactionStatus === 'settlement') {
-            // Pembayaran non-kartu (QRIS, e-wallet, VA) berhasil settled
+            // Pelunasan sukses via kanal non-kartu seperti QRIS, e-wallet, atau Virtual Account.
             $orders->each->update(['payment_status' => 'paid']);
 
         } elseif ($transactionStatus === 'pending') {
@@ -85,6 +83,7 @@ class PaymentCallbackController extends Controller
                 'status' => 'dibatalkan',
             ]);
         } elseif ($transactionStatus === 'expire') {
+            // Batas waktu 30 menit pembayaran habis, kembalikan status pesanan ke batal.
             $orders->each->update([
                 'payment_status' => 'expired',
                 'status' => 'dibatalkan',
