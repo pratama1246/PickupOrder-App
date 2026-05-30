@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Jam Operasional Pemesanan Online
+    |--------------------------------------------------------------------------
+    */
+    'order_hours' => [
+        'start' => env('ORDER_START_TIME', '07:30'),
+        'end' => env('ORDER_END_TIME', '15:30'),
+    ],
+
 ];

@@ -44,6 +44,7 @@ class CartController extends Controller
         $menu = Menu::with('canteen')->findOrFail($request->menu_id);
 
         abort_if(! $menu->isInStock(), 422, 'Menu tidak tersedia saat ini.');
+        abort_if(! $menu->canteen || ! $menu->canteen->is_open, 422, 'Kantin sedang tutup.');
 
         $cart = session(self::SESSION_KEY, []);
         $key = $request->menu_id;

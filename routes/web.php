@@ -67,9 +67,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{menuId}', [CartController::class, 'destroy'])->name('cart.destroy');
 
     // Checkout
-    Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store')->middleware('throttle:10,1');
+    Route::middleware('online.hours')->group(function () {
+        Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
+        Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+        Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store')->middleware('throttle:10,1');
+    });
     Route::post('/checkout/retry/{paymentCode}', [CheckoutController::class, 'retry'])->name('checkout.retry');
 
     // Riwayat pesanan

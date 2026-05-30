@@ -60,10 +60,17 @@
                                 @csrf
                                 <input type="hidden" name="menu_id" value="{{ $menu->id }}">
                                 <input type="hidden" name="quantity" x-bind:value="qty">
-                                <button type="submit"
-                                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all {{ !$menu->isInStock() ? 'btn-disabled opacity-50' : '' }}">
-                                    {{ $menu->isInStock() ? 'Tambah ke Keranjang' : 'Stok Habis' }}
-                                </button>
+                                @if (!$menu->canteen || !$menu->canteen->is_open)
+                                    <button type="button" disabled
+                                        class="btn btn-disabled opacity-50 cursor-not-allowed w-full rounded-xl font-bold text-sm h-12 min-h-0">
+                                        Kantin Tutup
+                                    </button>
+                                @else
+                                    <button type="submit"
+                                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all {{ !$menu->isInStock() ? 'btn-disabled opacity-50' : '' }}">
+                                        {{ $menu->isInStock() ? 'Tambah ke Keranjang' : 'Stok Habis' }}
+                                    </button>
+                                @endif
                             </form>
                         </div>
 

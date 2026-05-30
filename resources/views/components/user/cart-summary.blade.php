@@ -50,18 +50,28 @@
         </p>
     </div>
 
-    @if ($isSubmit)
-        <button type="submit" form="checkout-prepare-form"
-            class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all h-12 min-h-0"
-            :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
+    @if (!App\Helpers\OrderHelper::isOrderTimeActive())
+        <button type="button" disabled
+            class="btn w-full btn-disabled opacity-50 cursor-not-allowed text-base-content/50 border-none rounded-xl font-bold text-sm h-12 min-h-0">
             Bayar Sekarang
         </button>
+        <p class="text-xs text-center text-error font-medium mt-2">
+            Checkout dinonaktifkan di luar jam operasional online.
+        </p>
     @else
-        <a href="{{ $checkoutUrl }}"
-            class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center h-12 min-h-0"
-            :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
-            Bayar Sekarang
-        </a>
+        @if ($isSubmit)
+            <button type="submit" form="checkout-prepare-form"
+                class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all h-12 min-h-0"
+                :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
+                Bayar Sekarang
+            </button>
+        @else
+            <a href="{{ $checkoutUrl }}"
+                class="{{ $total == 0 ? 'btn-disabled opacity-50 pointer-events-none' : '' }} btn w-full bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center h-12 min-h-0"
+                :class="getGrandTotal() === 0 ? 'btn-disabled opacity-50 pointer-events-none' : ''">
+                Bayar Sekarang
+            </a>
+        @endif
     @endif
 
 </div>

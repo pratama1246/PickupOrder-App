@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => CheckRole::class,
+            'online.hours' => \App\Http\Middleware\CheckOnlineOrderHours::class,
         ]);
         // Kecualikan endpoint webhook Midtrans dari proteksi CSRF
         // karena Midtrans server tidak mengirim CSRF token saat POST notification

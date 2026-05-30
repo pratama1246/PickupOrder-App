@@ -474,7 +474,7 @@ class CheckoutController extends Controller
         foreach ($cart as $menuId => $item) {
             $menu = $menus->get($menuId);
 
-            if (! $menu || ! $menu->isInStock()) {
+            if (! $menu || ! $menu->isInStock() || ! $menu->canteen || ! $menu->canteen->is_open) {
                 unset($cart[$menuId]);
 
                 continue;

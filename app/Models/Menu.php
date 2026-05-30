@@ -89,6 +89,14 @@ class Menu extends Model
     }
 
     /**
+     * Memeriksa apakah menu siap untuk dipesan (stok tersedia & kantin sedang buka).
+     */
+    public function isOrderable(): bool
+    {
+        return $this->isInStock() && ($this->canteen && $this->canteen->is_open);
+    }
+
+    /**
      * Mengubah nominal desimal database menjadi format mata uang Rupiah (IDR).
      * Disesuaikan dengan standar pelaporan keuangan kantin Politeknik Negeri Cilacap.
      */
