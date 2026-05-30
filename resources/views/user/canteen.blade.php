@@ -34,8 +34,10 @@
                         <span class="loading loading-bars loading-lg"></span>
                     </div>
 
-                    <img src="{{ $canteen->image ? asset('storage/' . $canteen->image) : 'https://ui-avatars.com/api/?name=' . urlencode($canteen->name) . '&background=random' }}"
+                    <img x-ref="canteenImg"
+                        src="{{ $canteen->image ? asset('storage/' . $canteen->image) : 'https://ui-avatars.com/api/?name=' . urlencode($canteen->name) . '&background=random' }}"
                         @load="loaded = true"
+                        x-init="if ($refs.canteenImg.complete) loaded = true"
                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($canteen->name) }}&background=random'; loaded = true;"
                         alt="{{ $canteen->name }}" class="absolute inset-0 w-full h-full object-cover z-0">
 
