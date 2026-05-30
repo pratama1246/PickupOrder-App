@@ -14,13 +14,14 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    // Field 'role' sengaja tidak dimasukkan ke $fillable untuk mencegah Mass Assignment Privilege Escalation.
+    // Gunakan $user->forceFill(['role' => ...]) atau User::forceCreate([...]) untuk menetapkan role secara eksplisit.
     protected $fillable = [
         'name',
         'nim',
         'email',
         'avatar',
         'password',
-        'role',
         'is_first_login',
         'password_changed',
     ];

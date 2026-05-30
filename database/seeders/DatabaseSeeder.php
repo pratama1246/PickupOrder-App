@@ -24,30 +24,31 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Seed Admin User
-        $admin = User::updateOrCreate(
+        // Menggunakan firstOrCreate + forceFill karena 'role' tidak ada di $fillable.
+        $admin = User::firstOrCreate(
             ['nim' => 'admin'],
             [
-                'name' => 'Administrator PNC',
-                'email' => 'admin@pnc.ac.id',
-                'password' => Hash::make('pncpickup123'),
-                'role' => 'admin',
-                'is_first_login' => false,
+                'name'             => 'Administrator PNC',
+                'email'            => 'admin@pnc.ac.id',
+                'password'         => Hash::make('pncpickup123'),
+                'is_first_login'   => false,
                 'password_changed' => true,
             ]
         );
+        $admin->forceFill(['role' => 'admin'])->save();
 
         // 2. Seed Vendor User 1
-        $vendor1 = User::updateOrCreate(
+        $vendor1 = User::firstOrCreate(
             ['nim' => 'vendor_harmoni'],
             [
-                'name' => 'Ibu Kantin Harmoni',
-                'email' => 'kantinharmoni@pnc.ac.id',
-                'password' => Hash::make('pncpickup123'),
-                'role' => 'vendor',
-                'is_first_login' => false,
+                'name'             => 'Ibu Kantin Harmoni',
+                'email'            => 'kantinharmoni@pnc.ac.id',
+                'password'         => Hash::make('pncpickup123'),
+                'is_first_login'   => false,
                 'password_changed' => true,
             ]
         );
+        $vendor1->forceFill(['role' => 'vendor'])->save();
 
         // Seed Canteen 1
         $canteen1 = Canteen::updateOrCreate(
@@ -89,17 +90,17 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 3. Seed Vendor User 2
-        $vendor2 = User::updateOrCreate(
+        $vendor2 = User::firstOrCreate(
             ['nim' => 'vendor_mi'],
             [
-                'name' => 'Vendor Mi Academy',
-                'email' => 'miacademy@pnc.ac.id',
-                'password' => Hash::make('pncpickup123'),
-                'role' => 'vendor',
-                'is_first_login' => false,
+                'name'             => 'Vendor Mi Academy',
+                'email'            => 'miacademy@pnc.ac.id',
+                'password'         => Hash::make('pncpickup123'),
+                'is_first_login'   => false,
                 'password_changed' => true,
             ]
         );
+        $vendor2->forceFill(['role' => 'vendor'])->save();
 
         // Seed Canteen 2
         $canteen2 = Canteen::updateOrCreate(
@@ -141,17 +142,17 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 4. Seed Mahasiswa User
-        $mahasiswa = User::updateOrCreate(
+        $mahasiswa = User::firstOrCreate(
             ['nim' => '240202115'],
             [
-                'name' => 'Pratama Putra',
-                'email' => 'pratamaputra6854@gmail.com',
-                'password' => Hash::make('pncpickup123'),
-                'role' => 'mahasiswa',
-                'is_first_login' => true,
+                'name'             => 'Pratama Putra',
+                'email'            => 'pratamaputra6854@gmail.com',
+                'password'         => Hash::make('pncpickup123'),
+                'is_first_login'   => true,
                 'password_changed' => false,
             ]
         );
+        $mahasiswa->forceFill(['role' => 'mahasiswa'])->save();
 
         // Generate Dummy Historical Orders for the last 7 days
         Order::where('user_id', $mahasiswa->id)->delete();

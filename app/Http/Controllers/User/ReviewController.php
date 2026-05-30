@@ -35,15 +35,18 @@ class ReviewController extends Controller
         // Menyimpan ulasan terpisah untuk masing-masing menu dalam satu transaksi pesanan.
         // updateOrCreate digunakan agar pengguna dapat memperbarui ulasan lama jika mengirimkan form edit ulasan.
         foreach ($request->reviews as $reviewData) {
+            // Sanitasi komentar untuk mencegah tag HTML/link phishing masuk ke tampilan ulasan vendor.
+            $comment = isset($reviewData['comment']) ? strip_tags($reviewData['comment']) : null;
+
             Review::updateOrCreate(
                 [
-                    'user_id' => Auth::id(),
+                    'user_id'  => Auth::id(),
                     'order_id' => $order->id,
-                    'menu_id' => $reviewData['menu_id'],
+                    'menu_id'  => $reviewData['menu_id'],
                 ],
                 [
-                    'rating' => $reviewData['rating'],
-                    'comment' => $reviewData['comment'] ?? null,
+                    'rating'       => $reviewData['rating'],
+                    'comment'      => $comment,
                     'is_anonymous' => isset($reviewData['is_anonymous']) ? (bool) $reviewData['is_anonymous'] : false,
                 ]
             );

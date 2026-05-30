@@ -65,6 +65,10 @@ class MenuController extends Controller
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
 
+        // Sanitasi input teks agar nama/deskripsi menu tidak mengandung tag HTML atau link phishing.
+        $validated['name']        = strip_tags($validated['name']);
+        $validated['description'] = strip_tags($validated['description'] ?? '');
+
         if ($request->hasFile('image')) {
             // Pemrosesan Gambar: Konversi ke WebP, batasi lebar maksimal 800px untuk menghemat ruang disk,
             // serta atur kualitas kompresi ke 75% untuk menjaga kualitas visual yang optimal.
@@ -111,6 +115,10 @@ class MenuController extends Controller
             'is_available' => ['boolean'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
+
+        // Sanitasi input teks agar nama/deskripsi menu tidak mengandung tag HTML atau link phishing.
+        $validated['name']        = strip_tags($validated['name']);
+        $validated['description'] = strip_tags($validated['description'] ?? '');
 
         if ($request->hasFile('image')) {
             // Menghapus gambar lama di disk jika ada untuk mencegah sampah berkas tidak terpakai.

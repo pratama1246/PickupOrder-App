@@ -32,7 +32,13 @@
         </div>
     @endif
 
-    <form action="{{ route('login') }}" method="POST" class="space-y-5">
+    {{-- 
+        State 'loading' mengelola status pengiriman formulir.
+        Saat form disubmit, loading = true menonaktifkan tombol Masuk
+        dan memblokir link navigasi agar tidak bisa diklik ulang di jaringan lambat.
+    --}}
+    <form action="{{ route('login') }}" method="POST" class="space-y-5"
+        x-data="{ loading: false }" @submit="loading = true">
         @csrf
 
         <div>
@@ -79,10 +85,26 @@
             </a>
         </div>
 
-        <button type="submit"
-            class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
-            Masuk
+        <button type="submit" :disabled="loading"
+            class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+            <span x-show="!loading">Masuk</span>
+            <span x-show="loading" style="display:none" class="flex items-center justify-center gap-2">
+                <span class="loading loading-spinner loading-sm"></span>
+                Memproses...
+            </span>
         </button>
+
+        <div class="text-center mt-4">
+            <a href="{{ $backUrl }}"
+                :class="loading ? 'pointer-events-none opacity-40 cursor-not-allowed' : 'hover:text-fern-800'"
+                class="inline-flex items-center gap-1.5 text-sm font-bold text-fern-700 transition-colors py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali ke Halaman Sebelumnya
+            </a>
+        </div>
 
     </form>
 

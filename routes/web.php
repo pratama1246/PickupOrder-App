@@ -46,20 +46,23 @@ Route::middleware('auth')->group(function () {
 });
 
 // ---------------------------------------------------------------------------
-// User / Mahasiswa Routes
+// Public / Guest Routes (No Login Required)
 // ---------------------------------------------------------------------------
-Route::middleware('auth')->group(function () {
-    // Beranda
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+// Beranda
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-    // Tentang Kami
-    Route::get('/tentang-kami', [HomeController::class, 'about'])->name('about');
+// Tentang Kami
+Route::get('/about', [HomeController::class, 'about'])->name('about');
 
-    // Browse kantin & menu
-    Route::get('/browse', [UserCanteenController::class, 'index'])->name('canteen.index');
-    Route::get('/canteen/{id}', [UserCanteenController::class, 'show'])->name('canteen.show');
-    Route::get('/canteen/{canteenId}/menu/{id}', [UserMenuController::class, 'show'])->name('menu.show');
+// Browse kantin & menu
+Route::get('/browse', [UserCanteenController::class, 'index'])->name('canteen.index');
+Route::get('/canteen/{id}', [UserCanteenController::class, 'show'])->name('canteen.show');
+Route::get('/canteen/{canteenId}/menu/{id}', [UserMenuController::class, 'show'])->name('menu.show');
 
+// ---------------------------------------------------------------------------
+// User / Mahasiswa Routes (Auth & Role Required)
+// ---------------------------------------------------------------------------
+Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     // Keranjang belanja
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store')->middleware('throttle:30,1');

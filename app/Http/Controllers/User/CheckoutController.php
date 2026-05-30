@@ -37,7 +37,11 @@ class CheckoutController extends Controller
             'selected_menu_ids.*' => ['nullable', 'integer'],
         ]);
 
-        session(['checkout_notes' => $request->input('notes', [])]);
+        // Sanitasi catatan per kantin sebelum disimpan di session untuk mencegah injeksi HTML.
+        $rawNotes = $request->input('notes', []);
+        $cleanNotes = array_map(fn ($note) => $note ? strip_tags($note) : null, $rawNotes);
+
+        session(['checkout_notes'        => $cleanNotes]);
         session(['checkout_selected_ids' => $request->input('selected_menu_ids', [])]);
 
         return redirect()->route('checkout.index');

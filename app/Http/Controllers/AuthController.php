@@ -12,10 +12,24 @@ class AuthController extends Controller
 {
     /**
      * Menampilkan halaman formulir login utama.
+     * Menghitung URL kembali yang aman dari halaman sebelumnya agar pengguna bisa kembali
+     * ke konteks browsing mereka jika membatalkan proses login.
+     * Validasi domain internal mencegah celah open redirect dari URL eksternal yang disuntikkan.
      */
     public function showLogin(): View
     {
-        return view('auth.login');
+        $previous = url()->previous();
+        $loginUrl = route('login');
+        $appUrl   = config('app.url');
+
+        // Pastikan URL sebelumnya adalah halaman internal (bukan login itu sendiri)
+        // agar tidak terjadi loop redirect atau open redirect ke domain luar.
+        $backUrl = (
+            str_starts_with($previous, $appUrl) &&
+            rtrim($previous, '/') !== rtrim($loginUrl, '/')
+        ) ? $previous : route('home');
+
+        return view('auth.login', compact('backUrl'));
     }
 
     /**
@@ -49,9 +63,9 @@ class AuthController extends Controller
             }
 
             return match ($user->role) {
-                'admin' => redirect()->route('admin.dashboard'),
-                'vendor' => redirect()->route('vendor.dashboard'),
-                default => redirect()->route('home'),
+                'admin' => redirect()->intended(route('admin.dashboard')),
+                'vendor' => redirect()->intended(route('vendor.dashboard')),
+                default => redirect()->intended(route('home')),
             };
         }
 
@@ -71,7 +85,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('home');
     }
 
     /**
@@ -101,9 +115,9 @@ class AuthController extends Controller
         ]);
 
         return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'vendor' => redirect()->route('vendor.dashboard'),
-            default => redirect()->route('home'),
+            'admin' => redirect()->intended(route('admin.dashboard')),
+            'vendor' => redirect()->intended(route('vendor.dashboard')),
+            default => redirect()->intended(route('home')),
         };
     }
 
@@ -117,8 +131,8 @@ class AuthController extends Controller
 
     /**
      * Memproses pengajuan pemulihan kata sandi.
-     * Melakukan mock status pengiriman link ke layar tanpa integrasi SMTP asli
-     * guna menghindari overhead konfigurasi server surat eksternal pada lingkungan lokal.
+     * Mengembalikan respons generik yang seragam untuk semua kondisi (NIM/Email ada atau tidak ada)
+     * guna mencegah celah User Enumeration Attack yang bisa dimanfaatkan untuk harvesting akun kampus.
      */
     public function forgotPassword(Request $request): RedirectResponse
     {
@@ -126,20 +140,11 @@ class AuthController extends Controller
             'identifier' => ['required', 'string'],
         ]);
 
-        $user = User::where('nim', $request->identifier)
+        // Selalu kembalikan respons sukses yang sama, terlepas dari apakah NIM/email ditemukan atau tidak.
+        // Ini mencegah penyerang memetakan akun mahasiswa yang valid melalui percobaan sistematis.
+        User::where('nim', $request->identifier)
             ->orWhere('email', $request->identifier)
             ->first();
-
-        if (! $user) {
-            return back()->withErrors([
-                'identifier' => 'Email/NIM/NIP tidak ditemukan dalam sistem.',
-            ])->onlyInput('identifier');
-        }
-
-        // Akun bawaan generator NIM terkadang belum memiliki email aktif.
-        if (empty($user->email)) {
-            return back()->with('status', 'no-email');
-        }
 
         return back()->with('status', 'reset-sent');
     }

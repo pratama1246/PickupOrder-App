@@ -70,7 +70,9 @@ class UserController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $validated['password_changed'] = false;
 
-        User::create($validated);
+        // Menggunakan forceCreate agar 'role' bisa ditetapkan meskipun tidak ada di $fillable,
+        // sambil tetap mencegah mahasiswa/vendor menetapkan role sendiri lewat form publik.
+        User::forceCreate($validated);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Pengguna berhasil ditambahkan.');
@@ -113,7 +115,9 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
-        $user->update($validated);
+        // Menggunakan forceFill agar admin bisa mengubah role pengguna secara aman
+        // tanpa mengekspos field tersebut ke mass assignment dari request luar.
+        $user->forceFill($validated)->save();
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Pengguna berhasil diperbarui.');
@@ -282,9 +286,16 @@ class UserController extends Controller
                         continue;
                     }
 
-                    $nama = isset($data[$nameIdx]) ? trim($data[$nameIdx]) : '';
-                    $nim = isset($data[$nimIdx]) ? trim($data[$nimIdx]) : '';
-                    $email = isset($data[$emailIdx]) ? trim($data[$emailIdx]) : '';
+                    $nama  = isset($data[$nameIdx])  ? trim($data[$nameIdx])  : '';
+                    $nim   = isset($data[$nimIdx])    ? trim($data[$nimIdx])   : '';
+                    $email = isset($data[$emailIdx])  ? trim($data[$emailIdx]) : '';
+
+                    // Sanitasi CSV Injection: Hapus karakter pemicu formula spreadsheet
+                    // (=, +, -, @) di awal string agar data tidak dieksekusi saat dibuka di Excel/Sheets.
+                    $stripFormula = fn ($v) => preg_replace('/^[=+\-@]/', '', $v);
+                    $nama  = $stripFormula($nama);
+                    $nim   = $stripFormula($nim);
+                    $email = $stripFormula($email);
 
                     $validator = Validator::make(
                         ['nama' => $nama, 'nim' => $nim, 'email' => $email],
@@ -312,13 +323,14 @@ class UserController extends Controller
 
                     // Mendaftarkan akun mahasiswa baru dengan kata sandi bawaan berpola Pnc_[NIM].
                     // Flag is_first_login diatur true agar pengguna dipaksa mereset password saat masuk pertama kali.
-                    User::create([
-                        'name' => $nama,
-                        'nim' => $nim,
-                        'email' => $email,
-                        'password' => Hash::make('Pnc_'.$nim),
-                        'role' => 'mahasiswa',
-                        'is_first_login' => true,
+                    // forceCreate digunakan karena 'role' tidak ada di $fillable model User.
+                    User::forceCreate([
+                        'name'             => $nama,
+                        'nim'              => $nim,
+                        'email'            => $email,
+                        'password'         => Hash::make('Pnc_'.$nim),
+                        'role'             => 'mahasiswa',
+                        'is_first_login'   => true,
                         'password_changed' => false,
                     ]);
 

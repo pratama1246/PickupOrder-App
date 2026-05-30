@@ -86,6 +86,9 @@ class CanteenController extends Controller
         ]);
 
         // Mengonversi nama kantin menjadi slug tanpa spasi untuk membentuk base email institusi.
+        // strip_tags dijalankan lebih dahulu untuk memastikan nama bersih dari tag HTML injeksi.
+        $validated['name']        = strip_tags($validated['name']);
+        $validated['description'] = strip_tags($validated['description'] ?? '');
         $cleanName = Str::slug($validated['name'], '');
         $baseEmail = $cleanName.'@pnc.ac.id';
         $email = $baseEmail;
@@ -100,12 +103,14 @@ class CanteenController extends Controller
         $password = 'pncpickup123';
 
         // Pendaftaran otomatis user ber-role vendor untuk pengelolaan mandiri oleh pemilik warung.
-        $user = User::create([
-            'name' => 'Vendor '.$validated['name'],
-            'email' => $email,
-            'password' => Hash::make($password),
-            'role' => 'vendor',
-            'is_first_login' => true,
+        // Menggunakan forceCreate karena 'role' sengaja dikecualikan dari $fillable model User
+        // demi mencegah Mass Assignment Privilege Escalation dari input publik.
+        $user = User::forceCreate([
+            'name'             => 'Vendor '.$validated['name'],
+            'email'            => $email,
+            'password'         => Hash::make($password),
+            'role'             => 'vendor',
+            'is_first_login'   => true,
             'password_changed' => false,
         ]);
 
@@ -149,6 +154,10 @@ class CanteenController extends Controller
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
             'is_open' => ['boolean'],
         ]);
+
+        // Sanitasi input teks agar tag HTML/link phishing tidak masuk ke database.
+        $validated['name']        = strip_tags($validated['name']);
+        $validated['description'] = strip_tags($validated['description'] ?? '');
 
         if ($request->hasFile('image')) {
             if ($canteen->image) {
