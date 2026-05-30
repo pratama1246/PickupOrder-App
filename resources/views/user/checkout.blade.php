@@ -20,7 +20,6 @@
         </section>
 
         <section class="px-3 sm:px-10 md:px-16 lg:px-24">
-            {{-- Form dengan id agar bisa dicegat oleh JS AJAX --}}
             <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST"
                 class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
                 @csrf
@@ -175,8 +174,7 @@
                                     @foreach ($data['items'] as $item)
                                         <x-user.order-item :image="$item['image']
                                             ? asset('storage/' . $item['image'])
-                                            : asset('assets/food/' . strtolower(str_replace(' ', '-', $item['name']))) .
-                                                '.jpg'" :name="$item['name']" :description="$item['description'] ?? null"
+                                            : 'https://ui-avatars.com/api/?name=' . urlencode($item['name']) . '&background=random'" :name="$item['name']" :description="$item['description'] ?? null"
                                             :price="'Rp. ' . number_format($item['price'], 0, ',', '.')" :quantity="$item['quantity']" variant="list" />
                                     @endforeach
                                 </div>
@@ -225,7 +223,6 @@
 
     </main>
 
-    {{-- Midtrans Snap JS -- hanya dimuat di halaman checkout --}}
     <script src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     <script>

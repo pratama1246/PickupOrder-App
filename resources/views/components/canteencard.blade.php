@@ -32,7 +32,7 @@
             <span class="loading loading-bars loading-lg"></span>
         </div>
         <img src="{{ $imagePath }}" loading="lazy"
-            onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'"
+            onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'"
             class="w-full h-full object-cover relative z-0"
             alt="{{ $name }}" />
     </figure>

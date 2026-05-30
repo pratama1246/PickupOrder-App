@@ -131,7 +131,7 @@
                                     <x-user.cart-item
                                         :itemId="$item['menu_id']"
                                         :cartId="$item['menu_id']"
-                                        :image="$item['image'] ? asset('storage/' . $item['image']) : asset('assets/food/' . strtolower($item['name']) . '.jpg')"
+                                        :image="$item['image'] ? asset('storage/' . $item['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($item['name']) . '&background=random'"
                                         :name="$item['name']"
                                         :description="$item['description'] ?? null"
                                         :price="$item['price']"

@@ -36,7 +36,7 @@
         @foreach ($order->items as $item)
             <x-user.order-item :image="$item->menu && $item->menu->image
                 ? asset('storage/' . $item->menu->image)
-                : asset('assets/food/es teh.jpg')" :name="$item->menu->name ?? 'Menu Dihapus'" :description="$item->menu->description ?? ''" :price="$item->menu ? $item->menu->formatted_price : 'Rp ' . number_format($item->price, 0, ',', '.')" :quantity="$item->qty"
+                : 'https://ui-avatars.com/api/?name=' . urlencode($item->menu->name ?? 'Menu') . '&background=random'" :name="$item->menu->name ?? 'Menu Dihapus'" :description="$item->menu->description ?? ''" :price="$item->menu ? $item->menu->formatted_price : 'Rp ' . number_format($item->price, 0, ',', '.')" :quantity="$item->qty"
                 variant="card" />
         @endforeach
     </div>

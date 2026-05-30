@@ -430,7 +430,7 @@
                                 @foreach ($order->items as $item)
                                     <x-user.order-item :image="$item->menu && $item->menu->image
                                         ? asset('storage/' . $item->menu->image)
-                                        : asset('assets/food/es teh.jpg')" :name="$item->menu->name ?? 'Menu Dihapus'" :description="$item->menu->description ?? ''"
+                                        : 'https://ui-avatars.com/api/?name=' . urlencode($item->menu->name ?? 'Menu') . '&background=random'" :name="$item->menu->name ?? 'Menu Dihapus'" :description="$item->menu->description ?? ''"
                                         :price="$item->menu
                                             ? $item->menu->formatted_price
                                             : 'Rp ' . number_format($item->price, 0, ',', '.')" :quantity="$item->qty" variant="list" />
@@ -636,7 +636,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Star Rating -->
                                     <div class="rating rating-md mb-3">
                                         <input type="radio" name="reviews[{{ $index }}][rating]" value="1"
                                             class="mask mask-star-2 bg-amber-400" />
@@ -653,8 +652,7 @@
                                     <textarea name="reviews[{{ $index }}][comment]"
                                         class="textarea textarea-bordered w-full rounded-xl bg-white focus:outline-fern-700 resize-none"
                                         placeholder="Tulis ulasan Anda (opsional)..." rows="2"></textarea>
-
-                                    <!-- Toggle Anonim -->
+                                        
                                     <div class="mt-3">
                                         <label class="label cursor-pointer p-0 gap-3 justify-start inline-flex">
                                             <input type="checkbox" name="reviews[{{ $index }}][is_anonymous]"

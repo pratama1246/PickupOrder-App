@@ -5,7 +5,7 @@
 @section('content')
     <div class="max-w-8xl mx-auto space-y-4 sm:space-y-6 pb-10 lg:pb-0">
 
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 print:px-0">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 print:px-0 print:hidden">
             <div>
                 <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Laporan Penjualan</h1>
                 <p class="text-base-content/70 text-sm sm:text-lg font-medium">Ringkasan performa penjualan Kantin
@@ -38,8 +38,14 @@
                         required>
                 </div>
                 <button type="submit"
-                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6 active:scale-95 transition-all w-full sm:w-auto">Filter
-                    Data</button>
+                    class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-xl font-bold text-sm shadow-sm px-6 active:scale-95 transition-all w-full sm:w-auto flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content/70" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Tampilkan Data
+                </button>
             </form>
         </div>
 
@@ -175,13 +181,40 @@
                     height: auto !important;
                 }
 
-                .bg-base-100 {
-                    background-color: transparent !important;
+                /* Force semua background ke putih agar hasil cetak bersih */
+                .bg-base-100,
+                .bg-base-200,
+                .bg-emerald-50,
+                [class*="bg-vanilla-custard"],
+                [class*="bg-linear"],
+                [class*="from-"],
+                [class*="to-"] {
+                    background: white !important;
+                    background-image: none !important;
                 }
 
                 .bg-white {
                     box-shadow: none !important;
                     border: none !important;
+                }
+
+                /* Kompakkan stat card saat cetak */
+                .grid > div[class*="rounded-2xl"] {
+                    padding: 0.6rem 0.9rem !important;
+                    min-height: 0 !important;
+                    border: 1px solid #e5e7eb !important;
+                    box-shadow: none !important;
+                }
+
+                /* Sembunyikan icon stat card, perkecil font value */
+                .grid > div[class*="rounded-2xl"] > div:last-child {
+                    display: none !important;
+                }
+
+                .grid > div[class*="rounded-2xl"] p[class*="text-2xl"],
+                .grid > div[class*="rounded-2xl"] p[class*="text-3xl"] {
+                    font-size: 1.25rem !important;
+                    line-height: 1.4 !important;
                 }
 
                 @page {

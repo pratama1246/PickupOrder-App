@@ -5,41 +5,45 @@
 @section('content')
 
     <div class="max-w-4xl pb-10 lg:pb-0">
-        <div
-            class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-base-content/10 pb-6">
+        <div class="mb-6 sm:mb-4 flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
                 <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Transaksi</h1>
                 <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola dan pantau seluruh pesanan pelanggan.
                 </p>
             </div>
+        </div>
 
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                <div class="relative w-full sm:w-64">
-                    <input type="text" id="manual_code_input" placeholder="6 digit kode (cth: AB12CD)"
-                        class="input bg-white border-base-content/20 rounded-xl w-full font-bold uppercase tracking-widest pl-4 pr-16 shadow-sm placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-sm text-left"
-                        maxlength="6">
-                    <button type="button" onclick="searchManualCode()"
-                        class="absolute right-2 top-2 bottom-2 bg-fern-700 hover:bg-fern-800 text-white px-3 rounded-lg text-xs font-bold transition-colors">
-                        Cari
-                    </button>
-                </div>
-
-                <p class="text-xs font-bold text-base-content/40 uppercase hidden sm:block">ATAU</p>
-
-                <!-- Tombol Scan QR (Mengaktifkan Kamera) -->
-                <button type="button" onclick="document.getElementById('scan_qr_modal').showModal(); startScanner();"
-                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold shadow-sm active:scale-95 transition-all w-full sm:w-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
+        <div class="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div class="relative flex-1 sm:max-w-sm">
+                <input type="text" id="manual_code_input" placeholder="Kode pesanan"
+                    class="input bg-white border-base-content/20 rounded-xl w-full font-bold uppercase tracking-widest pl-4 pr-20 shadow-sm placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-sm"
+                    maxlength="6">
+                <button type="button" onclick="searchManualCode()"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-fern-700 hover:bg-fern-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors active:scale-95 flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
                     </svg>
-                    Scan QR Code
+                    Cari
                 </button>
             </div>
+
+            <span class="text-xs font-medium text-base-content/30 text-center block">atau</span>
+
+            <button type="button" onclick="document.getElementById('scan_qr_modal').showModal(); startScanner();"
+                class="btn bg-white hover:bg-base-200 text-base-content border border-base-content/20 rounded-xl font-bold shadow-sm active:scale-95 transition-all flex items-center gap-2 w-full sm:w-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-fern-700" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
+                </svg>
+                Scan QR Code
+            </button>
         </div>
+
 
         <div class="mb-6 flex items-center gap-3 w-full sm:w-auto">
             <select onchange="location = this.value;"
@@ -64,7 +68,6 @@
             @forelse($orders as $order)
                 <div
                     class="bg-vanilla-custard-50 border border-base-content/30 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative group cursor-pointer hover:border-fern-300 hover:shadow-md transition-all">
-                    {{-- Stretched link untuk mempermudah tap target area pada tampilan mobile card --}}
                     <a href="{{ route('vendor.order.show', $order->id) }}" class="absolute inset-0 z-10 rounded-2xl"
                         aria-label="Detail Pesanan {{ $order->order_code }}"></a>
 
@@ -80,8 +83,8 @@
                     </div>
 
                     <a href="{{ route('vendor.order.show', $order->id) }}"
-                        class="btn bg-base-300 group-hover:bg-base-400 text-base-content border-none w-full sm:w-auto px-6 shadow-sm font-bold rounded-xl relative z-20">
-                        Detail
+                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-6 shadow-sm font-bold rounded-xl relative z-20 active:scale-95 transition-all">
+                        Lihat Detail
                     </a>
                 </div>
             @empty
@@ -147,8 +150,7 @@
             setTimeout(() => {
                 html5QrCode.start({
                         facingMode: "environment"
-                    },
-                    {
+                    }, {
                         fps: 10,
                         qrbox: {
                             width: 250,
@@ -160,7 +162,8 @@
                 ).catch(err => {
                     console.error("Gagal memulai kamera", err);
                     alert(
-                        "Gagal mengakses kamera! Pastikan Anda mengizinkan akses kamera (Allow) dan membuka website lewat jalur HTTPS.");
+                        "Gagal mengakses kamera! Pastikan Anda mengizinkan akses kamera (Allow) dan membuka website lewat jalur HTTPS."
+                        );
                 });
             }, 300);
         }

@@ -26,26 +26,28 @@
                     <p class="text-base-content/70 text-sm sm:text-base font-medium">Informasi lengkap, menu, dan statistik
                         transaksi kantin.</p>
                 </div>
+            </div>
 
-                <div class="flex md:hidden items-center gap-2 shrink-0">
-                    <button type="button"
-                        onclick="document.getElementById('delete_canteen_modal_{{ $canteen->id }}').showModal()"
-                        class="btn bg-red-600 hover:bg-red-700 text-white border-none shadow-sm rounded-md transition-colors p-2.5 h-auto min-h-0 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </button>
-                    <a href="{{ route('admin.canteen.edit', $canteen->id) }}"
-                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none shadow-sm rounded-md transition-colors p-2.5 h-auto min-h-0 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                    </a>
-                </div>
+            <div class="flex md:hidden items-center gap-2.5 w-full">
+                <button type="button"
+                    onclick="document.getElementById('delete_canteen_modal_{{ $canteen->id }}').showModal()"
+                    class="btn bg-red-600 hover:bg-red-700 text-white border-none shadow-sm rounded-xl py-3 h-auto transition-all duration-200 active:scale-95 flex-1 flex items-center justify-center gap-2 font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span>Hapus</span>
+                </button>
+                <a href="{{ route('admin.canteen.edit', $canteen->id) }}"
+                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none shadow-sm rounded-xl py-3 h-auto transition-all duration-200 active:scale-95 flex-1 flex items-center justify-center gap-2 font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    <span>Edit</span>
+                </a>
             </div>
 
             <div class="hidden md:flex items-center gap-2 shrink-0">
@@ -63,17 +65,13 @@
 
         <div class="bg-white rounded-3xl shadow-sm border border-base-200 overflow-hidden flex flex-col md:flex-row">
             <div class="w-full md:w-1/3 h-48 md:h-auto relative bg-base-200">
-                <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
+                <div class="absolute inset-0 flex items-center justify-center text-fern-700/40 z-0">
                     <span class="loading loading-bars loading-lg"></span>
                 </div>
-                @if ($canteen->image)
-                    <img src="{{ asset('storage/' . $canteen->image) }}" alt="{{ $canteen->name }}"
-                        class="w-full h-full object-cover relative"
-                        onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'" />
-                @else
-                    <img src="{{ asset('assets/food/es teh.jpg') }}" alt="{{ $canteen->name }}"
-                        class="w-full h-full object-cover opacity-80 relative" />
-                @endif
+                <img src="{{ $canteen->image ? asset('storage/' . $canteen->image) : 'https://ui-avatars.com/api/?name=' . urlencode($canteen->name) . '&background=random' }}"
+                    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($canteen->name) }}&background=random'"
+                    alt="{{ $canteen->name }}"
+                    class="w-full h-full object-cover relative z-10" />
                 <div class="absolute inset-0 bg-linear-to-t from-black/50 to-transparent md:hidden z-20"></div>
                 <div class="absolute bottom-4 left-4 md:hidden z-20">
                     @if ($canteen->is_open)
@@ -197,9 +195,9 @@
                                             <div class="flex items-center gap-4">
                                                 <div
                                                     class="w-12 h-12 rounded-xl bg-base-200 overflow-hidden shrink-0 border border-base-content/10">
-                                                    <img src="{{ $menu->image ? asset('storage/' . $menu->image) : asset('assets/food/es teh.jpg') }}"
+                                                    <img src="{{ $menu->image ? asset('storage/' . $menu->image) : 'https://ui-avatars.com/api/?name=' . urlencode($menu->name) . '&background=random' }}"
                                                         alt="{{ $menu->name }}" class="w-full h-full object-cover"
-                                                        onerror="this.src='{{ asset('assets/food/es teh.jpg') }}'" />
+                                                        onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->name) }}&background=random'" />
                                                 </div>
                                                 <div>
                                                     <div class="font-bold text-base-content text-sm sm:text-base">

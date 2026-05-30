@@ -126,7 +126,7 @@
                     Simpan Perubahan
                 </button>
                 <a href="{{ route('vendor.menu.index') }}"
-                    class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6">
+                    class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-xl font-bold text-sm shadow-sm px-6">
                     Batal
                 </a>
             </div>

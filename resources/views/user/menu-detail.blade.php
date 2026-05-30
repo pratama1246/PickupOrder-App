@@ -28,8 +28,8 @@
                             <div class="absolute inset-0 flex items-center justify-center text-fern-700/40">
                                 <span class="loading loading-bars loading-lg"></span>
                             </div>
-                            <img src="{{ $menu->image ? asset('storage/' . $menu->image) : asset('assets/food/Nasi Rames.jpg') }}"
-                                onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->name) }}&background=random'"
+                            <img src="{{ $menu->image ? asset('storage/' . $menu->image) : 'https://ui-avatars.com/api/?name=' . urlencode($menu->name) . '&background=random' }}"
+                                onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->name) }}&background=random'"
                                 alt="{{ $menu->name }}" class="w-full h-full object-cover relative z-10" />
                         </div>
 
@@ -73,7 +73,7 @@
                 <div class="w-full min-w-0">
 
                     <div class="mb-8">
-                        <x-user.info-bar :rating="number_format($menu->average_rating, 1)" estimasi="10 - 15 Menit" :populer="true" :tersedia="$menu->isInStock()" />
+                        <x-user.info-bar :rating="number_format($menu->average_rating, 1)" estimasi="10 - 15 Menit" :populer="$menu->recent_orders_count >= 5" :tersedia="$menu->isInStock()" />
                     </div>
 
                     <h2 class="text-xl sm:text-2xl font-bold text-base-content mb-4">Menu Lain dari

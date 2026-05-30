@@ -10,7 +10,7 @@
       serta menyimpan array `selectedIds` untuk memproses aksi massal (bulk actions).
     --}}
     <div class="max-w-8xl mx-auto pb-10 lg:pb-0" id="users-container" x-data="{
-        ...initLiveSearch('#users-container'),
+        ...initLiveSearch('#users-results'),
         selectedIds: [],
         allIds: @js($users->pluck('id')->toArray()),
         toggleAll() {
@@ -29,66 +29,57 @@
                         <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola akun pengguna sistem.</p>
                     </div>
                 </div>
+            </div>
 
-                <div class="flex md:hidden items-center gap-2">
+            <form method="GET" action="{{ route('admin.users.index') }}" @submit.prevent
+                class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+                <div class="w-full md:w-64 xl:w-80 grow">
+                    <label
+                        class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md gap-2 px-2">
+                        <div
+                            class="bg-base-content/10 text-base-content rounded-full w-8 h-8 flex items-center justify-center shrink-0 pointer-events-none select-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="m21 21-4.35-4.35" />
+                            </svg>
+                        </div>
+                        <input type="text" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-1"
+                            placeholder="Cari pengguna..." />
+                    </label>
+                </div>
+
+
+                <button type="button" x-show="keyword" x-cloak @click="keyword = ''" x-transition
+                    class="btn btn-md bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0"
+                    title="Hapus pencarian">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <span>Hapus</span>
+                </button>
+
+                <div class="flex md:hidden items-center gap-2.5 w-full">
                     <a href="{{ route('admin.users.import.form') }}"
-                        class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center"
+                        class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-xl py-3 h-auto shadow-sm transition-all duration-200 active:scale-95 flex-1 flex items-center justify-center gap-2 font-bold"
                         title="Impor Pengguna">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/70" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
+                        <span>Import CSV</span>
                     </a>
                     <a href="{{ route('admin.users.create') }}"
-                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-md p-2.5 h-auto min-h-0 shadow-sm transition-colors flex items-center justify-center">
+                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl py-3 h-auto shadow-sm transition-all duration-200 active:scale-95 flex-1 flex items-center justify-center gap-2 font-bold">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
+                        <span>Tambah</span>
                     </a>
                 </div>
-            </div>
-
-            <form method="GET" action="{{ route('admin.users.index') }}" @submit.prevent
-                class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                <div class="w-full md:w-64 xl:w-80 grow relative">
-                    <label
-                        class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
-                        <input type="search" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-2"
-                            placeholder="Cari pengguna..." />
-                    </label>
-                    <button type="button"
-                        class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.35-4.35" />
-                        </svg>
-                    </button>
-                </div>
-
-                <button type="submit"
-                    class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/70" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                    </svg>
-                    <span>Filter</span>
-                </button>
-
-                @if (request('search') || request('role'))
-                    <a href="{{ route('admin.users.index') }}"
-                        class="btn btn-md bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold border-none rounded-full px-5 flex items-center justify-center gap-2 transition-colors w-fit sm:w-auto shrink-0"
-                        title="Hapus filter pencarian">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        <span>Kembali</span>
-                    </a>
-                @endif
 
                 <div class="hidden md:flex items-center gap-2 shrink-0">
                     <a href="{{ route('admin.users.import.form') }}"
@@ -207,7 +198,7 @@
             </div>
         </div>
 
-        <div class="max-w-8xl">
+        <div id="users-results" class="max-w-8xl">
             <x-admin.users-table :users="$users" />
 
             <div class="mt-4">

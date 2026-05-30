@@ -49,7 +49,7 @@
             <div
                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10">
                 <img src="{{ $image }}"
-                    onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'"
+                    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=random'"
                     alt="{{ $name }}" class="w-full h-full object-cover" />
             </div>
 
