@@ -21,32 +21,28 @@
             }
         }
     }" x-cloak>
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <div>
-                        <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Pengguna</h1>
-                        <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola akun pengguna sistem.</p>
-                    </div>
-                </div>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">Daftar Pengguna</h1>
+                <p class="text-base-content/70 text-sm sm:text-lg font-medium">Kelola akun pengguna sistem.</p>
             </div>
-
             <form method="GET" action="{{ route('admin.users.index') }}" @submit.prevent
-                class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                <div class="w-full md:w-64 xl:w-80 grow">
+                class="flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-3 w-full lg:w-auto">
+                <div class="w-full sm:w-64 xl:w-80 grow relative">
                     <label
-                        class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md gap-2 px-2">
-                        <div
-                            class="bg-base-content/10 text-base-content rounded-full w-8 h-8 flex items-center justify-center shrink-0 pointer-events-none select-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <circle cx="11" cy="11" r="8" />
-                                <path d="m21 21-4.35-4.35" />
-                            </svg>
-                        </div>
-                        <input type="text" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-1"
+                        class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
+                        <input type="text" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-2"
                             placeholder="Cari pengguna..." />
                     </label>
+                    <button type="button"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer"
+                        title="Cari">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
+                    </button>
                 </div>
 
 
@@ -60,9 +56,9 @@
                     <span>Hapus</span>
                 </button>
 
-                <div class="flex md:hidden items-center gap-2.5 w-full">
+                <div class="flex lg:hidden items-center gap-2.5 w-full sm:w-auto">
                     <a href="{{ route('admin.users.import.form') }}"
-                        class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-xl py-3 h-auto shadow-sm transition-all duration-200 active:scale-95 flex-1 flex items-center justify-center gap-2 font-bold"
+                        class="btn bg-base-200 hover:bg-base-300 text-base-content border-none rounded-xl py-3 h-auto shadow-sm transition-all duration-200 active:scale-95 flex-1 sm:flex-initial sm:px-6 flex items-center justify-center gap-2 font-bold"
                         title="Impor Pengguna">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-base-content/70" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -72,7 +68,7 @@
                         <span>Import CSV</span>
                     </a>
                     <a href="{{ route('admin.users.create') }}"
-                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl py-3 h-auto shadow-sm transition-all duration-200 active:scale-95 flex-1 flex items-center justify-center gap-2 font-bold">
+                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl py-3 h-auto shadow-sm transition-all duration-200 active:scale-95 flex-1 sm:flex-initial sm:px-6 flex items-center justify-center gap-2 font-bold">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -81,7 +77,7 @@
                     </a>
                 </div>
 
-                <div class="hidden md:flex items-center gap-2 shrink-0">
+                <div class="hidden lg:flex items-center gap-2 shrink-0">
                     <a href="{{ route('admin.users.import.form') }}"
                         class="btn btn-md bg-base-200 hover:bg-base-300 text-base-content border-none rounded-full w-12 h-12 p-0 shadow-sm transition-colors flex items-center justify-center"
                         title="Import Pengguna">
