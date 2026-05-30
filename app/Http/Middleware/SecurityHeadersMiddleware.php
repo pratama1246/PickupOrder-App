@@ -48,7 +48,7 @@ class SecurityHeadersMiddleware
         $csp = implode('; ', array_filter([
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$viteOrigin} {$midtransSandbox} {$midtransProd} https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com",
-            "style-src 'self' 'unsafe-inline' {$viteOrigin} https://fonts.googleapis.com",
+            "style-src 'self' 'unsafe-inline' {$viteOrigin} https://fonts.googleapis.com https://cdnjs.cloudflare.com",
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data: blob: https:",
             "frame-src 'self' {$midtransSandbox} {$midtransProd}",
