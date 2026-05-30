@@ -282,8 +282,6 @@ The interface was designed in Figma before development, following a design-first
 
 ## 📸 Screenshots
 
-> Tip: For long pages, you can use multiple screenshots per role (Student/Vendor/Admin).
-
 ### Main UI
 
 <img width="800" alt="main-page" src="https://github.com/user-attachments/assets/4f1f8180-c962-4472-ac7f-78ed208991f1" />
