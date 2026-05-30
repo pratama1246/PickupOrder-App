@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
 {
+    /**
+     * Menonaktifkan timestamps bawaan Eloquent.
+     * Karena data item pesanan bersifat statis setelah di-checkout dan terikat pada daur hidup transaksi induk.
+     */
     public $timestamps = false;
 
     protected $fillable = [
@@ -23,7 +27,7 @@ class OrderItem extends Model
     ];
 
     /**
-     * Pesanan induk item ini.
+     * Relasi ke Transaksi Utama (Order) induk.
      */
     public function order(): BelongsTo
     {
@@ -31,7 +35,8 @@ class OrderItem extends Model
     }
 
     /**
-     * Menu yang dipesan (snapshot nama & gambar via relasi).
+     * Relasi ke Menu makanan/minuman asli.
+     * Digunakan untuk mengambil informasi gambar, nama, dan detail hidangan.
      */
     public function menu(): BelongsTo
     {
@@ -39,7 +44,9 @@ class OrderItem extends Model
     }
 
     /**
-     * Subtotal item ini (price snapshot * qty).
+     * Menghitung subtotal nominal item ini.
+     * Menggunakan harga riwayat (price snapshot) yang tersimpan saat pesanan dibuat,
+     * untuk menjaga integritas pembukuan jika vendor mengubah harga menu di kemudian hari.
      */
     public function getSubtotalAttribute(): float
     {
@@ -47,7 +54,7 @@ class OrderItem extends Model
     }
 
     /**
-     * Subtotal dalam format rupiah.
+     * Format subtotal belanja ke Rupiah (IDR).
      */
     public function getFormattedSubtotalAttribute(): string
     {

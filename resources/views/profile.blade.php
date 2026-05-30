@@ -195,5 +195,124 @@
 
     @push('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+        <script>
+            // Menyimpan instansi aktif Cropper.js secara global di halaman ini agar dapat dihancurkan saat modal ditutup.
+            let cropperInstance = null;
+
+            /**
+             * Memproses gambar yang dipilih oleh pengguna sebelum memicu modal pemotongan.
+             * Mencegah proses jika format berkas bukan berupa gambar.
+             */
+            function handleAvatarSelect(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    alert('Format berkas harus berupa gambar!');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    openCropperModal(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            /**
+             * Membuka modal dialog pemotongan avatar dan menginisialisasi Cropper.js.
+             * Menggunakan setelan aspek rasio 1:1 statis sehingga pengguna dipaksa menggeser gambar,
+             * demi menghasilkan rasio avatar persegi sempurna yang konsisten.
+             */
+            function openCropperModal(imageSrc) {
+                const imageEl = document.getElementById('cropper_image');
+                if (!imageEl) return;
+                
+                imageEl.src = imageSrc;
+
+                const modal = document.getElementById('cropper_modal');
+                if (modal) {
+                    modal.showModal();
+                }
+
+                // Hancurkan instansi cropper lama untuk membebaskan memori sebelum membuat instansi baru.
+                if (cropperInstance) {
+                    cropperInstance.destroy();
+                }
+
+                cropperInstance = new Cropper(imageEl, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 0.8,
+                    restore: false,
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
+                    toggleDragModeOnDblclick: false,
+                    background: false
+                });
+            }
+
+            /**
+             * Menutup modal dialog pemotongan dan menghancurkan instansi Cropper.
+             * Mengosongkan file input asli jika dibatalkan (clearInput = true) agar event change tetap terpicu jika file yang sama dipilih lagi.
+             */
+            function closeCropperModal(clearInput = true) {
+                const modal = document.getElementById('cropper_modal');
+                if (modal) {
+                    modal.close();
+                }
+                if (cropperInstance) {
+                    cropperInstance.destroy();
+                    cropperInstance = null;
+                }
+                if (clearInput) {
+                    const avatarInput = document.getElementById('avatar-input');
+                    if (avatarInput) {
+                        avatarInput.value = '';
+                    }
+                }
+            }
+
+            /**
+             * Mengambil hasil potongan gambar dari canvas, mengubahnya menjadi Blob JPG berkualitas tinggi (90%),
+             * lalu menyisipkannya ke input file native agar terkirim dalam payload request Laravel.
+             */
+            function applyCrop() {
+                if (!cropperInstance) return;
+
+                // Membatasi resolusi hasil potong pada 400x400 piksel agar seimbang antara ketajaman gambar dan efisiensi penyimpanan server.
+                const canvas = cropperInstance.getCroppedCanvas({
+                    width: 400,
+                    height: 400,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                });
+
+                canvas.toBlob(function(blob) {
+                    if (!blob) return;
+
+                    // Membungkus data blob menjadi objek File agar kompatibel dengan input file native browser.
+                    const croppedFile = new File([blob], 'avatar_cropped.jpg', { type: 'image/jpeg' });
+
+                    const avatarInput = document.getElementById('avatar-input');
+                    if (avatarInput) {
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(croppedFile);
+                        avatarInput.files = dataTransfer.files;
+                    }
+
+                    // Memicu event kustom untuk didengarkan oleh Alpine.js guna memperbarui pratinjau avatar di UI.
+                    const previewUrl = URL.createObjectURL(blob);
+                    window.dispatchEvent(new CustomEvent('avatar-cropped', { detail: previewUrl }));
+
+                    // Tutup modal tanpa menghapus data input yang baru saja kita masukkan.
+                    closeCropperModal(false);
+                }, 'image/jpeg', 0.9);
+            }
+        </script>
     @endpush
 @endsection

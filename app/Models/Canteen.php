@@ -25,7 +25,8 @@ class Canteen extends Model
     ];
 
     /**
-     * Vendor (pemilik) kantin ini.
+     * Relasi ke User pemilik kantin (Vendor).
+     * Digunakan untuk memvalidasi hak akses pengelolaan dashboard vendor.
      */
     public function owner(): BelongsTo
     {
@@ -33,7 +34,7 @@ class Canteen extends Model
     }
 
     /**
-     * Semua menu makanan yang dimiliki kantin ini.
+     * Semua menu makanan dan minuman yang didaftarkan oleh kantin ini.
      */
     public function menus(): HasMany
     {
@@ -41,7 +42,7 @@ class Canteen extends Model
     }
 
     /**
-     * Semua pesanan yang masuk ke kantin ini.
+     * Riwayat seluruh pesanan yang masuk ke kantin ini.
      */
     public function orders(): HasMany
     {
@@ -49,7 +50,8 @@ class Canteen extends Model
     }
 
     /**
-     * Hanya menu yang tersedia (is_available = true & stok > 0).
+     * Menu aktif yang siap dipesan (is_available aktif dan stok tersedia).
+     * Digunakan pada halaman beranda & pencarian agar pengguna tidak memesan menu kosong.
      */
     public function availableMenus(): HasMany
     {
@@ -57,7 +59,7 @@ class Canteen extends Model
     }
 
     /**
-     * Semua ulasan untuk menu-menu di kantin ini.
+     * Mengakses seluruh ulasan pelanggan secara langsung dari semua menu milik kantin ini.
      */
     public function reviews(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
@@ -65,7 +67,9 @@ class Canteen extends Model
     }
 
     /**
-     * Rata-rata rating kantin. Default 5.0 jika belum ada ulasan.
+     * Mengembalikan rata-rata rating kantin.
+     * Menggunakan cache attribute hasil eager loading 'withAvg' jika tersedia untuk optimasi query,
+     * dan memberikan nilai default 5.0 agar kantin baru memiliki impresi awal yang baik.
      */
     public function getAverageRatingAttribute(): float
     {

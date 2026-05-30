@@ -32,8 +32,8 @@ class Order extends Model
     ];
 
     /**
-     * Generate order_code otomatis sebelum disimpan ke DB.
-     * Format: PNC-ORD-YYYYMMDD-XXXX
+     * Mendaftarkan event model Eloquent.
+     * Secara otomatis membuat kode transaksi (order_code) unik sebelum record disimpan.
      */
     protected static function booted(): void
     {
@@ -44,6 +44,10 @@ class Order extends Model
         });
     }
 
+    /**
+     * Membuat kode transaksi acak dengan format PNC-ORD-[YYYYMMDD]-[RANDOM].
+     * Menggunakan perulangan (do-while) untuk memastikan tidak terjadi tabrakan data (collision) di database.
+     */
     public static function generateOrderCode(): string
     {
         do {
@@ -54,7 +58,8 @@ class Order extends Model
     }
 
     /**
-     * Dapatkan kode pengambilan (6 karakter terakhir dari order_code)
+     * Mengambil 6 karakter acak terakhir dari kode transaksi.
+     * Digunakan sebagai kode verifikasi cepat saat pengambilan makanan di kantin oleh mahasiswa.
      */
     public function getPickupCodeAttribute(): string
     {
@@ -64,7 +69,7 @@ class Order extends Model
     }
 
     /**
-     * Mahasiswa yang membuat pesanan ini.
+     * Relasi ke Mahasiswa (User) pembuat pesanan.
      */
     public function user(): BelongsTo
     {
@@ -72,7 +77,7 @@ class Order extends Model
     }
 
     /**
-     * Kantin tujuan pesanan ini.
+     * Relasi ke Kantin tempat pesanan ini ditujukan.
      */
     public function canteen(): BelongsTo
     {
@@ -80,7 +85,7 @@ class Order extends Model
     }
 
     /**
-     * Semua item detail pesanan.
+     * Daftar item makanan/minuman yang dipesan dalam transaksi ini.
      */
     public function items(): HasMany
     {
@@ -88,7 +93,7 @@ class Order extends Model
     }
 
     /**
-     * Ulasan yang diberikan untuk pesanan ini.
+     * Relasi ulasan ulasan makanan yang dikaitkan dengan pesanan ini setelah selesai.
      */
     public function reviews(): HasMany
     {
@@ -96,9 +101,8 @@ class Order extends Model
     }
 
     /**
-     * Pemetaan status DB ke label UI untuk <x-status-badge>.
-     * Status DB: menunggu, dimasak, siap_diambil, selesai, dibatalkan
-     * Status badge: Menunggu, Diproses, Selesai, Dibatalkan
+     * Menerjemahkan status teknis di database menjadi label ramah pengguna.
+     * Disesuaikan dengan kebutuhan badge status transaksi di frontend.
      */
     public function getStatusLabelAttribute(): string
     {
@@ -113,7 +117,7 @@ class Order extends Model
     }
 
     /**
-     * Format total harga ke rupiah.
+     * Format total belanja ke dalam Rupiah (IDR).
      */
     public function getFormattedTotalAttribute(): string
     {
@@ -121,7 +125,7 @@ class Order extends Model
     }
 
     /**
-     * Label ramah pengguna untuk metode pembayaran.
+     * Menerjemahkan metode pembayaran database ke label teks UI.
      */
     public function getPaymentMethodLabelAttribute(): string
     {
@@ -133,7 +137,7 @@ class Order extends Model
     }
 
     /**
-     * Label ramah pengguna untuk status pembayaran.
+     * Menerjemahkan status transaksi Midtrans / Cash ke label teks UI.
      */
     public function getPaymentStatusLabelAttribute(): string
     {
@@ -147,7 +151,7 @@ class Order extends Model
     }
 
     /**
-     * Cek apakah pesanan sudah lunas.
+     * Mengecek status pelunasan pembayaran transaksi.
      */
     public function isPaid(): bool
     {
@@ -155,7 +159,8 @@ class Order extends Model
     }
 
     /**
-     * Hitung posisi antrian saat ini di kantin.
+     * Menghitung urutan antrean transaksi yang sedang aktif (status 'menunggu' atau 'dimasak').
+     * Antrean dihitung berdasarkan jumlah pesanan masuk dengan ID lebih kecil di kantin yang sama.
      */
     public function getQueuePositionAttribute(): int
     {
@@ -163,7 +168,6 @@ class Order extends Model
             return 0;
         }
 
-        // Hitung order di kantin yang sama, dengan status 'menunggu' atau 'dimasak', yang dibuat sebelum order ini
         $count = self::where('canteen_id', $this->canteen_id)
             ->whereIn('status', ['menunggu', 'dimasak'])
             ->where('id', '<', $this->id)
@@ -173,7 +177,7 @@ class Order extends Model
     }
 
     /**
-     * Hitung estimasi waktu berdasarkan antrian (asumsi 5 menit per pesanan).
+     * Menghitung estimasi sisa waktu tunggu penyajian makanan (diasumsikan rata-rata 5 menit per nomor antrean).
      */
     public function getEstimatedTimeAttribute(): int
     {
@@ -181,7 +185,7 @@ class Order extends Model
     }
 
     /**
-     * Scope: filter berdasarkan status.
+     * Query scope untuk mempermudah pemfilteran pesanan berdasarkan status operasionalnya.
      */
     public function scopeWithStatus($query, string $status)
     {

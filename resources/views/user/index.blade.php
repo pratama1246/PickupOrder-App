@@ -251,4 +251,76 @@
 
         </div>
     </section>
+    @push('scripts')
+        <script>
+            // Efek mengetik otomatis (Typewriter) khusus untuk menyapa mahasiswa di halaman beranda.
+            function initTypewriter() {
+                const typingTextEl = document.getElementById("typing-text");
+                if (!typingTextEl) return;
+
+                const words = [
+                    "Nugas?",
+                    "Praktikum?",
+                    "Bikin Laporan?",
+                    "Ngoding?",
+                    "Benerin Bug?",
+                    "Ngebubut?",
+                    "Nyolder?",
+                    "Bikin Robot?",
+                    "Ngelistrik?",
+                    "Titrasi?",
+                    "Sampling Air?",
+                    "Olah Pangan?",
+                    "Pentesting?",
+                    "Ngedit Video?",
+                    "Bikin Animasi?",
+                    "Input Jurnal?",
+                    "Revisi TA?",
+                    "Rapat?",
+                    "Bikin Proposal?",
+                    "Evaluasi?",
+                    "Begadang?",
+                    "Mager?"
+                ];
+                let i = 0;
+                let j = 0;
+                let currentWord = "";
+                let isDeleting = false;
+
+                function typeEffect() {
+                    const el = document.getElementById("typing-text");
+                    if (!el) return;
+
+                    currentWord = words[i];
+
+                    if (isDeleting) {
+                        j--;
+                    } else {
+                        j++;
+                    }
+
+                    el.textContent = currentWord.substring(0, j);
+
+                    let speed = isDeleting ? 50 : 100;
+
+                    if (!isDeleting && j === currentWord.length) {
+                        speed = 1200;
+                        isDeleting = true;
+                    } else if (isDeleting && j === 0) {
+                        isDeleting = false;
+                        i = (i + 1) % words.length;
+                        speed = 300;
+                    }
+
+                    setTimeout(typeEffect, speed);
+                }
+
+                typeEffect();
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                initTypewriter();
+            });
+        </script>
+    @endpush
 @endsection

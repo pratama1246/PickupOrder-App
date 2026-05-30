@@ -29,20 +29,25 @@ class Menu extends Model
     ];
 
     /**
-     * Kantin pemilik menu ini.
+     * Relasi ke Kantin pemilik menu ini.
+     * Digunakan untuk memvalidasi status operasional kantin pembuat menu.
      */
     public function canteen(): BelongsTo
     {
         return $this->belongsTo(Canteen::class);
     }
 
+    /**
+     * Riwayat pembelian menu ini di seluruh item transaksi.
+     * Digunakan untuk menghitung popularitas menu dan analisis penjualan vendor.
+     */
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
     /**
-     * Semua ulasan untuk menu ini.
+     * Relasi ke seluruh ulasan rating/komentar khusus untuk menu makanan/minuman ini.
      */
     public function reviews(): HasMany
     {
@@ -50,7 +55,9 @@ class Menu extends Model
     }
 
     /**
-     * Rata-rata rating menu. Default 5.0 jika belum ada ulasan.
+     * Mengembalikan rata-rata rating menu.
+     * Menggunakan cache attribute hasil eager loading 'withAvg' jika tersedia untuk optimasi query,
+     * dan memberikan nilai default 5.0 agar menu baru memiliki impresi awal yang baik.
      */
     public function getAverageRatingAttribute(): float
     {
@@ -65,7 +72,7 @@ class Menu extends Model
     }
 
     /**
-     * Menghitung total ulasan menu.
+     * Menghitung jumlah total ulasan yang telah dikirimkan oleh pengguna untuk menu ini.
      */
     public function getTotalReviewsAttribute(): int
     {
@@ -73,7 +80,8 @@ class Menu extends Model
     }
 
     /**
-     * Cek apakah menu ini tersedia (available dan stok > 0).
+     * Memeriksa kelayakan beli menu (aktif dan stok fisik di atas 0).
+     * Mencegah pembeli memasukkan menu kosong ke dalam keranjang belanja.
      */
     public function isInStock(): bool
     {
@@ -81,7 +89,8 @@ class Menu extends Model
     }
 
     /**
-     * Format harga ke rupiah tanpa desimal.
+     * Mengubah nominal desimal database menjadi format mata uang Rupiah (IDR).
+     * Disesuaikan dengan standar pelaporan keuangan kantin Politeknik Negeri Cilacap.
      */
     public function getFormattedPriceAttribute(): string
     {

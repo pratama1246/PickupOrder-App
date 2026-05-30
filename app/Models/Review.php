@@ -20,7 +20,7 @@ class Review extends Model
     ];
 
     /**
-     * User yang memberikan ulasan.
+     * Relasi ke Mahasiswa (User) yang menulis ulasan.
      */
     public function user(): BelongsTo
     {
@@ -28,7 +28,7 @@ class Review extends Model
     }
 
     /**
-     * Menu yang diulas.
+     * Relasi ke Menu hidangan spesifik yang dinilai.
      */
     public function menu(): BelongsTo
     {
@@ -36,7 +36,7 @@ class Review extends Model
     }
 
     /**
-     * Order asal ulasan ini.
+     * Relasi ke Transaksi (Order) asal transaksi ulasan ini dibuat.
      */
     public function order(): BelongsTo
     {
@@ -44,7 +44,9 @@ class Review extends Model
     }
 
     /**
-     * Nama pengguna (disamarkan jika is_anonymous true)
+     * Menyusun nama reviewer dengan masking sensor (misalnya J***n) jika opsi anonim dipilih.
+     * Hal ini bertujuan untuk melindungi privasi mahasiswa agar bisa memberikan ulasan jujur
+     * tanpa khawatir akan tindakan diskriminatif.
      */
     public function getReviewerNameAttribute()
     {
@@ -68,7 +70,9 @@ class Review extends Model
     }
 
     /**
-     * Avatar pengguna (anonim jika is_anonymous true)
+     * Mengembalikan URL avatar reviewer.
+     * Jika ulasan bersifat anonim atau user tidak memiliki foto profil kustom,
+     * akan dikembalikan avatar inisial default generator (UI Avatars) demi alasan privasi.
      */
     public function getReviewerAvatarAttribute()
     {

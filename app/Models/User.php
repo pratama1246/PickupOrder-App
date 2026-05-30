@@ -30,6 +30,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * Casts atribut Eloquent.
+     * Atribut 'password' dikonfigurasi ke 'hashed' agar secara otomatis dienkripsi oleh model
+     * saat dibuat atau diperbarui, meminimalkan kelalaian pemanggilan manual Hash::make di controller.
+     */
     protected function casts(): array
     {
         return [
@@ -41,7 +46,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Kantin milik vendor ini (hanya untuk role vendor).
+     * Relasi ke profil Kantin yang dimiliki (khusus untuk pengguna dengan peran 'vendor').
      */
     public function canteen(): HasOne
     {
@@ -49,7 +54,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Semua pesanan yang dibuat user ini (untuk role mahasiswa).
+     * Riwayat seluruh pesanan yang pernah dibuat oleh mahasiswa ini.
      */
     public function orders(): HasMany
     {
@@ -57,7 +62,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Semua ulasan yang diberikan oleh user ini.
+     * Riwayat ulasan makanan/minuman yang telah ditulis oleh pengguna ini.
      */
     public function reviews(): HasMany
     {
@@ -65,7 +70,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Cek apakah user adalah admin.
+     * Memeriksa apakah pengguna memiliki hak akses Administrator (Admin).
+     * Digunakan dalam otentikasi middleware, kebijakan akses (Policies), dan percabangan menu dashboard.
      */
     public function isAdmin(): bool
     {
@@ -73,7 +79,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Cek apakah user adalah vendor kantin.
+     * Memeriksa apakah pengguna adalah operator Canteen (Vendor).
+     * Digunakan dalam otentikasi middleware, kebijakan akses (Policies), dan percabangan menu dashboard.
      */
     public function isVendor(): bool
     {
@@ -81,7 +88,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Cek apakah user adalah mahasiswa.
+     * Memeriksa apakah pengguna adalah Mahasiswa umum.
+     * Digunakan untuk memfilter menu checkout dan hak belanja makanan.
      */
     public function isMahasiswa(): bool
     {

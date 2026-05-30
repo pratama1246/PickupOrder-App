@@ -6,7 +6,10 @@ html {
     scroll-padding-top: 6rem;
 }
 
-/* Hide Alpine.js elements before initialization to prevent layout flash */
+/* 
+ * Menyembunyikan elemen Alpine.js sebelum script dimuat sepenuhnya.
+ * Ini mencegah terjadinya 'layout flash' (konten mentah ter-render sebelum Alpine terinisiasi).
+ */
 [x-cloak] {
     display: none !important;
 }
@@ -99,12 +102,14 @@ html {
     }
 }
 
-/* Custom Profile Picture Cropper styles */
+/* 
+ * Kustomisasi visual kotak potong (cropper box) agar berbentuk lingkaran sempurna (avatar).
+ * Outline fern-700 digunakan untuk menyelaraskan dengan identitas visual brand.
+ */
 .cropper-view-box,
 .cropper-face {
     border-radius: 50%;
     outline: 2px solid #306939 !important;
-    /* warna fern-700 */
     outline-offset: -1px;
 }
 
@@ -118,7 +123,10 @@ html {
     background-color: #f3f4f6;
 }
 
-/* Custom background mesh glow for Hero sections */
+/* 
+ * Efek gradasi radial glow sebagai latar belakang Hero section.
+ * Menggabungkan warna fern dan vanilla-custard secara halus untuk visual premium.
+ */
 .bg-mesh-glow {
     background: radial-gradient(circle at 10% 20%, var(--color-fern-50) 0%, transparent 40%),
         radial-gradient(circle at 90% 80%, var(--color-vanilla-custard-50) 0%, transparent 50%),
