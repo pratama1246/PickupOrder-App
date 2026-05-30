@@ -6,6 +6,7 @@ use App\Models\Canteen;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Review;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -62,7 +63,7 @@ class DatabaseSeeder extends Seeder
         // Seed Menus for Canteen 1
         $menus1 = collect([
             Menu::updateOrCreate(['canteen_id' => $canteen1->id, 'name' => 'Nasi Goreng Spesial'], [
-                'category' => 'Nasi',
+                'category' => 'Makanan',
                 'description' => 'Nasi goreng dengan telur mata sapi, kerupuk, dan suwiran ayam.',
                 'price' => 11999.00,
                 'image' => 'assets/food/nasigoreng.jpg',
@@ -70,7 +71,7 @@ class DatabaseSeeder extends Seeder
                 'is_available' => true,
             ]),
             Menu::updateOrCreate(['canteen_id' => $canteen1->id, 'name' => 'Ayam Geprek Sambal Korek'], [
-                'category' => 'Ayam',
+                'category' => 'Makanan',
                 'description' => 'Ayam goreng krispi digeprek dengan cabai rawit pedas mantap.',
                 'price' => 15000.00,
                 'image' => 'assets/food/ayamgeprek.jpg',
@@ -214,6 +215,48 @@ class DatabaseSeeder extends Seeder
 
             $order->timestamps = false;
             $order->update(['total_price' => $totalPrice]);
+        }
+
+        // 5. Seed Reviews for completed orders
+        $completedOrders = Order::where('status', 'selesai')->with('items')->get();
+        $comments = [
+            5 => ['Enak banget!', 'Rekomendasi sekali!', 'Sangat lezat dan porsi pas.', 'Makanannya hangat dan enak.', 'Pelayanan cepat dan rasa mantap!'],
+            4 => ['Enak, tapi porsinya agak sedikit.', 'Rasanya pas, sesuai harga.', 'Cukup enak, worth it.', 'Makanan enak dan bersih.'],
+            3 => ['Biasa saja rasanya.', 'Lumayan untuk makan siang.', 'Standard kantin pada umumnya.'],
+        ];
+
+        foreach ($completedOrders as $order) {
+            foreach ($order->items as $item) {
+                if (rand(1, 100) <= 75) {
+                    // Distribusi: 55% bintang 5, 35% bintang 4, 10% bintang 3
+                    $randVal = rand(1, 100);
+                    if ($randVal <= 55) {
+                        $rating = 5;
+                    } elseif ($randVal <= 90) {
+                        $rating = 4;
+                    } else {
+                        $rating = 3;
+                    }
+
+                    $commentList = $comments[$rating];
+                    $comment = $commentList[array_rand($commentList)];
+
+                    Review::updateOrCreate(
+                        [
+                            'user_id' => $order->user_id,
+                            'order_id' => $order->id,
+                            'menu_id' => $item->menu_id,
+                        ],
+                        [
+                            'rating' => $rating,
+                            'comment' => $comment,
+                            'is_anonymous' => (bool)rand(0, 1),
+                            'created_at' => $order->created_at,
+                            'updated_at' => $order->created_at,
+                        ]
+                    );
+                }
+            }
         }
     }
 }

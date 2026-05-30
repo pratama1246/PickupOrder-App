@@ -55,4 +55,27 @@ class Canteen extends Model
     {
         return $this->hasMany(Menu::class)->where('is_available', true)->where('stock', '>', 0);
     }
+
+    /**
+     * Semua ulasan untuk menu-menu di kantin ini.
+     */
+    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(Review::class, Menu::class);
+    }
+
+    /**
+     * Rata-rata rating kantin. Default 5.0 jika belum ada ulasan.
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        if (array_key_exists('reviews_avg_rating', $this->attributes)) {
+            $val = (float) $this->attributes['reviews_avg_rating'];
+
+            return $val > 0 ? $val : 5.0;
+        }
+        $avg = (float) $this->reviews()->avg('rating');
+
+        return $avg > 0 ? $avg : 5.0;
+    }
 }

@@ -14,7 +14,15 @@ class MenuController extends Controller
      */
     public function show(int $canteenId, int $id): View
     {
-        $menu = Menu::with('canteen')->withAvg('reviews', 'rating')->findOrFail($id);
+        $menu = Menu::with('canteen')
+            ->withAvg('reviews', 'rating')
+            ->withCount(['orderItems as recent_orders_count' => function ($query) {
+                $query->whereHas('order', function ($q) {
+                    $q->where('status', 'selesai')
+                      ->where('created_at', '>=', now()->subDays(30));
+                });
+            }])
+            ->findOrFail($id);
 
         // Pastikan menu memang milik kantin yang diminta
         abort_if($menu->canteen_id !== $canteenId, 404);

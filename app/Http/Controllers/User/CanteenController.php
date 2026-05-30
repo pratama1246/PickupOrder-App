@@ -16,7 +16,7 @@ class CanteenController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Canteen::with(['menus' => function ($q) use ($request) {
+        $query = Canteen::withAvg('reviews', 'rating')->with(['menus' => function ($q) use ($request) {
             $q->where('is_available', true)->where('stock', '>', 0);
             if ($request->filled('category')) {
                 $q->where('category', $request->category);
@@ -92,7 +92,7 @@ class CanteenController extends Controller
      */
     public function show(int $id): View
     {
-        $canteen = Canteen::with(['menus' => function ($q) {
+        $canteen = Canteen::withAvg('reviews', 'rating')->with(['menus' => function ($q) {
             $q->where('is_available', true)->orderBy('name');
         }])->findOrFail($id);
 

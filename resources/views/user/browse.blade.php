@@ -23,21 +23,22 @@
         <section class="px-3 sm:px-10 md:px-16 lg:px-24 mb-8">
             <div class="max-w-8xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
 
-                <form action="" method="GET" @submit.prevent class="w-full sm:max-w-md">
+                <form action="" method="GET" @submit.prevent class="w-full sm:max-w-md relative">
                     <label
-                        class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md gap-2 px-2">
-                        <div
-                            class="bg-base-content/10 text-base-content rounded-full w-8 h-8 flex items-center justify-center shrink-0 pointer-events-none select-none">
-                            <svg x-show="!loading" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <circle cx="11" cy="11" r="8" />
-                                <path d="m21 21-4.35-4.35" />
-                            </svg>
-                            <span x-show="loading" class="loading loading-spinner loading-xs text-base-content" style="display: none;"></span>
-                        </div>
-                        <input type="text" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-1"
+                        class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
+                        <input type="text" x-model="keyword" class="grow text-sm sm:text-base font-medium pl-2"
                             placeholder="Cari kantin atau menu favoritmu..." />
                     </label>
+                    <button type="button" @click="triggerSearch()"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-fern-700 hover:bg-fern-800 text-white border-none min-h-0 w-8 h-8 transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer"
+                        title="Cari">
+                        <svg x-show="!loading" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
+                        <span x-show="loading" class="loading loading-spinner loading-xs text-white" style="display: none;"></span>
+                    </button>
                 </form>
 
                 <select x-model="category"

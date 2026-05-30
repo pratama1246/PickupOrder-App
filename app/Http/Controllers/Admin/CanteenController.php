@@ -22,7 +22,7 @@ class CanteenController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Canteen::with('owner')->withCount('menus');
+        $query = Canteen::with('owner')->withAvg('reviews', 'rating')->withCount('menus');
 
         if ($request->filled('search')) {
             $query->where('name', 'like', "%{$request->search}%");

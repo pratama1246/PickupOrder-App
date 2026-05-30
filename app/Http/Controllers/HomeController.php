@@ -17,20 +17,32 @@ class HomeController extends Controller
     {
         // Kantin yang sedang buka, diambil 6 teratas
         $canteens = Canteen::where('is_open', true)
+            ->withAvg('reviews', 'rating')
             ->withCount('availableMenus')
             ->latest()
             ->take(6)
             ->get();
 
-        // Menu populer: menu tersedia dari kantin yang buka, diurutkan berdasarkan frekuensi dipesan
+        // Menu populer: menu tersedia dari kantin yang buka, diurutkan berdasarkan frekuensi dipesan (pesanan selesai dalam 30 hari terakhir, minimal dipesan 1x)
         $popularMenus = Menu::where('is_available', true)
             ->where('stock', '>', 0)
             ->whereHas('canteen', function ($query) {
                 $query->where('is_open', true);
             })
+            ->whereHas('orderItems', function ($query) {
+                $query->whereHas('order', function ($q) {
+                    $q->where('status', 'selesai')
+                      ->where('created_at', '>=', now()->subDays(30));
+                });
+            })
             ->with(['canteen'])
             ->withAvg('reviews', 'rating')
-            ->withCount('orderItems')
+            ->withCount(['orderItems as order_items_count' => function ($query) {
+                $query->whereHas('order', function ($q) {
+                    $q->where('status', 'selesai')
+                      ->where('created_at', '>=', now()->subDays(30));
+                });
+            }])
             ->orderByDesc('order_items_count')
             ->take(8)
             ->get();
@@ -49,9 +61,6 @@ class HomeController extends Controller
         return view('user.index', compact('canteens', 'popularMenus', 'categories'));
     }
 
-    /**
-     * Halaman Tentang Kami.
-     */
     public function about(): View
     {
         return view('user.about');
