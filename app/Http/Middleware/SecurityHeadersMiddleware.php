@@ -50,7 +50,7 @@ class SecurityHeadersMiddleware
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$viteOrigin} {$midtransSandbox} {$midtransProd} https://cdn.jsdelivr.net",
             "style-src 'self' 'unsafe-inline' {$viteOrigin} https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
-            "img-src 'self' data: https:",
+            "img-src 'self' data: blob: https:",
             "frame-src 'self' {$midtransSandbox} {$midtransProd}",
             "connect-src 'self' {$viteOrigin} {$midtransSandbox} {$midtransProd}",
             "object-src 'none'",
