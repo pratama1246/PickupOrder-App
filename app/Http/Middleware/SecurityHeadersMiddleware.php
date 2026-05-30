@@ -47,7 +47,7 @@ class SecurityHeadersMiddleware
         // - connect-src: membolehkan AJAX request ke server lokal, WebSocket Vite, serta API gerbang pembayaran Midtrans.
         $csp = implode('; ', array_filter([
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$viteOrigin} {$midtransSandbox} {$midtransProd} https://cdn.jsdelivr.net",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$viteOrigin} {$midtransSandbox} {$midtransProd} https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com",
             "style-src 'self' 'unsafe-inline' {$viteOrigin} https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data: blob: https:",
