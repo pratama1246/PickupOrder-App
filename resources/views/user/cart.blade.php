@@ -22,19 +22,30 @@
                                  qty: {{ $item['quantity'] }},
                                  price: {{ $item['price'] }},
                                  canteenId: {{ $item['canteen_id'] }},
-                                 selected: true
+                                 selected: {{ $item['stock'] > 0 ? 'true' : 'false' }},
+                                 stock: {{ $item['stock'] }}
                              }, @endforeach
                 @endforeach
             },
             updateTimeout: null,
             toggleItem(itemId, checked) {
                 if (this.items[itemId]) {
+                    if (this.items[itemId].stock <= 0) {
+                        this.items[itemId].selected = false;
+                        return;
+                    }
                     this.items[itemId].selected = checked;
                 }
             },
             toggleAll(canteenId, checked) {
                 for (let id in this.items) {
                     if (this.items[id].canteenId === canteenId) {
+                        if (this.items[id].stock <= 0) {
+                            this.items[id].selected = false;
+                            const cb = document.querySelector(`input[name='selected_menu_ids[]'][value='${id}']`);
+                            if (cb) cb.checked = false;
+                            continue;
+                        }
                         this.items[id].selected = checked;
                         // Menyelaraskan keadaan checked state checkbox input tersembunyi dengan data state Alpine
                         const cb = document.querySelector(`input[name='selected_menu_ids[]'][value='${id}']`);
@@ -43,7 +54,10 @@
                 }
             },
             isAllSelected(canteenId) {
-                return Object.values(this.items).filter(i => i.canteenId === canteenId).every(i => i.selected);
+                const itemsInCanteen = Object.values(this.items).filter(i => i.canteenId === canteenId);
+                const checkableItems = itemsInCanteen.filter(i => i.stock > 0);
+                if (checkableItems.length === 0) return false;
+                return checkableItems.every(i => i.selected);
             },
             changeQty(itemId, amount) {
                 let item = this.items[itemId];
@@ -136,6 +150,7 @@
                                         :description="$item['description'] ?? null"
                                         :price="$item['price']"
                                         :quantity="$item['quantity']"
+                                        :stock="$item['stock']"
                                     />
                                 @endforeach
                             </div>

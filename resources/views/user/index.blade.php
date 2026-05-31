@@ -218,7 +218,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @forelse ($popularMenus as $menu)
                     <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$menu->canteen->name" :description="$menu->description" :price="$menu->formatted_price"
-                        :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :actionUrl="route('menu.show', ['canteenId' => $menu->canteen_id, 'id' => $menu->id])" />
+                        :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :actionUrl="route('menu.show', ['canteenId' => $menu->canteen_id, 'id' => $menu->id])" />
                 @empty
                     <div class="col-span-full p-8 text-center bg-vanilla-custard-50 border border-base-200 rounded-3xl">
                         <p class="text-base-content/60 font-medium">Belum ada menu populer.</p>

@@ -7,6 +7,7 @@
     'image' => null,
     'rating' => '4.7',
     'actionUrl' => '#',
+    'stock' => 1,
 ])
 
 {{-- 
@@ -24,7 +25,7 @@
     $imageUrl = $image ? $image : 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random';
 @endphp
 
-<div class="card relative bg-base-100 w-full h-full flex flex-col shadow-sm rounded-2xl overflow-hidden border border-base-200">
+<div class="card relative bg-base-100 w-full h-full flex flex-col shadow-sm rounded-2xl overflow-hidden border border-base-200 {{ $stock <= 0 ? 'grayscale opacity-70 border-base-content/10 bg-base-200/30' : '' }}">
     <a href="{{ $actionUrl }}" class="absolute inset-0 z-10" aria-label="Lihat {{ $name }}"></a>
 
     <div class="flex sm:hidden gap-4 p-4 h-full">
@@ -64,6 +65,11 @@
                 <span class="font-extrabold text-sm text-base-content">{{ $price }}</span>
                 @if (isset($action))
                     <div class="relative z-20">{{ $action }}</div>
+                @elseif ($stock <= 0)
+                    <button disabled
+                        class="btn btn-disabled bg-gray-200 text-gray-400 border-none h-7 min-h-0 rounded-md font-bold text-xs px-3 shadow-sm flex items-center justify-center relative z-20">
+                        Stok Habis
+                    </button>
                 @else
                     <a href="{{ $actionUrl }}"
                         class="btn bg-fern-700 text-white border-none h-7 min-h-0 rounded-md font-bold text-xs px-3 shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 relative z-20">
@@ -106,6 +112,11 @@
             <span class="font-bold text-lg text-base-content">{{ $price }}</span>
             @if (isset($action))
                 <div class="relative z-20">{{ $action }}</div>
+            @elseif ($stock <= 0)
+                <button disabled
+                    class="btn btn-disabled bg-gray-200 text-gray-400 border-none btn-sm rounded-xl font-bold shadow-sm flex items-center justify-center relative z-20">
+                    Stok Habis
+                </button>
             @else
                 <a href="{{ $actionUrl }}"
                     class="btn bg-fern-700 text-white border-none btn-sm rounded-xl font-bold shadow-sm flex items-center justify-center transition-all duration-200 active:scale-95 relative z-20">

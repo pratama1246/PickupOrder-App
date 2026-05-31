@@ -137,7 +137,3 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/users/{id}/toggle', [AdminUserController::class, 'toggle'])->name('users.toggle');
     Route::resource('users', AdminUserController::class)->except(['show']);
 });
-
-Route::get('/test-429', function () {
-    return view('errors.429');
-});

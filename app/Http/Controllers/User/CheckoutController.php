@@ -51,7 +51,7 @@ class CheckoutController extends Controller
      * Menampilkan halaman ringkasan checkout (/checkout).
      * Menyaring item keranjang agar hanya memproses menu yang dicentang (dipilih) oleh mahasiswa.
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
         $cart = session(self::SESSION_KEY, []);
         $cart = $this->syncCartWithMenus($cart);
@@ -166,36 +166,51 @@ class CheckoutController extends Controller
         $sharedOrderCode = Order::generateOrderCode();
         $lastOrder = null;
 
-        DB::transaction(function () use ($grouped, $pickupTime, $notes, $sharedOrderCode, &$lastOrder) {
-            foreach ($grouped as $canteenId => $items) {
-                $total = array_sum(array_column($items, 'subtotal'));
+        try {
+            DB::transaction(function () use ($grouped, $pickupTime, $notes, $sharedOrderCode, &$lastOrder) {
+                foreach ($grouped as $canteenId => $items) {
+                    $total = array_sum(array_column($items, 'subtotal'));
 
-                $order = Order::create([
-                    'user_id' => Auth::id(),
-                    'canteen_id' => $canteenId,
-                    'order_code' => $sharedOrderCode,
-                    'status' => 'menunggu',
-                    'pickup_time' => $pickupTime,
-                    'total_price' => $total,
-                    'notes' => $notes[$canteenId] ?? null,
-                    'payment_method' => 'cash',
-                    'payment_status' => 'pending',
-                    'payment_code' => null,
-                    'snap_token' => null,
-                ]);
-
-                foreach ($items as $item) {
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'menu_id' => $item['menu_id'],
-                        'qty' => $item['quantity'],
-                        'price' => $item['price'],
+                    $order = Order::create([
+                        'user_id' => Auth::id(),
+                        'canteen_id' => $canteenId,
+                        'order_code' => $sharedOrderCode,
+                        'status' => 'menunggu',
+                        'pickup_time' => $pickupTime,
+                        'total_price' => $total,
+                        'notes' => $notes[$canteenId] ?? null,
+                        'payment_method' => 'cash',
+                        'payment_status' => 'pending',
+                        'payment_code' => null,
+                        'snap_token' => null,
                     ]);
-                }
 
-                $lastOrder = $order;
+                    foreach ($items as $item) {
+                        // Kunci baris menu untuk update untuk menghindari race condition
+                        $menu = Menu::lockForUpdate()->findOrFail($item['menu_id']);
+                        if ($menu->stock < $item['quantity']) {
+                            throw new \Exception("Stok menu '{$menu->name}' tidak mencukupi. Sisa stok: {$menu->stock}.");
+                        }
+                        $menu->decrement('stock', $item['quantity']);
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'menu_id' => $item['menu_id'],
+                            'qty' => $item['quantity'],
+                            'price' => $item['price'],
+                        ]);
+                    }
+
+                    $lastOrder = $order;
+                }
+            });
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
             }
-        });
+
+            return back()->withErrors(['payment_method' => $e->getMessage()])->withInput();
+        }
 
         // Menghapus item terpilih dari keranjang belanja global setelah sukses checkout.
         foreach (array_keys($cart) as $menuId) {
@@ -314,36 +329,51 @@ class CheckoutController extends Controller
         $sharedOrderCode = Order::generateOrderCode();
         $lastOrder = null;
 
-        DB::transaction(function () use ($grouped, $pickupTime, $notes, $paymentCode, $snapToken, $sharedOrderCode, &$lastOrder) {
-            foreach ($grouped as $canteenId => $items) {
-                $total = array_sum(array_column($items, 'subtotal'));
+        try {
+            DB::transaction(function () use ($grouped, $pickupTime, $notes, $paymentCode, $snapToken, $sharedOrderCode, &$lastOrder) {
+                foreach ($grouped as $canteenId => $items) {
+                    $total = array_sum(array_column($items, 'subtotal'));
 
-                $order = Order::create([
-                    'user_id' => Auth::id(),
-                    'canteen_id' => $canteenId,
-                    'order_code' => $sharedOrderCode,
-                    'status' => 'menunggu',
-                    'pickup_time' => $pickupTime,
-                    'total_price' => $total,
-                    'notes' => $notes[$canteenId] ?? null,
-                    'payment_method' => 'midtrans',
-                    'payment_status' => 'pending',
-                    'payment_code' => $paymentCode,
-                    'snap_token' => $snapToken,
-                ]);
-
-                foreach ($items as $item) {
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'menu_id' => $item['menu_id'],
-                        'qty' => $item['quantity'],
-                        'price' => $item['price'],
+                    $order = Order::create([
+                        'user_id' => Auth::id(),
+                        'canteen_id' => $canteenId,
+                        'order_code' => $sharedOrderCode,
+                        'status' => 'menunggu',
+                        'pickup_time' => $pickupTime,
+                        'total_price' => $total,
+                        'notes' => $notes[$canteenId] ?? null,
+                        'payment_method' => 'midtrans',
+                        'payment_status' => 'pending',
+                        'payment_code' => $paymentCode,
+                        'snap_token' => $snapToken,
                     ]);
-                }
 
-                $lastOrder = $order;
+                    foreach ($items as $item) {
+                        // Kunci baris menu untuk update untuk menghindari race condition
+                        $menu = Menu::lockForUpdate()->findOrFail($item['menu_id']);
+                        if ($menu->stock < $item['quantity']) {
+                            throw new \Exception("Stok menu '{$menu->name}' tidak mencukupi. Sisa stok: {$menu->stock}.");
+                        }
+                        $menu->decrement('stock', $item['quantity']);
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'menu_id' => $item['menu_id'],
+                            'qty' => $item['quantity'],
+                            'price' => $item['price'],
+                        ]);
+                    }
+
+                    $lastOrder = $order;
+                }
+            });
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
             }
-        });
+
+            return back()->withErrors(['payment_method' => $e->getMessage()])->withInput();
+        }
 
         $fullCart = session(self::SESSION_KEY, []);
         foreach (array_keys($cart) as $menuId) {

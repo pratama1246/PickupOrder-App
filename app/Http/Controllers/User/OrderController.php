@@ -105,10 +105,18 @@ class OrderController extends Controller
             return back()->with('error', 'Pesanan yang sedang/sudah diproses tidak dapat dibatalkan.');
         }
 
-        $order->update([
-            'status' => 'dibatalkan',
-            'payment_status' => 'failed',
-        ]);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($order) {
+            $order->update([
+                'status' => 'dibatalkan',
+                'payment_status' => 'failed',
+            ]);
+
+            foreach ($order->items as $item) {
+                if ($item->menu) {
+                    $item->menu->increment('stock', $item->qty);
+                }
+            }
+        });
 
         return redirect()->route('order.index')->with('success', 'Pesanan #'.$order->order_code.' berhasil dibatalkan.');
     }
@@ -128,12 +136,20 @@ class OrderController extends Controller
             return redirect()->route('order.index')->with('error', 'Transaksi tidak ditemukan atau sudah dibatalkan.');
         }
 
-        foreach ($orders as $order) {
-            $order->update([
-                'status' => 'dibatalkan',
-                'payment_status' => 'failed',
-            ]);
-        }
+        \Illuminate\Support\Facades\DB::transaction(function () use ($orders) {
+            foreach ($orders as $order) {
+                $order->update([
+                    'status' => 'dibatalkan',
+                    'payment_status' => 'failed',
+                ]);
+
+                foreach ($order->items as $item) {
+                    if ($item->menu) {
+                        $item->menu->increment('stock', $item->qty);
+                    }
+                }
+            }
+        });
 
         return redirect()->route('order.index')->with('success', 'Seluruh transaksi dengan kode '.$paymentCode.' berhasil dibatalkan.');
     }

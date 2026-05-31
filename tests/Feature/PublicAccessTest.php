@@ -18,6 +18,7 @@ class PublicAccessTest extends TestCase
         // Set standard app order hours config to allow checking out (or testing)
         config(['app.order_hours.start' => '07:30']);
         config(['app.order_hours.end' => '15:30']);
+        config(['app.order_days' => '*']);
     }
 
     public function test_guest_can_access_public_routes()

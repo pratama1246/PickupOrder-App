@@ -17,14 +17,17 @@ class CheckOnlineOrderHours
     public function handle(Request $request, Closure $next): Response
     {
         if (! OrderHelper::isOrderTimeActive()) {
+            $activeDays = OrderHelper::getActiveDaysFormatted();
+            $timeRange = config('app.order_hours.start') . ' - ' . config('app.order_hours.end');
+
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Pemesanan online saat ini sedang tutup. Pemesanan online dapat dilakukan pada pukul ' . config('app.order_hours.start') . ' - ' . config('app.order_hours.end') . ' WIB.'
+                    'message' => 'Pemesanan online saat ini sedang tutup. Pemesanan online dapat dilakukan pada hari ' . $activeDays . ' pukul ' . $timeRange . ' WIB.'
                 ], 422);
             }
 
-            return redirect()->route('cart.index')->with('error', 'Pemesanan online saat ini sedang tutup.');
+            return redirect()->route('cart.index')->with('error', 'Pemesanan online saat ini sedang tutup (Buka: hari ' . $activeDays . ' pukul ' . $timeRange . ' WIB).');
         }
 
         return $next($request);

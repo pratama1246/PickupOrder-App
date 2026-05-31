@@ -45,8 +45,8 @@
                           Menggunakan Alpine.js untuk menghitung total harga pesanan secara real-time di sisi klien 
                           berdasarkan kuantitas (qty) yang dipilih sebelum dikirimkan ke server.
                         --}}
-                        <div class="mb-5" x-data="{ qty: 1, harga: {{ $menu->price }} }">
-                            <x-user.quantity-control x-model="qty" />
+                        <div class="mb-5" x-data="{ qty: {{ $menu->stock > 0 ? 1 : 0 }}, harga: {{ $menu->price }} }">
+                            <x-user.quantity-control x-model="qty" :min="$menu->stock > 0 ? 1 : 0" :max="$menu->stock > 0 ? $menu->stock : 0" />
 
                             <div class="mt-5 pt-4 border-t border-base-content/10">
                                 <p class="text-sm font-bold text-base-content/60 mb-1">Total :</p>
@@ -87,7 +87,7 @@
                 <div class="w-full min-w-0">
 
                     <div class="mb-8">
-                        <x-user.info-bar :rating="number_format($menu->average_rating, 1)" estimasi="10 - 15 Menit" :populer="$menu->recent_orders_count >= 5" :tersedia="$menu->isInStock()" />
+                        <x-user.info-bar :rating="number_format($menu->average_rating, 1)" :estimasi="$menu->canteen->estimated_queue_time" :populer="$menu->recent_orders_count >= 5" :tersedia="$menu->isInStock()" />
                     </div>
 
                     <h2 class="text-xl sm:text-2xl font-bold text-base-content mb-4">Menu Lain dari
@@ -98,7 +98,7 @@
                         @forelse($otherMenus as $otherMenu)
                             <div class="snap-start shrink-0 w-80 sm:w-72">
                                 <x-foodcard :id="$otherMenu->id" :name="$otherMenu->name" :canteenName="$otherMenu->canteen->name" :description="$otherMenu->description"
-                                    :price="$otherMenu->formatted_price" :image="$otherMenu->image ? asset('storage/' . $otherMenu->image) : null" :rating="number_format($otherMenu->average_rating, 1)" :actionUrl="route('menu.show', [
+                                    :price="$otherMenu->formatted_price" :image="$otherMenu->image ? asset('storage/' . $otherMenu->image) : null" :rating="number_format($otherMenu->average_rating, 1)" :stock="$otherMenu->stock" :actionUrl="route('menu.show', [
                                         'canteenId' => $otherMenu->canteen_id,
                                         'id' => $otherMenu->id,
                                     ])" />

@@ -140,7 +140,7 @@
                         <div x-show="(selectedCategory === 'Semua Kategori' || '{{ $menu->category ?? '' }}' === selectedCategory) && (menus[{{ $index }}].name.includes(searchQuery.toLowerCase()) || menus[{{ $index }}].desc.includes(searchQuery.toLowerCase()))"
                             x-transition>
                             <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$canteen->name" :description="$menu->description"
-                                :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :actionUrl="route('menu.show', ['canteenId' => $canteen->id, 'id' => $menu->id])" />
+                                :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :actionUrl="route('menu.show', ['canteenId' => $canteen->id, 'id' => $menu->id])" />
                         </div>
                     @empty
                         <div

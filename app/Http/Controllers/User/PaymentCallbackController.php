@@ -77,17 +77,25 @@ class PaymentCallbackController extends Controller
         } elseif ($transactionStatus === 'pending') {
             $orders->each->update(['payment_status' => 'pending']);
 
-        } elseif (in_array($transactionStatus, ['deny', 'cancel', 'failure'])) {
-            $orders->each->update([
-                'payment_status' => 'failed',
-                'status' => 'dibatalkan',
-            ]);
-        } elseif ($transactionStatus === 'expire') {
-            // Batas waktu 30 menit pembayaran habis, kembalikan status pesanan ke batal.
-            $orders->each->update([
-                'payment_status' => 'expired',
-                'status' => 'dibatalkan',
-            ]);
+        } elseif (in_array($transactionStatus, ['deny', 'cancel', 'failure']) || $transactionStatus === 'expire') {
+            $paymentStatus = $transactionStatus === 'expire' ? 'expired' : 'failed';
+
+            \Illuminate\Support\Facades\DB::transaction(function () use ($orders, $paymentStatus) {
+                foreach ($orders as $order) {
+                    if ($order->status !== 'dibatalkan') {
+                        $order->update([
+                            'payment_status' => $paymentStatus,
+                            'status' => 'dibatalkan',
+                        ]);
+
+                        foreach ($order->items as $item) {
+                            if ($item->menu) {
+                                $item->menu->increment('stock', $item->qty);
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         return response()->json(['message' => 'OK'], 200);

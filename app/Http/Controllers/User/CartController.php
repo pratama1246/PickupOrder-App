@@ -227,6 +227,7 @@ class CartController extends Controller
             $cart[$menuId]['price'] = (float) $menu->price;
             $cart[$menuId]['canteen_id'] = $menu->canteen_id;
             $cart[$menuId]['canteen_name'] = $menu->canteen->name;
+            $cart[$menuId]['stock'] = $menu->stock;
             $cart[$menuId]['subtotal'] = $cart[$menuId]['price'] * $cart[$menuId]['quantity'];
         }
 

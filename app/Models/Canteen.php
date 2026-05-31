@@ -82,4 +82,20 @@ class Canteen extends Model
 
         return $avg > 0 ? $avg : 5.0;
     }
+
+    /**
+     * Menghitung estimasi waktu penyajian makanan berdasarkan jumlah antrean aktif di kantin.
+     * Menggunakan asumsi pengerjaan rata-rata 5 menit per antrean dengan range toleransi 5 menit.
+     */
+    public function getEstimatedQueueTimeAttribute(): string
+    {
+        $activeOrdersCount = $this->orders()
+            ->whereIn('status', ['menunggu', 'dimasak'])
+            ->count();
+
+        $minTime = ($activeOrdersCount + 1) * 5;
+        $maxTime = $minTime + 5;
+
+        return "{$minTime} - {$maxTime} Menit";
+    }
 }

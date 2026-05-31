@@ -6,6 +6,7 @@
     'quantity' => 1,
     'itemId' => null,
     'cartId' => null,
+    'stock' => 1,
 ])
 
 {{-- 
@@ -17,10 +18,13 @@
   - Memanfaatkan reaktivitas Alpine.js untuk menghitung subtotal harga menu secara instan di sisi klien.
 --}}
 <div class="cart-item-card border transition-all duration-200 rounded-2xl p-4 sm:p-5 cursor-pointer select-none"
-     :class="items[{{ $itemId }}] && items[{{ $itemId }}].selected ? 'bg-fern-100/80 border-fern-300 shadow-xs' : 'bg-white border-base-content/20'"
+     :class="items[{{ $itemId }}] && items[{{ $itemId }}].stock <= 0 ? 'bg-base-200/50 border-base-content/10 opacity-70 cursor-not-allowed' : (items[{{ $itemId }}] && items[{{ $itemId }}].selected ? 'bg-fern-100/80 border-fern-300 shadow-xs' : 'bg-white border-base-content/20')"
      x-data="{
          toggleCard(e) {
              if (e.target.closest('button') || e.target.closest('form') || e.target.closest('input') || e.target.closest('label') || e.target.closest('dialog')) {
+                 return;
+             }
+             if (this.items[{{ $itemId }}].stock <= 0) {
                  return;
              }
              const cb = $el.querySelector('input[name=\'selected_menu_ids[]\']');
@@ -38,8 +42,10 @@
                 name="selected_menu_ids[]"
                 value="{{ $cartId ?? $itemId }}"
                 form="checkout-prepare-form"
-                checked
-                class="checkbox checkbox-sm rounded-md border-base-content/30 checked:bg-fern-700 checked:border-fern-700 checked:text-white focus:ring-0"
+                @if($stock <= 0) disabled @endif
+                :disabled="items[{{ $itemId }}].stock <= 0"
+                :checked="items[{{ $itemId }}].selected"
+                class="checkbox checkbox-sm rounded-md border-base-content/30 checked:bg-fern-700 checked:border-fern-700 checked:text-white focus:ring-0 disabled:opacity-30 disabled:cursor-not-allowed"
                 @change="toggleItem({{ $cartId ?? $itemId }}, $event.target.checked)"
             >
         </label>
@@ -54,7 +60,12 @@
             </div>
 
             <div class="min-w-0 flex-1">
-                <h4 class="font-bold text-sm sm:text-base text-base-content leading-tight">{{ $name }}</h4>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h4 class="font-bold text-sm sm:text-base text-base-content leading-tight">{{ $name }}</h4>
+                    @if($stock <= 0)
+                        <span class="badge bg-red-500 text-white border-none font-bold text-[10px] py-1 px-2 rounded-md shadow-sm shrink-0">Stok Habis</span>
+                    @endif
+                </div>
                 @if ($description)
                     <p class="text-xs text-base-content/60 font-medium mt-0.5 leading-snug line-clamp-1">
                         {{ $description }}</p>
@@ -79,10 +90,11 @@
             <div class="flex items-center gap-2 sm:gap-4 shrink-0">
                 <div class="flex items-center gap-1.5 sm:gap-2.5">
                     <button type="button" @click="changeQty({{ $itemId }}, -1)"
-                        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95"
-                        :disabled="items[{{ $itemId }}].qty <= 1">
+                        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+                        :disabled="items[{{ $itemId }}].qty <= 1 || items[{{ $itemId }}].stock <= 0"
+                        @if($stock <= 0) disabled @endif>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content"
-                            :class="items[{{ $itemId }}].qty <= 1 ? 'opacity-30' : ''" fill="none"
+                            :class="items[{{ $itemId }}].qty <= 1 || items[{{ $itemId }}].stock <= 0 ? 'opacity-30' : ''" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
                         </svg>
@@ -92,10 +104,11 @@
                         x-text="items[{{ $itemId }}].qty">{{ $quantity }}</span>
 
                     <button type="button" @click="changeQty({{ $itemId }}, 1)"
-                        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95"
-                        :disabled="items[{{ $itemId }}].qty >= 20">
+                        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-base-content/30 hover:border-base-content/60 bg-base-100 transition-colors active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+                        :disabled="items[{{ $itemId }}].qty >= 20 || items[{{ $itemId }}].qty >= items[{{ $itemId }}].stock"
+                        @if($stock <= 0) disabled @endif>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content"
-                            :class="items[{{ $itemId }}].qty >= 20 ? 'opacity-30' : ''" fill="none"
+                            :class="items[{{ $itemId }}].qty >= 20 || items[{{ $itemId }}].qty >= items[{{ $itemId }}].stock ? 'opacity-30' : ''" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>

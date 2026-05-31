@@ -20,7 +20,7 @@ class CanteenController extends Controller
         // Membatasi menu yang dimuat hanya yang berstatus aktif dan stoknya tersedia.
         // Menerapkan pencarian dan filter kategori secara rekursif ke dalam relasi menus.
         $query = Canteen::withAvg('reviews', 'rating')->with(['menus' => function ($q) use ($request) {
-            $q->where('is_available', true)->where('stock', '>', 0);
+            $q->where('is_available', true);
             if ($request->filled('category')) {
                 $q->where('category', $request->category);
             }

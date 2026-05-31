@@ -114,7 +114,15 @@ class OrderController extends Controller
             ->whereIn('status', ['menunggu', 'dimasak'])
             ->findOrFail($id);
 
-        $order->update(['status' => 'dibatalkan']);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($order) {
+            $order->update(['status' => 'dibatalkan']);
+
+            foreach ($order->items as $item) {
+                if ($item->menu) {
+                    $item->menu->increment('stock', $item->qty);
+                }
+            }
+        });
 
         return back()->with('success', "Pesanan #{$order->order_code} dibatalkan.");
     }

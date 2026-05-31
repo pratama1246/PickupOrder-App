@@ -66,9 +66,12 @@
 
         <div id="pesanan-results">
             @php
-                $allMenus = $canteens->getCollection()->flatMap->menus->take(12);
+                $allMenus = $canteens->getCollection()->flatMap->menus;
+                $inStockMenus = $allMenus->filter(fn($m) => $m->stock > 0)->take(12);
+                $outOfStockMenus = $allMenus->filter(fn($m) => $m->stock <= 0)->take(12);
                 $hasCanteens = $canteens->count() > 0;
-                $hasMenus = $allMenus->count() > 0;
+                $hasMenus = $inStockMenus->count() > 0;
+                $hasOutOfStockMenus = $outOfStockMenus->count() > 0;
             @endphp
 
             @if (!$hasCanteens && !$hasMenus)
@@ -125,9 +128,30 @@
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                                @foreach ($allMenus as $menu)
+                                @foreach ($inStockMenus as $menu)
                                     <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$menu->canteen->name" :description="$menu->description"
-                                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :actionUrl="route('menu.show', [
+                                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :actionUrl="route('menu.show', [
+                                            'canteenId' => $menu->canteen_id,
+                                            'id' => $menu->id,
+                                        ])" />
+                                @endforeach
+                            </div>
+                        </div>
+                    </section>
+                @endif
+
+                @if ($hasOutOfStockMenus)
+                    <section class="px-3 sm:px-10 md:px-16 lg:px-24 mb-12">
+                        <div class="max-w-8xl mx-auto">
+                            <div class="mb-6 sm:pl-2">
+                                <h2 class="text-xl sm:text-2xl font-bold text-base-content">Menu Habis</h2>
+                                <p class="text-base-content/60 text-sm mt-1">Menu lezat yang sedang tidak tersedia saat ini.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                                @foreach ($outOfStockMenus as $menu)
+                                    <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$menu->canteen->name" :description="$menu->description"
+                                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :actionUrl="route('menu.show', [
                                             'canteenId' => $menu->canteen_id,
                                             'id' => $menu->id,
                                         ])" />

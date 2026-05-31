@@ -132,5 +132,6 @@ return [
         'start' => env('ORDER_START_TIME', '07:30'),
         'end' => env('ORDER_END_TIME', '15:30'),
     ],
+    'order_days' => env('ORDER_ACTIVE_DAYS', 'Monday,Tuesday,Wednesday,Thursday,Friday'),
 
 ];
