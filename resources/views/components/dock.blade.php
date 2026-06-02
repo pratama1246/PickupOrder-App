@@ -2,19 +2,8 @@
     'role' => 'user',
 ])
 
-@php
-    $resolvedRole = $role;
-    if ($resolvedRole === 'user' && auth()->check()) {
-        if (auth()->user()->role === 'admin') {
-            $resolvedRole = 'admin';
-        } elseif (auth()->user()->role === 'vendor') {
-            $resolvedRole = 'vendor';
-        }
-    }
-@endphp
-
 <div class="dock lg:hidden bg-base-100 shadow-lg border-t border-base-200 z-50">
-    @if ($resolvedRole === 'admin')
+    @if ($role === 'admin')
         <a href="{{ route('admin.dashboard') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('admin/dashboard') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -48,7 +37,7 @@
             </svg>
             <span class="dock-label text-xs">Pengguna</span>
         </a>
-    @elseif($resolvedRole === 'vendor')
+    @elseif($role === 'vendor')
         <a href="{{ route('vendor.dashboard') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('vendor/dashboard') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
