@@ -23,9 +23,11 @@
             <li><a href="{{ route('canteen.index') }}"
                     class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('browse*') || request()->is('canteen*') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Pesan</a>
             </li>
+            @if(!auth()->check() || auth()->user()->role === 'mahasiswa')
             <li><a href="{{ route('order.index') }}"
                     class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->is('history*') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Riwayat</a>
             </li>
+            @endif
             <li><a href="{{ route('about') }}"
                     class="rounded-lg hover:bg-fern-50 hover:text-fern-700 font-medium {{ request()->routeIs('about') ? 'bg-fern-50 text-fern-700 font-medium' : 'text-white' }}">Tentang
                     Kami</a></li>
@@ -34,6 +36,7 @@
 
     <div class="navbar-end gap-1">
 
+        @if(!auth()->check() || auth()->user()->role === 'mahasiswa')
         @php
             $cartCount = count(session('cart', []));
         @endphp
@@ -53,6 +56,7 @@
 
             </div>
         </a>
+        @endif
 
         @auth
             <div class="dropdown dropdown-end ml-1">

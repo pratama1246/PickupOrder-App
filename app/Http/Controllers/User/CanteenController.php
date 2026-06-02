@@ -20,7 +20,7 @@ class CanteenController extends Controller
         // Membatasi menu yang dimuat hanya yang berstatus aktif dan stoknya tersedia.
         // Menerapkan pencarian dan filter kategori secara rekursif ke dalam relasi menus.
         $query = Canteen::withAvg('reviews', 'rating')->with(['menus' => function ($q) use ($request) {
-            $q->where('is_available', true);
+            $q->with('canteen')->where('is_available', true);
             if ($request->filled('category')) {
                 $q->where('category', $request->category);
             }
@@ -80,7 +80,7 @@ class CanteenController extends Controller
         }
 
         // Paginate dengan angka 9 agar pas terbagi dalam grid 3 kolom pada desktop (3 baris sempurna).
-        $canteens = $query->latest()->paginate(9)->withQueryString();
+        $canteens = $query->orderBy('is_open', 'desc')->latest()->paginate(9)->withQueryString();
 
         $categories = Menu::select('category')->distinct()->whereNotNull('category')->pluck('category');
         $allCanteens = Canteen::where('is_open', true)->select('id', 'name')->get();

@@ -146,7 +146,7 @@
 @push('scripts')
     {{-- Load Midtrans Snap JS jika ada pending online group --}}
     @if ($pendingOnlineGroups->isNotEmpty())
-        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+        <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
             data-client-key="{{ config('services.midtrans.client_key') }}"></script>
         <script>
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ?? '';

@@ -25,6 +25,7 @@ class StockManagementTest extends TestCase
         config(['app.order_hours.start' => '07:30']);
         config(['app.order_hours.end' => '15:30']);
         config(['app.order_days' => '*']);
+        \Carbon\Carbon::setTestNow(\Carbon\Carbon::parse('2026-06-02 10:00:00'));
 
         // Create student
         $this->student = User::factory()->create([
@@ -56,6 +57,12 @@ class StockManagementTest extends TestCase
             'is_available' => true,
             'category' => 'Makanan',
         ]);
+    }
+
+    protected function tearDown(): void
+    {
+        \Carbon\Carbon::setTestNow();
+        parent::tearDown();
     }
 
     public function test_cash_checkout_decrements_stock()

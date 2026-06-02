@@ -8,6 +8,7 @@
     'image' => null,
     'actionUrl' => route('canteen.index'),
     'actionText' => 'Lihat Menu',
+    'isOpen' => true,
 ])
 
 {{-- 
@@ -23,7 +24,7 @@
     $imagePath = $image ? $image : 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random';
 @endphp
 
-<div class="card relative bg-base-100 rounded-3xl shadow-sm p-0 md:p-6 flex flex-col md:flex-row gap-0 md:gap-6 border border-base-200 cursor-pointer">
+<div class="card relative bg-base-100 rounded-3xl shadow-sm p-0 md:p-6 flex flex-col md:flex-row gap-0 md:gap-6 border border-base-200 cursor-pointer {{ !$isOpen ? 'grayscale opacity-65 bg-base-200/30 border-base-content/10' : '' }}">
     <a href="{{ $actionUrl }}" class="absolute inset-0 z-10 rounded-3xl" aria-label="Lihat {{ $name }}"></a>
 
     <figure
@@ -37,8 +38,11 @@
             alt="{{ $name }}" />
     </figure>
     <div class="flex flex-col flex-1 card-body p-6 md:p-2">
-        <h2 class="card-title font-bold text-lg md:text-xl text-base-content mb-1">
-            {{ $name }}
+        <h2 class="card-title font-bold text-lg md:text-xl text-base-content mb-1 flex flex-wrap items-center gap-2">
+            <span>{{ $name }}</span>
+            @if (!$isOpen)
+                <span class="badge bg-red-500 text-white border-none font-extrabold text-[10px] px-2 py-0.5 tracking-wider uppercase">Tutup</span>
+            @endif
         </h2>
         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl w-fit mb-3 bg-base-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-yellow-400" viewBox="0 0 24 24"
@@ -74,8 +78,8 @@
                 {{ $buttons }}
             @else
                 <a href="{{ $actionUrl }}"
-                    class="btn bg-fern-700 text-white border-none shadow-md rounded-xl w-full md:w-fit transition-all duration-200 active:scale-95 font-bold text-sm px-6 py-2 min-h-0 h-auto inline-flex items-center justify-center">
-                    {{ $actionText }}
+                    class="btn {{ !$isOpen ? 'bg-base-content/40 hover:bg-base-content/50' : 'bg-fern-700 hover:bg-fern-800' }} text-white border-none shadow-md rounded-xl w-full md:w-fit transition-all duration-200 active:scale-95 font-bold text-sm px-6 py-2 min-h-0 h-auto inline-flex items-center justify-center">
+                    {{ !$isOpen ? 'Lihat Menu (Tutup)' : $actionText }}
                 </a>
             @endif
         </div>

@@ -32,7 +32,9 @@
             <h6 class="footer-title text-fern-700">Navigasi</h6>
             <a href="{{ route('home') }}" class="link link-hover text-sm">Beranda</a>
             <a href="{{ route('canteen.index') }}" class="link link-hover text-sm">Pesan Makanan</a>
+            @if(!auth()->check() || auth()->user()->role === 'mahasiswa')
             <a href="{{ route('order.index') }}" class="link link-hover text-sm">Riwayat Pesanan</a>
+            @endif
             <a href="{{ route('profile.edit') }}" class="link link-hover text-sm">Profil Saya</a>
             <a href="{{ route('about') }}" class="link link-hover text-sm">Tentang Kami</a>
         </nav>

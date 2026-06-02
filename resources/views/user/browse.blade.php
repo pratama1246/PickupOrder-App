@@ -107,7 +107,7 @@
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                 @foreach ($canteens as $canteen)
                                     <x-canteencard :id="$canteen->id" :name="$canteen->name" :image="$canteen->image ? asset('storage/' . $canteen->image) : null" :description="$canteen->description ?? 'Kantin pilihan mahasiswa.'"
-                                        :menuCount="$canteen->available_menus_count ?? $canteen->menus->count()" :rating="number_format($canteen->average_rating, 1)" :actionUrl="route('canteen.show', $canteen->id)" actionText="Lihat Kantin" />
+                                        :menuCount="$canteen->available_menus_count ?? $canteen->menus->count()" :rating="number_format($canteen->average_rating, 1)" :actionUrl="route('canteen.show', $canteen->id)" actionText="Lihat Kantin" :isOpen="$canteen->is_open" />
                                 @endforeach
                             </div>
 
@@ -130,7 +130,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                                 @foreach ($inStockMenus as $menu)
                                     <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$menu->canteen->name" :description="$menu->description"
-                                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :actionUrl="route('menu.show', [
+                                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :isCanteenOpen="$menu->canteen->is_open" :actionUrl="route('menu.show', [
                                             'canteenId' => $menu->canteen_id,
                                             'id' => $menu->id,
                                         ])" />
@@ -151,7 +151,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                                 @foreach ($outOfStockMenus as $menu)
                                     <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$menu->canteen->name" :description="$menu->description"
-                                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :actionUrl="route('menu.show', [
+                                        :price="$menu->formatted_price" :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" :stock="$menu->stock" :isCanteenOpen="$menu->canteen->is_open" :actionUrl="route('menu.show', [
                                             'canteenId' => $menu->canteen_id,
                                             'id' => $menu->id,
                                         ])" />
