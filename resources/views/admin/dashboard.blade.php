@@ -109,7 +109,25 @@
                             @forelse($topCanteens ?? [] as $i => $canteen)
                                 <tr class="hover:bg-base-200/30 transition-colors">
                                     <td class="px-4 py-3 text-base-content/40 font-bold">{{ $i + 1 }}</td>
-                                    <td class="px-4 py-3 font-semibold text-base-content">{{ $canteen->name }}</td>
+                                    <td class="px-4 py-3 font-semibold text-base-content">
+                                        <div class="flex items-center gap-2.5">
+                                            @php
+                                                $canteenImageUrl = 'https://ui-avatars.com/api/?name=' . urlencode($canteen->name) . '&background=random';
+                                                if ($canteen->image) {
+                                                    $canteenImageUrl = str_starts_with($canteen->image, 'assets/') ? asset($canteen->image) : asset('storage/' . $canteen->image);
+                                                }
+                                            @endphp
+                                            <div class="avatar shrink-0">
+                                                <div class="w-8 h-8 rounded-lg bg-base-200 overflow-hidden shadow-xs border border-base-content/5">
+                                                    <img src="{{ $canteenImageUrl }}" 
+                                                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($canteen->name) }}&background=random';"
+                                                         alt="{{ $canteen->name }}" 
+                                                         class="w-full h-full object-cover">
+                                                </div>
+                                            </div>
+                                            <span class="truncate max-w-[120px] sm:max-w-[200px]">{{ $canteen->name }}</span>
+                                        </div>
+                                    </td>
                                     <td class="px-4 py-3 text-center">
                                         <span
                                             class="font-semibold text-fern-700">{{ number_format($canteen->completed_orders_count) }}</span>

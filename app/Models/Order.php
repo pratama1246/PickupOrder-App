@@ -24,6 +24,7 @@ class Order extends Model
         'payment_status',
         'payment_code',
         'snap_token',
+        'payment_proof',
     ];
 
     protected $casts = [
@@ -131,6 +132,7 @@ class Order extends Model
     {
         return match ($this->payment_method) {
             'midtrans' => 'Online (QRIS / E-Wallet)',
+            'qris_manual' => 'Transfer QRIS Kantin',
             'cash' => 'Bayar di Warung',
             default => 'Bayar di Warung',
         };

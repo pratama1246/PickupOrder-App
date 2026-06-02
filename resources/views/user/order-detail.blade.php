@@ -337,6 +337,23 @@
                             </div>
                         @endif
 
+                        @if ($order->payment_method === 'qris_manual' && $order->payment_status === 'pending')
+                            <div
+                                class="bg-amber-50 border border-amber-300 rounded-2xl p-5 flex items-start gap-4 shadow-sm mb-6">
+                                <div class="p-2.5 rounded-xl bg-amber-100 text-amber-700 shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-amber-900 text-sm mb-0.5">Menunggu Verifikasi Pembayaran</p>
+                                    <p class="text-amber-800 text-xs font-semibold leading-relaxed">Bukti transfer Anda telah terkirim. Kantin akan segera memverifikasi pembayaran Anda sebelum mulai memasak pesanan.</p>
+                                </div>
+                            </div>
+                        @endif
+
                         {{-- Informasi: Pesanan Siap Diambil dengan Pembayaran Tunai (Cash) Belum Lunas --}}
                         @if ($order->status === 'siap_diambil' && $order->payment_method === 'cash' && $order->payment_status === 'pending')
                             <div

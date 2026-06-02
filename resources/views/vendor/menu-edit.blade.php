@@ -16,6 +16,7 @@
             class="space-y-5">
             @csrf
             @method('PUT')
+            <input type="file" name="image" id="real_image_input" class="hidden" />
 
             <div>
                 <label class="block text-sm font-bold text-base-content mb-1.5">Nama Menu</label>
@@ -112,8 +113,8 @@
                         <p class="mb-1 text-xs"><span class="font-bold">Klik untuk mengubah</span> atau seret gambar</p>
                         <p class="text-xxs opacity-75">PNG, JPG, WEBP maks. 10MB</p>
                     </div>
-                    <input type="file" name="image" accept="image/*" class="hidden"
-                        @change="if ($event.target.files.length) imageUrl = URL.createObjectURL($event.target.files[0])" />
+                    <input type="file" accept="image/*" class="hidden"
+                        @change="if ($event.target.files.length) { imageUrl = URL.createObjectURL($event.target.files[0]); compressAndSetFile($event.target.files[0], 'real_image_input', 1200, 0.75); }" />
                 </label>
                 @error('image')
                     <p class="text-error text-xs mt-1">{{ $message }}</p>
@@ -133,5 +134,59 @@
 
         </form>
     </div>
+
+    @push('scripts')
+    <script>
+        window.compressAndSetFile = function(file, targetInputId, maxWidth, quality) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxWidth) {
+                            width *= maxWidth / height;
+                            height = maxWidth;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(function(blob) {
+                        const compressedFile = new File([blob], file.name.substring(0, file.name.lastIndexOf('.')) + '_compressed.jpg', {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(compressedFile);
+
+                        const realInput = document.getElementById(targetInputId);
+                        if (realInput) {
+                            realInput.files = dataTransfer.files;
+                            console.log('Menu file compressed: ' + (compressedFile.size / 1024).toFixed(2) + ' KB');
+                        }
+                    }, 'image/jpeg', quality);
+                };
+            };
+        };
+    </script>
+    @endpush
 
 @endsection

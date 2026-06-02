@@ -37,11 +37,12 @@ class CartController extends Controller
      * Menambahkan item menu makanan ke dalam keranjang belanja.
      * Melakukan verifikasi ketersediaan stok fisik dan status aktif operasional kantin induk.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'menu_id' => ['required', 'integer', 'exists:menus,id'],
             'quantity' => ['required', 'integer', 'min:1', 'max:20'],
+            'force' => ['nullable', 'boolean'],
         ]);
 
         $menu = Menu::with('canteen')->findOrFail($request->menu_id);
@@ -51,6 +52,7 @@ class CartController extends Controller
         abort_if(! $menu->canteen || ! $menu->canteen->is_open, 422, 'Kantin sedang tutup.');
 
         $cart = session(self::SESSION_KEY, []);
+
         $key = $request->menu_id;
 
         if (isset($cart[$key])) {
@@ -71,6 +73,14 @@ class CartController extends Controller
         $cart[$key]['subtotal'] = $cart[$key]['price'] * $cart[$key]['quantity'];
 
         session([self::SESSION_KEY => $cart]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "{$menu->name} berhasil ditambahkan ke keranjang.",
+                'cart' => $cart,
+            ]);
+        }
 
         return back()->with('success', "{$menu->name} ditambahkan ke keranjang.");
     }
@@ -135,6 +145,7 @@ class CartController extends Controller
             ->where('user_id', $request->user()->id)
             ->findOrFail($id);
 
+        // Muat keranjang belanja yang sudah ada
         $cart = session(self::SESSION_KEY, []);
         $addedCount = 0;
         $skippedCount = 0;

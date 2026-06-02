@@ -78,6 +78,38 @@ class OrderController extends Controller
 
         $order = Order::where('canteen_id', $canteen->id)->findOrFail($id);
 
+        // Penanganan Aksi Verifikasi Pembayaran QRIS Manual
+        if ($request->input('action_type') === 'confirm_payment') {
+            abort_if($order->payment_method !== 'qris_manual' || $order->payment_status !== 'pending', 422, 'Pesanan tidak memerlukan konfirmasi pembayaran.');
+            
+            $order->update([
+                'payment_status' => 'paid',
+                'status' => 'dimasak', // Langsung masuk tahap dimasak setelah dibayar
+            ]);
+
+            return back()->with('success', "Pembayaran untuk pesanan #{$order->order_code} berhasil dikonfirmasi!");
+        }
+
+        if ($request->input('action_type') === 'reject_payment') {
+            abort_if($order->payment_method !== 'qris_manual' || $order->payment_status !== 'pending', 422, 'Pesanan tidak memerlukan verifikasi pembayaran.');
+
+            \Illuminate\Support\Facades\DB::transaction(function () use ($order) {
+                $order->update([
+                    'payment_status' => 'failed',
+                    'status' => 'dibatalkan',
+                ]);
+
+                // Kembalikan stok menu karena pesanan dibatalkan
+                foreach ($order->items as $item) {
+                    if ($item->menu) {
+                        $item->menu->increment('stock', $item->qty);
+                    }
+                }
+            });
+
+            return back()->with('success', "Pembayaran ditolak. Pesanan #{$order->order_code} berhasil dibatalkan.");
+        }
+
         // Aturan transisi linear status pesanan makanan.
         $nextStatus = match ($order->status) {
             'menunggu' => 'dimasak',

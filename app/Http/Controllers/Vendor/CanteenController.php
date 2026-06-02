@@ -36,13 +36,22 @@ class CanteenController extends Controller
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
             'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'qris_image'  => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
         // Sanitasi input teks agar tag HTML/link phishing tidak masuk ke profil kantin.
         $validated['name']        = strip_tags($validated['name']);
         $validated['description'] = strip_tags($validated['description'] ?? '');
 
-        if ($request->hasFile('image')) {
+        // By default, do not modify image and qris_image unless specified.
+        unset($validated['image'], $validated['qris_image']);
+
+        if ($request->input('delete_image') == '1') {
+            if ($canteen->image && ! str_starts_with($canteen->image, 'assets/')) {
+                Storage::disk('public')->delete($canteen->image);
+            }
+            $validated['image'] = null;
+        } elseif ($request->hasFile('image')) {
             // Melindungi file aset gambar bawaan sistem agar tidak terhapus secara tidak sengaja.
             if ($canteen->image && ! str_starts_with($canteen->image, 'assets/')) {
                 Storage::disk('public')->delete($canteen->image);
@@ -54,6 +63,23 @@ class CanteenController extends Controller
             $webp = $image->encode(new WebpEncoder(quality: 75));
             Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
             $validated['image'] = 'canteens/'.$filename;
+        }
+
+        if ($request->input('delete_qris_image') == '1') {
+            if ($canteen->qris_image) {
+                Storage::disk('public')->delete($canteen->qris_image);
+            }
+            $validated['qris_image'] = null;
+        } elseif ($request->hasFile('qris_image')) {
+            if ($canteen->qris_image) {
+                Storage::disk('public')->delete($canteen->qris_image);
+            }
+            $filename = uniqid('qris_').'.webp';
+            $image    = Image::decode($request->file('qris_image'));
+            $image->scale(width: 800); // 800px is perfect for scannable QR Codes
+            $webp = $image->encode(new WebpEncoder(quality: 85)); // Higher quality for scan precision
+            Storage::disk('public')->put('qris/'.$filename, $webp->toString());
+            $validated['qris_image'] = 'qris/'.$filename;
         }
 
         $canteen->update($validated);

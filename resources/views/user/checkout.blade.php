@@ -20,9 +20,10 @@
         </section>
 
         <section class="px-3 sm:px-10 md:px-16 lg:px-24">
-            <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST"
+            <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST" enctype="multipart/form-data"
                 class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
                 @csrf
+                <input type="file" name="payment_proof" id="real_payment_proof_input" class="hidden" />
 
                 <div class="w-full lg:flex-1 min-w-0 space-y-6">
 
@@ -95,7 +96,12 @@
                         @enderror
                     </div>
 
-                    <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm">
+                    @php
+                        $canteenData = reset($grouped);
+                        $qrisImage = $canteenData['qris_image'] ?? null;
+                    @endphp
+                    <div class="bg-vanilla-custard-50 border border-base-content/20 rounded-3xl p-5 sm:p-6 shadow-sm"
+                        x-data="{ paymentMethod: 'qris' }">
                         <h2 class="text-lg sm:text-xl font-bold text-base-content mb-5">Pilih Metode Pembayaran</h2>
 
                         <div class="space-y-4">
@@ -103,7 +109,7 @@
                             <label
                                 class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-checked:bg-fern-50/50 has-checked:border-fern-700">
                                 <input type="radio" name="payment_method" value="qris"
-                                    class="radio radio-success radio-sm" checked>
+                                    class="radio radio-success radio-sm" x-model="paymentMethod">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-base-content/80"
@@ -120,10 +126,35 @@
                                 </div>
                             </label>
 
+                            {{-- QRIS Manual (Kantin) --}}
+                            @if ($qrisImage)
+                            <label
+                                class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-checked:bg-fern-50/50 has-checked:border-fern-700">
+                                <input type="radio" name="payment_method" value="qris_manual"
+                                    class="radio radio-success radio-sm" x-model="paymentMethod">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-base-content/80"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <rect x="7" y="7" width="3" height="3"></rect>
+                                            <rect x="14" y="7" width="3" height="3"></rect>
+                                            <rect x="7" y="14" width="3" height="3"></rect>
+                                            <rect x="14" y="14" width="3" height="3"></rect>
+                                        </svg>
+                                        <h3 class="font-bold text-base text-base-content">Transfer QRIS Kantin (Manual)</h3>
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-base-content/60 font-medium mt-1">Scan QRIS kantin, transfer, dan unggah bukti transfer</p>
+                                </div>
+                            </label>
+                            @endif
+
+                            {{-- Bayar Di Warung --}}
                             <label
                                 class="relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-content/10 bg-base-100 hover:bg-base-200 transition-all has-checked:bg-fern-50/50 has-checked:border-fern-700">
                                 <input type="radio" name="payment_method" value="bayar_di_warung"
-                                    class="radio radio-success radio-sm">
+                                    class="radio radio-success radio-sm" x-model="paymentMethod">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-base-content/80"
@@ -147,8 +178,49 @@
                             </label>
                         </div>
 
+                        {{-- Panel Scan QRIS dan Upload Bukti --}}
+                        @if ($qrisImage)
+                        <div class="mt-5 pt-5 border-t border-base-content/10 space-y-5" x-show="paymentMethod === 'qris_manual'" x-transition>
+                            <div class="flex flex-col items-center bg-white border border-base-content/20 rounded-2xl p-5 shadow-xs">
+                                <h3 class="font-bold text-base-content mb-3 text-center text-sm sm:text-base">QRIS {{ $canteenData['canteen_name'] }}</h3>
+                                <div class="w-48 h-48 bg-base-200 rounded-2xl overflow-hidden mb-3 border border-base-content/10 relative shadow-inner">
+                                    <img src="{{ asset('storage/' . $qrisImage) }}" alt="QRIS Kantin" class="w-full h-full object-contain p-1" />
+                                </div>
+                                <a href="{{ asset('storage/' . $qrisImage) }}" download="QRIS-{{ Str::slug($canteenData['canteen_name']) }}.png" class="btn btn-outline border-fern-700 text-fern-700 hover:bg-fern-700 hover:text-white rounded-xl btn-sm font-bold min-h-0 h-9 px-4 transition-colors">
+                                    Unduh QR Code
+                                </a>
+                            </div>
+
+                            <div class="space-y-2" x-data="{ proofPreview: '' }">
+                                <label class="block text-sm font-bold text-base-content">Unggah Bukti Pembayaran</label>
+                                
+                                <label
+                                    class="relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-base-content/25 rounded-2xl cursor-pointer hover:bg-base-content/5 hover:border-fern-700 transition-colors group overflow-hidden bg-white shadow-xs">
+                                    <img x-show="proofPreview" :src="proofPreview" class="absolute inset-0 w-full h-full object-contain p-2"
+                                        style="display: none;" />
+                                    <div class="flex flex-col items-center justify-center pb-5 pt-4 px-4 text-center z-10"
+                                        :class="proofPreview ?
+                                            'absolute inset-0 bg-black/50 text-white opacity-0 hover:opacity-100 transition-opacity duration-200' :
+                                            'text-base-content/60'">
+                                        <svg class="w-8 h-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <p class="mb-1 text-xs"><span class="font-bold">Klik untuk mengunggah</span> bukti transfer</p>
+                                        <p class="text-xxs opacity-75">Format foto bukti transfer (JPG, PNG, WEBP)</p>
+                                    </div>
+                                    <input type="file" accept="image/*" class="hidden"
+                                        @change="if ($event.target.files.length) { proofPreview = URL.createObjectURL($event.target.files[0]); handleImageUpload($event.target.files[0]); }" />
+                                </label>
+                            </div>
+                        </div>
+                        @endif
+
                         <div id="error-payment_method" class="mt-3 text-sm font-medium text-red-600 hidden"></div>
                         @error('payment_method')
+                            <p class="mt-3 text-sm font-medium text-red-600">{{ $message }}</p>
+                        @enderror
+                        <div id="error-payment_proof" class="mt-3 text-sm font-medium text-red-600 hidden"></div>
+                        @error('payment_proof')
                             <p class="mt-3 text-sm font-medium text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
@@ -226,6 +298,59 @@
     <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
         data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     <script>
+        window.handleImageUpload = function(file) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    const MAX_WIDTH = 1000;
+                    const MAX_HEIGHT = 1000;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(function(blob) {
+                        const compressedFile = new File([blob], file.name.substring(0, file.name.lastIndexOf('.')) + '_compressed.jpg', {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(compressedFile);
+
+                        const realInput = document.getElementById('real_payment_proof_input');
+                        if (realInput) {
+                            realInput.files = dataTransfer.files;
+                            console.log('File compressed to: ' + (compressedFile.size / 1024).toFixed(2) + ' KB');
+                        }
+                    }, 'image/jpeg', 0.7); // compress to JPEG with 70% quality
+                };
+            };
+        };
+
         (function() {
             const form = document.getElementById('checkout-form');
             const submitBtn = document.getElementById('checkout-submit-btn');

@@ -111,10 +111,24 @@
                     }
                 }
                 return total;
+            },
+            validateCheckout(e) {
+                let selectedCanteens = new Set();
+                for (let id in this.items) {
+                    if (this.items[id].selected) {
+                        selectedCanteens.add(this.items[id].canteenId);
+                    }
+                }
+                if (selectedCanteens.size > 1) {
+                    e.preventDefault();
+                    document.getElementById('multi_canteen_warning_modal').showModal();
+                    return false;
+                }
+                return true;
             }
         }">
 
-            <form id="checkout-prepare-form" action="{{ route('checkout.prepare') }}" method="POST" class="hidden">
+            <form id="checkout-prepare-form" action="{{ route('checkout.prepare') }}" method="POST" class="hidden" @submit="validateCheckout($event)">
                 @csrf
             </form>
 
@@ -184,6 +198,16 @@
                     </div>
                 @endif
             </div>
+
+            <x-modal id="multi_canteen_warning_modal" type="warning" title="Pilih 1 Kantin Saja">
+                Anda hanya dapat melakukan checkout dari satu kantin dalam sekali transaksi. Silakan pilih kembali item belanja Anda agar hanya berasal dari satu kantin saja.
+                <x-slot:footer>
+                    <button type="button" onclick="document.getElementById('multi_canteen_warning_modal').close()"
+                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl px-5 text-sm font-bold min-h-0 h-10 transition-all shadow-md active:scale-95">
+                        Mengerti
+                    </button>
+                </x-slot:footer>
+            </x-modal>
         </section>
 
     </main>

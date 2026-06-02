@@ -18,6 +18,7 @@ class Canteen extends Model
         'image',
         'is_open',
         'daily_target',
+        'qris_image',
     ];
 
     protected $casts = [

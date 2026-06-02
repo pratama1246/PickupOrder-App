@@ -14,54 +14,61 @@
                 Anda.</p>
         </div>
 
-        <form action="{{ route('vendor.canteen.update') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
-            @csrf
-            @method('PUT')
+        @php
+            $currentImageUrl = '';
+            if ($canteen->image) {
+                $currentImageUrl = str_starts_with($canteen->image, 'assets/')
+                    ? asset($canteen->image)
+                    : asset('storage/' . $canteen->image);
+            }
+            $currentQrisUrl = '';
+            if ($canteen->qris_image) {
+                $currentQrisUrl = asset('storage/' . $canteen->qris_image);
+            }
+        @endphp
 
-            <div>
-                <label class="block text-sm font-bold text-base-content mb-1.5">Nama Kantin</label>
-                <input type="text" name="name" value="{{ old('name', $canteen->name) }}"
-                    placeholder="Masukkan nama kantin" required
-                    class="input input-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium" />
-                @error('name')
-                    <p class="text-error text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+        <div
+            x-data="{ imageUrl: '{{ $currentImageUrl }}', deleteImage: false, qrisUrl: '{{ $currentQrisUrl }}', deleteQris: false }">
+            <form action="{{ route('vendor.canteen.update') }}" method="POST" enctype="multipart/form-data"
+                class="space-y-5">
+                @csrf
+                @method('PUT')
+                <input type="file" name="image" id="real_image_input" class="hidden" />
+                <input type="file" name="qris_image" id="real_qris_image_input" class="hidden" />
 
-            <div>
-                <label class="block text-sm font-bold text-base-content mb-1.5">Deskripsi Kantin</label>
-                <textarea name="description" rows="4"
-                    placeholder="Tuliskan deskripsi atau informasi menarik tentang kantin Anda..."
-                    class="textarea textarea-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium resize-none">{{ old('description', $canteen->description) }}</textarea>
-                @error('description')
-                    <p class="text-error text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+                <div>
+                    <label class="block text-sm font-bold text-base-content mb-1.5">Nama Kantin</label>
+                    <input type="text" name="name" value="{{ old('name', $canteen->name) }}"
+                        placeholder="Masukkan nama kantin" required
+                        class="input input-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium" />
+                    @error('name')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            {{-- 
-              Menentukan path URL gambar kantin saat ini (apakah menggunakan gambar default/seeding di public 
-              atau berkas unggahan baru di storage) agar image preview Alpine.js memuat gambar yang benar.
-            --}}
-            @php
-                $currentImageUrl = '';
-                if ($canteen->image) {
-                    $currentImageUrl = str_starts_with($canteen->image, 'assets/')
-                        ? asset($canteen->image)
-                        : asset('storage/' . $canteen->image);
-                }
-            @endphp
+                <div>
+                    <label class="block text-sm font-bold text-base-content mb-1.5">Deskripsi Kantin</label>
+                    <textarea name="description" rows="4"
+                        placeholder="Tuliskan deskripsi atau informasi menarik tentang kantin Anda..."
+                        class="textarea textarea-bordered w-full rounded-xl border-base-content/25 focus:outline-none focus:border-fern-600 text-sm font-medium resize-none">{{ old('description', $canteen->description) }}</textarea>
+                    @error('description')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             {{-- 
               Menggunakan Alpine.js untuk mempermudah penggantian gambar lama dengan pratinjau lokal berkas baru
               secara instan sebelum dikirimkan ke server.
             --}}
-            <div x-data="{ imageUrl: '{{ $currentImageUrl }}' }">
+            {{-- Bagian Upload Gambar Kantin --}}
+            <div>
                 <label class="block text-sm font-bold text-base-content mb-1.5">Gambar Kantin</label>
+                <input type="hidden" name="delete_image" :value="deleteImage ? '1' : '0'" />
                 <label
                     class="relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-base-content/25 rounded-2xl cursor-pointer hover:bg-base-content/5 hover:border-fern-600 transition-colors group overflow-hidden bg-white shadow-xs">
-                    <img x-show="imageUrl" :src="imageUrl" class="absolute inset-0 w-full h-full object-cover"
+                    <img x-show="imageUrl && !deleteImage" :src="imageUrl" class="absolute inset-0 w-full h-full object-cover"
                         style="display: none;" />
                     <div class="flex flex-col items-center justify-center pb-6 pt-5 px-4 text-center z-10"
-                        :class="imageUrl ?
+                        :class="imageUrl && !deleteImage ?
                             'absolute inset-0 bg-black/50 text-white opacity-0 hover:opacity-100 transition-opacity duration-200' :
                             'text-base-content/60'">
                         <svg class="w-8 h-8 mb-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -72,14 +79,68 @@
                         <p class="mb-1 text-xs"><span class="font-bold">Klik untuk mengubah</span> atau seret gambar</p>
                         <p class="text-xxs opacity-75">PNG, JPG, WEBP maks. 10MB</p>
                     </div>
-                    <input type="file" name="image" accept="image/*" class="hidden"
-                        @change="if ($event.target.files.length) imageUrl = URL.createObjectURL($event.target.files[0])" />
+                    <input type="file" accept="image/*" class="hidden"
+                        @change="if ($event.target.files.length) { imageUrl = URL.createObjectURL($event.target.files[0]); deleteImage = false; compressAndSetFile($event.target.files[0], 'real_image_input', 1200, 0.75); }" />
                 </label>
-                @error('image')
-                    <p class="text-error text-xs mt-1">{{ $message }}</p>
-                @enderror
+                <div class="flex justify-between items-center mt-1.5">
+                    @error('image')
+                        <p class="text-error text-xs">{{ $message }}</p>
+                    @else
+                        <div></div>
+                    @enderror
+                    <template x-if="imageUrl && !deleteImage">
+                        <button type="button" onclick="document.getElementById('confirm_delete_image_modal').showModal()"
+                            class="text-xs font-bold text-red-500 hover:text-red-700 transition-colors flex items-center gap-1 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Hapus Gambar
+                        </button>
+                    </template>
+                </div>
             </div>
 
+            {{-- Bagian Upload QRIS --}}
+            <div>
+                <label class="block text-sm font-bold text-base-content mb-1.5">Gambar QRIS Statis Kantin</label>
+                <input type="hidden" name="delete_qris_image" :value="deleteQris ? '1' : '0'" />
+                <label
+                    class="relative flex flex-col items-center justify-center w-full h-44 border-2 border-dashed border-base-content/25 rounded-2xl cursor-pointer hover:bg-base-content/5 hover:border-fern-600 transition-colors group overflow-hidden bg-white shadow-xs">
+                    <img x-show="qrisUrl && !deleteQris" :src="qrisUrl" class="absolute inset-0 w-full h-full object-contain p-2"
+                        style="display: none;" />
+                    <div class="flex flex-col items-center justify-center pb-6 pt-5 px-4 text-center z-10"
+                        :class="qrisUrl && !deleteQris ?
+                            'absolute inset-0 bg-black/50 text-white opacity-0 hover:opacity-100 transition-opacity duration-200' :
+                            'text-base-content/60'">
+                        <svg class="w-8 h-8 mb-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                        </svg>
+                        <p class="mb-1 text-xs"><span class="font-bold">Klik untuk mengunggah</span> kode QRIS</p>
+                        <p class="text-xxs opacity-75">PNG, JPG, WEBP maks. 10MB</p>
+                    </div>
+                    <input type="file" accept="image/*" class="hidden"
+                        @change="if ($event.target.files.length) { qrisUrl = URL.createObjectURL($event.target.files[0]); deleteQris = false; compressAndSetFile($event.target.files[0], 'real_qris_image_input', 800, 0.85); }" />
+                </label>
+                <div class="flex justify-between items-center mt-1.5">
+                    @error('qris_image')
+                        <p class="text-error text-xs">{{ $message }}</p>
+                    @else
+                        <div></div>
+                    @enderror
+                    <template x-if="qrisUrl && !deleteQris">
+                        <button type="button" onclick="document.getElementById('confirm_delete_qris_modal').showModal()"
+                            class="text-xs font-bold text-red-500 hover:text-red-700 transition-colors flex items-center gap-1 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142a2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Hapus QRIS
+                        </button>
+                    </template>
+                </div>
+            </div>
+            {{-- Tombol Aksi Simpan/Batal --}}
             <div class="flex gap-3 pt-4">
                 <button type="submit"
                     class="btn bg-fern-700 hover:bg-fern-800 text-white border-none rounded-xl font-bold text-sm shadow-sm px-6">
@@ -91,7 +152,92 @@
                 </a>
             </div>
 
-        </form>
+            </form>
+
+            {{-- Dialog Konfirmasi Hapus Gambar --}}
+            <x-modal id="confirm_delete_image_modal" type="warning" title="Hapus Gambar Kantin?">
+                Apakah Anda yakin ingin menghapus gambar banner kantin Anda? Pratinjau gambar akan dihapus dan perubahan akan diterapkan setelah Anda menyimpan profil.
+                <x-slot:footer>
+                    <button type="button" onclick="document.getElementById('confirm_delete_image_modal').close()"
+                        class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">
+                        Batal
+                    </button>
+                    <button type="button" @click="imageUrl = ''; deleteImage = true; document.getElementById('real_image_input').value = ''; document.getElementById('confirm_delete_image_modal').close()"
+                        class="btn bg-red-600 hover:bg-red-700 text-white border-0 shadow-md rounded-xl font-bold active:scale-95 transition-all">
+                        Ya, Hapus
+                    </button>
+                </x-slot:footer>
+            </x-modal>
+
+            {{-- Dialog Konfirmasi Hapus QRIS --}}
+            <x-modal id="confirm_delete_qris_modal" type="warning" title="Hapus QRIS Kantin?">
+                Apakah Anda yakin ingin menghapus gambar QRIS kantin Anda? Pratinjau QRIS akan dihapus dan perubahan akan diterapkan setelah Anda menyimpan profil.
+                <x-slot:footer>
+                    <button type="button" onclick="document.getElementById('confirm_delete_qris_modal').close()"
+                        class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">
+                        Batal
+                    </button>
+                    <button type="button" @click="qrisUrl = ''; deleteQris = true; document.getElementById('real_qris_image_input').value = ''; document.getElementById('confirm_delete_qris_modal').close()"
+                        class="btn bg-red-600 hover:bg-red-700 text-white border-0 shadow-md rounded-xl font-bold active:scale-95 transition-all">
+                        Ya, Hapus
+                    </button>
+                </x-slot:footer>
+            </x-modal>
+        </div>
     </div>
+
+    @push('scripts')
+    <script>
+        window.compressAndSetFile = function(file, targetInputId, maxWidth, quality) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxWidth) {
+                            width *= maxWidth / height;
+                            height = maxWidth;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(function(blob) {
+                        const compressedFile = new File([blob], file.name.substring(0, file.name.lastIndexOf('.')) + '_compressed.jpg', {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(compressedFile);
+
+                        const realInput = document.getElementById(targetInputId);
+                        if (realInput) {
+                            realInput.files = dataTransfer.files;
+                            console.log('File compressed: ' + targetInputId + ' to ' + (compressedFile.size / 1024).toFixed(2) + ' KB');
+                        }
+                    }, 'image/jpeg', quality);
+                };
+            };
+        };
+    </script>
+    @endpush
 
 @endsection

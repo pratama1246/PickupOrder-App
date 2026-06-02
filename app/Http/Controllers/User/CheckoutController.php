@@ -17,6 +17,9 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Midtrans\Config as MidtransConfig;
 use Midtrans\Snap;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\Laravel\Facades\Image;
 
 class CheckoutController extends Controller
 {
@@ -72,10 +75,21 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Pilih setidaknya satu menu untuk checkout.');
         }
 
+        // Pastikan semua menu yang di-checkout hanya berasal dari satu kantin yang sama
+        $canteenIds = array_unique(array_column($cart, 'canteen_id'));
+        if (count($canteenIds) > 1) {
+            return redirect()->route('cart.index')->with('error', 'Anda hanya dapat melakukan checkout dari satu kantin dalam sekali transaksi.');
+        }
+
         // Mengelompokkan item belanja berdasarkan kantin agar mahasiswa dapat melihat subtotal per warung.
         $grouped = [];
         foreach ($cart as $item) {
-            $grouped[$item['canteen_id']]['canteen_name'] = $item['canteen_name'];
+            if (!isset($grouped[$item['canteen_id']])) {
+                $canteen = \App\Models\Canteen::find($item['canteen_id']);
+                $grouped[$item['canteen_id']]['canteen_name'] = $item['canteen_name'];
+                $grouped[$item['canteen_id']]['qris_image'] = $canteen ? $canteen->qris_image : null;
+                $grouped[$item['canteen_id']]['items'] = [];
+            }
             $grouped[$item['canteen_id']]['items'][] = $item;
         }
 
@@ -95,9 +109,10 @@ class CheckoutController extends Controller
         $request->validate([
             'pickup_time' => ['required', 'string'],
             'custom_time' => ['nullable', 'required_if:pickup_time,custom', 'string', 'regex:/^\d{2}:\d{2}$/'],
-            'payment_method' => ['required', 'in:qris,bayar_di_warung'],
+            'payment_method' => ['required', 'in:qris,bayar_di_warung,qris_manual'],
             'notes' => ['nullable', 'array'],
             'notes.*' => ['nullable', 'string', 'max:500'],
+            'payment_proof' => ['required_if:payment_method,qris_manual', 'nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:10240'],
         ]);
 
         $fullCart = $this->syncCartWithMenus(session(self::SESSION_KEY, []));
@@ -153,11 +168,15 @@ class CheckoutController extends Controller
             $grouped[$item['canteen_id']][] = $item;
         }
 
-        $paymentMethod = $request->payment_method === 'qris' ? 'midtrans' : 'cash';
+        $paymentMethod = $request->payment_method;
         $notes = $request->input('notes', []);
 
-        if ($paymentMethod === 'midtrans') {
+        if ($paymentMethod === 'qris') {
             return $this->processMidtransCheckout($request, $grouped, $pickupTime, $notes, $cart);
+        }
+
+        if ($paymentMethod === 'qris_manual') {
+            return $this->processQrisManualCheckout($request, $grouped, $pickupTime, $notes, $cart);
         }
 
         // --- Transaksi Pembayaran Tunai (Cash) ---
@@ -516,5 +535,97 @@ class CheckoutController extends Controller
         }
 
         return $cart;
+    }
+
+    /**
+     * Memproses pesanan dengan metode transfer QRIS Kantin (Manual).
+     * Menyimpan gambar bukti transfer terkompresi dan mencatat status pending.
+     */
+    private function processQrisManualCheckout(Request $request, array $grouped, Carbon $pickupTime, array $notes, array $cart)
+    {
+        $paymentProofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $filename = uniqid('proof_').'.webp';
+            $image = Image::decode($request->file('payment_proof'));
+            $image->scale(width: 1000); // 1000px is perfect for scannable receipt details
+            $webp = $image->encode(new WebpEncoder(quality: 80));
+            Storage::disk('public')->put('proofs/'.$filename, $webp->toString());
+            $paymentProofPath = 'proofs/'.$filename;
+        }
+
+        $sharedOrderCode = Order::generateOrderCode();
+        $lastOrder = null;
+
+        try {
+            DB::transaction(function () use ($grouped, $pickupTime, $notes, $sharedOrderCode, $paymentProofPath, &$lastOrder) {
+                foreach ($grouped as $canteenId => $items) {
+                    $total = array_sum(array_column($items, 'subtotal'));
+
+                    $order = Order::create([
+                        'user_id' => Auth::id(),
+                        'canteen_id' => $canteenId,
+                        'order_code' => $sharedOrderCode,
+                        'status' => 'menunggu',
+                        'pickup_time' => $pickupTime,
+                        'total_price' => $total,
+                        'notes' => $notes[$canteenId] ?? null,
+                        'payment_method' => 'qris_manual',
+                        'payment_status' => 'pending',
+                        'payment_code' => null,
+                        'snap_token' => null,
+                        'payment_proof' => $paymentProofPath,
+                    ]);
+
+                    foreach ($items as $item) {
+                        // Kunci baris menu untuk update untuk menghindari race condition
+                        $menu = Menu::lockForUpdate()->findOrFail($item['menu_id']);
+                        if ($menu->stock < $item['quantity']) {
+                            throw new \Exception("Stok menu '{$menu->name}' tidak mencukupi. Sisa stok: {$menu->stock}.");
+                        }
+                        $menu->decrement('stock', $item['quantity']);
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'menu_id' => $item['menu_id'],
+                            'qty' => $item['quantity'],
+                            'price' => $item['price'],
+                        ]);
+                    }
+
+                    $lastOrder = $order;
+                }
+            });
+        } catch (\Exception $e) {
+            // Delete uploaded file if transaction fails
+            if ($paymentProofPath) {
+                Storage::disk('public')->delete($paymentProofPath);
+            }
+
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+            }
+
+            return back()->withErrors(['payment_method' => $e->getMessage()])->withInput();
+        }
+
+        // Hapus item dari keranjang
+        $fullCart = session(self::SESSION_KEY, []);
+        foreach (array_keys($cart) as $menuId) {
+            unset($fullCart[$menuId]);
+        }
+        session([self::SESSION_KEY => $fullCart]);
+        session()->forget('checkout_notes');
+        session()->forget('checkout_selected_ids');
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('order.index'),
+                'message' => 'Pesanan berhasil dibuat! Silakan tunggu verifikasi pembayaran.',
+            ]);
+        }
+
+        return redirect()->route('order.index')
+            ->with('success', 'Pesanan dibuat! Silakan tunggu verifikasi pembayaran.');
     }
 }

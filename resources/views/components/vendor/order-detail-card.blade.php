@@ -91,62 +91,134 @@
                 </div>
             @endif
 
-            <div class="flex flex-col sm:flex-row gap-3">
-                @if (in_array($order->status, ['menunggu', 'dimasak', 'siap_diambil']))
-                    @if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
-                        <button type="button" disabled
-                            class="btn bg-base-300 text-base-content/40 border-none w-full rounded-xl font-bold shadow-sm cursor-not-allowed flex-1">
-                            Menunggu Pembayaran
-                        </button>
-                    @else
-                        <form action="{{ route('vendor.order.update', $order->id) }}" method="POST" class="flex-1">
-                            @csrf
-                            @method('PUT')
-                            <button type="submit"
-                                class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold shadow-sm active:scale-95 transition-all">
-                                @if ($order->status === 'menunggu')
-                                    Mulai Masak
-                                @elseif ($order->status === 'dimasak')
-                                    Siap Diambil
-                                @elseif ($order->status === 'siap_diambil')
-                                    @if ($order->payment_method === 'cash' && $order->payment_status === 'pending')
-                                        Selesai & Terima Uang
-                                    @else
-                                        Selesaikan Pesanan
-                                    @endif
-                                @else
-                                    Ubah Status
-                                @endif
-                            </button>
-                        </form>
-                    @endif
-                @endif
+            @if ($order->payment_method === 'qris_manual' && $order->payment_status === 'pending')
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-start gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5.5 h-5.5 text-amber-600 shrink-0 mt-0.5"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <p class="text-amber-800 font-bold text-sm">Menunggu Verifikasi Bukti Bayar</p>
+                                <p class="text-amber-700 text-xs font-medium mt-0.5">Mahasiswa telah mengunggah bukti pembayaran. Silakan periksa gambar di bawah sebelum mengonfirmasi.</p>
+                            </div>
+                        </div>
+                        
+                        {{-- Bukti Pembayaran Preview --}}
+                        @if ($order->payment_proof)
+                            <div class="mt-1">
+                                <p class="text-xs font-bold text-base-content/60 mb-1.5">Bukti Transfer:</p>
+                                <div class="w-32 h-32 bg-base-200 border border-base-content/10 rounded-xl overflow-hidden cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-xs"
+                                     onclick="document.getElementById('proof_zoom_modal_{{ $order->id }}').showModal()">
+                                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
 
-                @if (in_array($order->status, ['menunggu', 'dimasak']))
+                            <x-modal id="proof_zoom_modal_{{ $order->id }}" title="Bukti Transfer Mahasiswa" :showFooter="false" modalClass="max-w-2xl">
+                                <div class="w-full max-h-[80vh] overflow-y-auto flex items-center justify-center p-2 bg-base-200/50 rounded-xl border border-base-content/10">
+                                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer Full" class="max-w-full h-auto rounded-lg shadow-sm" />
+                                </div>
+                            </x-modal>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                @if ($order->payment_method === 'qris_manual' && $order->payment_status === 'pending')
+                    {{-- Aksi Verifikasi untuk QRIS Manual --}}
+                    <form action="{{ route('vendor.order.update', $order->id) }}" method="POST" class="flex-1">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="action_type" value="confirm_payment" />
+                        <button type="submit"
+                            class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold shadow-sm active:scale-95 transition-all">
+                            Konfirmasi Pembayaran
+                        </button>
+                    </form>
                     <div class="flex-1">
                         <button type="button"
-                            onclick="document.getElementById('cancel_order_modal_{{ $order->id }}').showModal()"
+                            onclick="document.getElementById('reject_payment_modal_{{ $order->id }}').showModal()"
                             class="btn bg-red-500 hover:bg-red-600 text-white border-none w-full rounded-xl font-bold shadow-sm active:scale-95 transition-all">
-                            Batalkan
+                            Tolak Pembayaran
                         </button>
-                        <x-modal id="cancel_order_modal_{{ $order->id }}" type="error" title="Batalkan Pesanan">
-                            Apakah Anda yakin ingin membatalkan pesanan ini? Aksi ini tidak dapat diurungkan.
-
+                        <x-modal id="reject_payment_modal_{{ $order->id }}" type="error" title="Tolak & Batalkan Pesanan">
+                            Apakah Anda yakin ingin menolak pembayaran ini? Pesanan mahasiswa akan otomatis dibatalkan.
                             <x-slot:footer>
                                 <button type="button"
-                                    onclick="document.getElementById('cancel_order_modal_{{ $order->id }}').close()"
+                                    onclick="document.getElementById('reject_payment_modal_{{ $order->id }}').close()"
                                     class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">Batal</button>
-                                <form action="{{ route('vendor.order.destroy', $order->id) }}" method="POST"
+                                <form action="{{ route('vendor.order.update', $order->id) }}" method="POST"
                                     class="m-0 p-0 inline-block">
                                     @csrf
-                                    @method('DELETE')
+                                    @method('PUT')
+                                    <input type="hidden" name="action_type" value="reject_payment" />
                                     <button type="submit"
-                                        class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold active:scale-95 transition-all">Ya,
-                                        Batalkan</button>
+                                        class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold active:scale-95 transition-all">Ya, Tolak</button>
                                 </form>
                             </x-slot:footer>
                         </x-modal>
                     </div>
+                @else
+                    {{-- Alur Normal --}}
+                    @if (in_array($order->status, ['menunggu', 'dimasak', 'siap_diambil']))
+                        @if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
+                            <button type="button" disabled
+                                class="btn bg-base-300 text-base-content/40 border-none w-full rounded-xl font-bold shadow-sm cursor-not-allowed flex-1">
+                                Menunggu Pembayaran
+                            </button>
+                        @else
+                            <form action="{{ route('vendor.order.update', $order->id) }}" method="POST" class="flex-1">
+                                @csrf
+                                @method('PUT')
+                                <button type="submit"
+                                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold shadow-sm active:scale-95 transition-all">
+                                    @if ($order->status === 'menunggu')
+                                        Mulai Masak
+                                    @elseif ($order->status === 'dimasak')
+                                        Siap Diambil
+                                    @elseif ($order->status === 'siap_diambil')
+                                        @if ($order->payment_method === 'cash' && $order->payment_status === 'pending')
+                                            Selesai & Terima Uang
+                                        @else
+                                            Selesaikan Pesanan
+                                        @endif
+                                    @else
+                                        Ubah Status
+                                    @endif
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+    
+                    @if (in_array($order->status, ['menunggu', 'dimasak']))
+                        <div class="flex-1">
+                            <button type="button"
+                                onclick="document.getElementById('cancel_order_modal_{{ $order->id }}').showModal()"
+                                class="btn bg-red-500 hover:bg-red-600 text-white border-none w-full rounded-xl font-bold shadow-sm active:scale-95 transition-all">
+                                Batalkan
+                            </button>
+                            <x-modal id="cancel_order_modal_{{ $order->id }}" type="error" title="Batalkan Pesanan">
+                                Apakah Anda yakin ingin membatalkan pesanan ini? Aksi ini tidak dapat diurungkan.
+    
+                                <x-slot:footer>
+                                    <button type="button"
+                                        onclick="document.getElementById('cancel_order_modal_{{ $order->id }}').close()"
+                                        class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">Batal</button>
+                                    <form action="{{ route('vendor.order.destroy', $order->id) }}" method="POST"
+                                        class="m-0 p-0 inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold active:scale-95 transition-all">Ya,
+                                            Batalkan</button>
+                                    </form>
+                                </x-slot:footer>
+                            </x-modal>
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>

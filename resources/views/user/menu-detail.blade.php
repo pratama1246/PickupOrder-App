@@ -45,7 +45,84 @@
                           Menggunakan Alpine.js untuk menghitung total harga pesanan secara real-time di sisi klien 
                           berdasarkan kuantitas (qty) yang dipilih sebelum dikirimkan ke server.
                         --}}
-                        <div class="mb-5" x-data="{ qty: {{ $menu->stock > 0 ? 1 : 0 }}, harga: {{ $menu->price }} }">
+                        <div class="mb-5" x-data="{ 
+                            qty: {{ $menu->stock > 0 ? 1 : 0 }}, 
+                            harga: {{ $menu->price }},
+                            loading: false,
+                            async submitForm(e) {
+                                e.preventDefault();
+                                if (this.loading) return;
+                                this.loading = true;
+                                
+                                const form = e.target;
+                                const formData = new FormData(form);
+                                
+                                const submitBtn = form.querySelector('button[type=submit]');
+                                let originalBtnText = '';
+                                if (submitBtn) {
+                                    originalBtnText = submitBtn.innerHTML;
+                                    submitBtn.disabled = true;
+                                    submitBtn.innerHTML = '<span class=&quot;loading loading-spinner loading-xs text-white&quot;></span>';
+                                }
+
+                                try {
+                                    const response = await fetch(form.action, {
+                                        method: 'POST',
+                                        body: formData,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json'
+                                        }
+                                    });
+                                    const data = await response.json();
+                                    
+                                    if (response.ok) {
+                                        window.dispatchEvent(new CustomEvent('notify', {
+                                            detail: {
+                                                message: data.message || 'Sukses menambahkan menu ke keranjang!',
+                                                type: 'success'
+                                            }
+                                        }));
+                                        
+                                        // Refresh the cart badge in navbar
+                                        const navbarCartBtn = document.getElementById('navbar-cart-btn');
+                                        if (navbarCartBtn) {
+                                            const pageRes = await fetch(window.location.href, {
+                                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                            });
+                                            const html = await pageRes.text();
+                                            const parser = new DOMParser();
+                                            const doc = parser.parseFromString(html, 'text/html');
+                                            const newNavbarCartBtn = doc.getElementById('navbar-cart-btn');
+                                            if (newNavbarCartBtn) {
+                                                navbarCartBtn.innerHTML = newNavbarCartBtn.innerHTML;
+                                            }
+                                        }
+                                    } else {
+                                        window.dispatchEvent(new CustomEvent('notify', {
+                                            detail: {
+                                                message: data.message || 'Gagal menambahkan ke keranjang',
+                                                type: 'error'
+                                            }
+                                        }));
+                                    }
+                                } catch (err) {
+                                    console.error(err);
+                                    window.dispatchEvent(new CustomEvent('notify', {
+                                        detail: {
+                                            message: 'Terjadi kesalahan jaringan.',
+                                            type: 'error'
+                                        }
+                                    }));
+                                } finally {
+                                    this.loading = false;
+                                    if (submitBtn) {
+                                        submitBtn.disabled = false;
+                                        submitBtn.innerHTML = originalBtnText;
+                                    }
+                                }
+                            }
+                        }">
                             <x-user.quantity-control x-model="qty" :min="$menu->stock > 0 ? 1 : 0" :max="$menu->stock > 0 ? $menu->stock : 0" />
 
                             <div class="mt-5 pt-4 border-t border-base-content/10">
@@ -62,7 +139,7 @@
                                     Masuk untuk Memesan
                                 </a>
                             @else
-                                <form action="{{ route('cart.store') }}" method="POST" class="mt-5">
+                                <form action="{{ route('cart.store') }}" method="POST" class="mt-5" @submit="submitForm($event)">
                                     @csrf
                                     <input type="hidden" name="menu_id" value="{{ $menu->id }}">
                                     <input type="hidden" name="quantity" x-bind:value="qty">
@@ -158,4 +235,5 @@
         </section>
 
     </main>
+
 @endsection
