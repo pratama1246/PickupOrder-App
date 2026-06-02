@@ -2,16 +2,19 @@
     'role' => 'user',
 ])
 
-{{-- 
-  Komponen Navigasi Dock Bawah (Mobile-First):
-  - Hanya muncul pada ukuran layar mobile/tablet ('lg:hidden').
-  - Menerima prop 'role' ('user', 'vendor', atau 'admin') untuk me-render daftar tautan menu yang sesuai.
-  - Memanfaatkan fungsi penolong request()->is() untuk menerapkan status kelas aktif ('dock-active text-fern-700') 
-    secara dinamis pada tautan navigasi yang sedang dibuka oleh pengguna.
---}}
+@php
+    $resolvedRole = $role;
+    if ($resolvedRole === 'user' && auth()->check()) {
+        if (auth()->user()->role === 'admin') {
+            $resolvedRole = 'admin';
+        } elseif (auth()->user()->role === 'vendor') {
+            $resolvedRole = 'vendor';
+        }
+    }
+@endphp
 
 <div class="dock lg:hidden bg-base-100 shadow-lg border-t border-base-200 z-50">
-    @if ($role === 'admin')
+    @if ($resolvedRole === 'admin')
         <a href="{{ route('admin.dashboard') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('admin/dashboard') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -45,7 +48,7 @@
             </svg>
             <span class="dock-label text-xs">Pengguna</span>
         </a>
-    @elseif($role === 'vendor')
+    @elseif($resolvedRole === 'vendor')
         <a href="{{ route('vendor.dashboard') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('vendor/dashboard') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -113,6 +116,7 @@
             <span class="dock-label text-xs">Pesan</span>
         </a>
 
+        @if(!auth()->check() || auth()->user()->role === 'mahasiswa')
         <a href="{{ route('order.index') }}"
             class="flex flex-col items-center gap-0.5 {{ request()->is('history*') ? 'dock-active text-fern-700 font-bold' : '' }}">
             <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -123,5 +127,6 @@
             </svg>
             <span class="dock-label text-xs">Riwayat</span>
         </a>
+        @endif
     @endif
 </div>
