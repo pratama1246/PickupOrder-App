@@ -136,6 +136,27 @@ class CartController extends Controller
     }
 
     /**
+     * Menghapus semua item menu makanan dari daftar keranjang belanja yang memiliki stok habis (0).
+     */
+    public function clearOutOfStock(): RedirectResponse
+    {
+        $cart = session(self::SESSION_KEY, []);
+
+        if (!empty($cart)) {
+            $menus = Menu::whereIn('id', array_keys($cart))->get()->keyBy('id');
+            foreach ($cart as $menuId => $item) {
+                $menu = $menus->get($menuId);
+                if (!$menu || !$menu->isInStock()) {
+                    unset($cart[$menuId]);
+                }
+            }
+            session([self::SESSION_KEY => $cart]);
+        }
+
+        return back()->with('success', 'Semua menu habis berhasil dibersihkan.');
+    }
+
+    /**
      * Menyalin kembali item dari riwayat transaksi lama pengguna ke keranjang belanja (fitur "Beli Lagi").
      * Menyaring menu yang sudah tidak lagi dijual oleh pemilik kantin agar tidak menimbulkan error harga.
      */

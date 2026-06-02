@@ -137,11 +137,18 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-base-content/80"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                            <rect x="7" y="7" width="3" height="3"></rect>
-                                            <rect x="14" y="7" width="3" height="3"></rect>
-                                            <rect x="7" y="14" width="3" height="3"></rect>
-                                            <rect x="14" y="14" width="3" height="3"></rect>
+                                            <rect width="5" height="5" x="3" y="3" rx="1"/>
+                                            <rect width="5" height="5" x="16" y="3" rx="1"/>
+                                            <rect width="5" height="5" x="3" y="16" rx="1"/>
+                                            <path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
+                                            <path d="M21 21v.01"/>
+                                            <path d="M12 7v3a2 2 0 0 1-2 2H7"/>
+                                            <path d="M3 12h.01"/>
+                                            <path d="M12 3h.01"/>
+                                            <path d="M12 16v.01"/>
+                                            <path d="M16 12h1"/>
+                                            <path d="M21 12v.01"/>
+                                            <path d="M12 21v-1"/>
                                         </svg>
                                         <h3 class="font-bold text-base text-base-content">Transfer QRIS Kantin (Manual)</h3>
                                     </div>

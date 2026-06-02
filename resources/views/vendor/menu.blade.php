@@ -73,7 +73,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 @forelse ($menus as $menu)
                     <x-foodcard :id="$menu->id" :name="$menu->name" :canteenName="$canteen->name" :description="$menu->description" :price="$menu->formatted_price"
-                        :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" actionUrl="#">
+                        :image="$menu->image ? asset('storage/' . $menu->image) : null" :rating="number_format($menu->average_rating, 1)" actionUrl="#" :stock="$menu->isInStock() ? $menu->stock : 0" :isCanteenOpen="$canteen->is_open">
                         <x-slot:action>
                             <div class="flex items-center gap-3">
                                 <a href="{{ route('vendor.menu.edit', $menu->id) }}"

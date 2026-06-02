@@ -71,6 +71,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Item keranjang belanja milik mahasiswa ini.
+     */
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    /**
      * Memeriksa apakah pengguna memiliki hak akses Administrator (Admin).
      * Digunakan dalam otentikasi middleware, kebijakan akses (Policies), dan percabangan menu dashboard.
      */

@@ -68,6 +68,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store')->middleware('throttle:30,1');
     Route::put('/cart/{menuId}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/{menuId}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::post('/cart/clear-out-of-stock', [CartController::class, 'clearOutOfStock'])->name('cart.clear-out-of-stock');
 
     // Checkout
     Route::middleware('online.hours')->group(function () {

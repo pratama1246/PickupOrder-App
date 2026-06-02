@@ -7,10 +7,35 @@
 
         <x-breadcrumb class="pt-8 pb-4" maxWidth="max-w-7xl" :links="[['label' => 'Beranda', 'url' => '/'], ['label' => 'Keranjang Belanja']]" />
 
+        @php
+            $hasOutOfStock = false;
+            foreach ($grouped as $data) {
+                foreach ($data['items'] as $item) {
+                    if ($item['stock'] <= 0) {
+                        $hasOutOfStock = true;
+                        break 2;
+                    }
+                }
+            }
+        @endphp
+
         <section class="px-3 sm:px-10 md:px-16 lg:px-24 pb-6">
-            <div class="max-w-7xl mx-auto">
-                <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Keranjang Belanja</h1>
-                <p class="text-base-content/70 text-sm sm:text-base font-medium">Silahkan periksa detail pesanan Anda</p>
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-1">Keranjang Belanja</h1>
+                    <p class="text-base-content/70 text-sm sm:text-base font-medium">Silahkan periksa detail pesanan Anda</p>
+                </div>
+                @if ($hasOutOfStock)
+                    <form action="{{ route('cart.clear-out-of-stock') }}" method="POST" class="m-0 p-0">
+                        @csrf
+                        <button type="submit" class="btn btn-outline border-red-200 hover:border-red-300 hover:bg-red-50 text-red-600 rounded-xl text-xs sm:text-sm font-bold active:scale-95 transition-all shadow-xs h-10 min-h-0 flex items-center gap-1.5 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Bersihkan Menu Habis
+                        </button>
+                    </form>
+                @endif
             </div>
         </section>
 
@@ -124,11 +149,12 @@
                     document.getElementById('multi_canteen_warning_modal').showModal();
                     return false;
                 }
+                e.target.submit();
                 return true;
             }
         }">
 
-            <form id="checkout-prepare-form" action="{{ route('checkout.prepare') }}" method="POST" class="hidden" @submit="validateCheckout($event)">
+            <form id="checkout-prepare-form" action="{{ route('checkout.prepare') }}" method="POST" class="hidden" @submit.prevent="validateCheckout($event)">
                 @csrf
             </form>
 

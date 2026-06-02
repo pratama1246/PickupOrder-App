@@ -80,10 +80,16 @@ class AuthController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
+        $cart = $request->session()->get('cart', []);
+
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        if (!empty($cart)) {
+            $request->session()->put('cart', $cart);
+        }
 
         return redirect()->route('home');
     }

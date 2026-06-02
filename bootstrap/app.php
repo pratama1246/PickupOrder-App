@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Tambahkan security headers ke semua response web (CSP, X-Frame-Options, dll).
         $middleware->appendToGroup('web', SecurityHeadersMiddleware::class);
+        $middleware->appendToGroup('web', \App\Http\Middleware\SyncCartSession::class);
 
         $middleware->alias([
             'role'         => CheckRole::class,

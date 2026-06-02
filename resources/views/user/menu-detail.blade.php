@@ -139,7 +139,7 @@
                                     Masuk untuk Memesan
                                 </a>
                             @else
-                                <form action="{{ route('cart.store') }}" method="POST" class="mt-5" @submit="submitForm($event)">
+                                <form action="{{ route('cart.store') }}" method="POST" class="mt-5" @submit.prevent="submitForm($event)">
                                     @csrf
                                     <input type="hidden" name="menu_id" value="{{ $menu->id }}">
                                     <input type="hidden" name="quantity" x-bind:value="qty">
