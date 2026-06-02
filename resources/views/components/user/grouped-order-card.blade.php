@@ -78,34 +78,30 @@
             <button 
                 type="button" 
                 onclick="document.getElementById('cancel_group_modal_{{ $firstOrder->payment_code }}').showModal()"
-                class="btn bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 w-full sm:w-auto px-6 min-h-0 h-11 rounded-xl font-bold text-sm transition-all duration-200 active:scale-95"
+                class="btn bg-red-500 hover:bg-red-600 text-white border-none w-full sm:w-auto px-6 min-h-0 h-11 rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
             >
                 Batalkan Semua
             </button>
-
-            <x-modal id="cancel_group_modal_{{ $firstOrder->payment_code }}" type="error" title="Batalkan Semua Pesanan">
-                Apakah Anda yakin ingin membatalkan seluruh transaksi ini? Semua pesanan dari {{ $group->count() }} kantin akan ikut dibatalkan secara permanen.
-                
-                <x-slot:footer>
-                    <button type="button" onclick="document.getElementById('cancel_group_modal_{{ $firstOrder->payment_code }}').close()" class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">Kembali</button>
-                    <form action="{{ route('order.cancel-group', $firstOrder->payment_code) }}" method="POST" class="m-0 p-0 inline-block">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold active:scale-95 transition-all">Ya, Batalkan Semua</button>
-                    </form>
-                </x-slot:footer>
-            </x-modal>
 
             <button 
                 onclick="openSnapGroup('{{ $firstOrder->snap_token }}', '{{ $retryUrl }}', '{{ $csrfToken }}')"
                 class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-8 min-h-0 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
                 Bayar Sekarang
             </button>
         </div>
     </div>
 
+    <x-modal id="cancel_group_modal_{{ $firstOrder->payment_code }}" type="error" title="Batalkan Semua Pesanan">
+        Apakah Anda yakin ingin membatalkan seluruh transaksi ini? Semua pesanan dari {{ $group->count() }} kantin akan ikut dibatalkan secara permanen.
+        
+        <x-slot:footer>
+            <button type="button" onclick="document.getElementById('cancel_group_modal_{{ $firstOrder->payment_code }}').close()" class="btn btn-ghost rounded-xl font-bold active:scale-95 transition-all">Kembali</button>
+            <form action="{{ route('order.cancel-group', $firstOrder->payment_code) }}" method="POST" class="m-0 p-0 inline-block">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white border-0 rounded-xl font-bold active:scale-95 transition-all">Ya, Batalkan Semua</button>
+            </form>
+        </x-slot:footer>
+    </x-modal>
 </div>

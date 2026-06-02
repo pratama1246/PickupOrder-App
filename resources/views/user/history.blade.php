@@ -203,4 +203,31 @@
             }
         </script>
     @endif
+
+    {{-- Script untuk menghasilkan QR Code di modal "Ambil Sekarang" riwayat pesanan --}}
+    @php
+        $hasSiapDiambil = $orders->contains('status', 'siap_diambil');
+    @endphp
+    @if ($hasSiapDiambil)
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @foreach ($orders as $order)
+                    @if ($order->status === 'siap_diambil')
+                        const qrCanvas_{{ $order->id }} = document.getElementById('qr-code-{{ $order->id }}');
+                        if (qrCanvas_{{ $order->id }}) {
+                            new QRious({
+                                element: qrCanvas_{{ $order->id }},
+                                value: '{{ $order->pickup_code }}',
+                                size: 180,
+                                level: 'H',
+                                foreground: '#1F2937',
+                                background: '#ffffff'
+                            });
+                        }
+                    @endif
+                @endforeach
+            });
+        </script>
+    @endif
 @endpush

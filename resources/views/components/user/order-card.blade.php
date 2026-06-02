@@ -65,12 +65,35 @@
                     Detail
                 </a>
             @else
-                <a href="{{ route('order.show', $order->id) }}"
-                    class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-8 min-h-0 h-11 rounded-xl font-bold text-sm text-center flex items-center justify-center active:scale-95 transition-all shadow-md">
-                    Pantau Antrian
-                </a>
+                @if ($order->status === 'siap_diambil')
+                    <button type="button" onclick="document.getElementById('pickup_modal_{{ $order->id }}').showModal()"
+                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-8 min-h-0 h-11 rounded-xl font-bold text-sm text-center flex items-center justify-center active:scale-95 transition-all shadow-md">
+                        Ambil Sekarang
+                    </button>
+                    <a href="{{ route('order.show', $order->id) }}"
+                        class="btn bg-white hover:bg-base-100 text-base-content border border-base-content/25 w-full sm:w-auto px-6 min-h-0 h-11 rounded-xl font-bold text-sm text-center flex items-center justify-center active:scale-95 transition-all shadow-sm">
+                        Pantau Antrian
+                    </a>
+                @else
+                    <a href="{{ route('order.show', $order->id) }}"
+                        class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-8 min-h-0 h-11 rounded-xl font-bold text-sm text-center flex items-center justify-center active:scale-95 transition-all shadow-md">
+                        Pantau Antrian
+                    </a>
+                @endif
             @endif
         </div>
     </div>
+
+    @if ($order->status === 'siap_diambil')
+        <x-modal id="pickup_modal_{{ $order->id }}" title="Kode Pengambilan" :showFooter="false">
+            <div class="text-center py-4 bg-white rounded-2xl">
+                <p class="text-xs font-bold text-base-content/70 uppercase mb-3">Kode Pengambilan</p>
+                <canvas id="qr-code-{{ $order->id }}" class="mx-auto rounded-xl"></canvas>
+                <p class="text-3xl font-black text-base-content tracking-widest mt-4">
+                    {{ $order->pickup_code }}</p>
+                <p class="text-xs text-base-content/50 mt-2 font-medium">Tunjukkan ke kasir untuk verifikasi pesanan</p>
+            </div>
+        </x-modal>
+    @endif
 
 </div>

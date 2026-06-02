@@ -518,12 +518,10 @@
                                             </svg>
                                             Beri Ulasan
                                         </button>
-                                    @else
-                                        <button
-                                            class="btn w-full h-12 min-h-0 rounded-xl font-bold text-base transition-all 
-                                    {{ $step == 5 ? 'bg-fern-700 hover:bg-fern-800 text-white shadow-md active:scale-95' : 'bg-gray-300 text-gray-500 cursor-not-allowed border-none' }}"
-                                            {{ $step != 5 ? 'disabled' : '' }}>
-                                            {{ $step == 5 ? 'Ambil Sekarang' : ($step == 6 ? 'Selesai' : 'Belum Siap') }}
+                                    @elseif ($step != 5)
+                                        <button disabled
+                                            class="btn w-full h-12 min-h-0 rounded-xl font-bold text-base transition-all bg-gray-300 text-gray-500 cursor-not-allowed border-none">
+                                            {{ $step == 6 ? 'Selesai' : 'Belum Siap' }}
                                         </button>
                                     @endif
                                 @endif

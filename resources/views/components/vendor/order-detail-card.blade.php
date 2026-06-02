@@ -33,10 +33,64 @@
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pt-2">
-        <div>
-            <h3 class="text-lg font-bold text-base-content mb-1">Total Belanja</h3>
-            <p class="text-2xl font-extrabold text-fern-700">{{ $order->formatted_total }}</p>
+    <div class="flex flex-col md:flex-row justify-between items-start gap-6 pt-2">
+        <div class="flex-1 w-full">
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-base-content mb-1">Total Belanja</h3>
+                <p class="text-2xl font-extrabold text-fern-700">{{ $order->formatted_total }}</p>
+            </div>
+
+            @if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4 max-w-md">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <div>
+                            <p class="text-amber-800 font-bold text-sm">Menunggu Pembayaran Online</p>
+                            <p class="text-amber-700 text-xs font-medium mt-0.5">Pesanan ini belum dapat diproses.
+                                Silakan tunggu konfirmasi pembayaran dari mahasiswa.</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if ($order->payment_method === 'qris_manual' && $order->payment_status === 'pending')
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4 max-w-md">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-start gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5.5 h-5.5 text-amber-600 shrink-0 mt-0.5"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <p class="text-amber-800 font-bold text-sm">Menunggu Verifikasi Bukti Bayar</p>
+                                <p class="text-amber-700 text-xs font-medium mt-0.5">Mahasiswa telah mengunggah bukti pembayaran. Silakan periksa gambar di bawah sebelum mengonfirmasi.</p>
+                            </div>
+                        </div>
+                        
+                        {{-- Bukti Pembayaran Preview --}}
+                        @if ($order->payment_proof)
+                            <div class="mt-1">
+                                <p class="text-xs font-bold text-base-content/60 mb-1.5">Bukti Transfer:</p>
+                                <div class="w-32 h-32 bg-base-200 border border-base-content/10 rounded-xl overflow-hidden cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-xs"
+                                     onclick="document.getElementById('proof_zoom_modal_{{ $order->id }}').showModal()">
+                                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
+
+                            <x-modal id="proof_zoom_modal_{{ $order->id }}" title="Bukti Transfer Mahasiswa" :showFooter="false" modalClass="max-w-2xl">
+                                <div class="w-full max-h-[80vh] overflow-y-auto flex items-center justify-center p-2 bg-base-200/50 rounded-xl border border-base-content/10">
+                                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer Full" class="max-w-full h-auto rounded-lg shadow-sm" />
+                                </div>
+                            </x-modal>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
 
         <div class="flex-1 max-w-sm w-full">
@@ -74,58 +128,6 @@
                 </li>
             </ul>
 
-            @if ($order->payment_method === 'midtrans' && $order->payment_status === 'pending')
-                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4">
-                    <div class="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
-                             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        <div>
-                            <p class="text-amber-800 font-bold text-sm">Menunggu Pembayaran Online</p>
-                            <p class="text-amber-700 text-xs font-medium mt-0.5">Pesanan ini belum dapat diproses.
-                                Silakan tunggu konfirmasi pembayaran dari mahasiswa.</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            @if ($order->payment_method === 'qris_manual' && $order->payment_status === 'pending')
-                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4">
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-start gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5.5 h-5.5 text-amber-600 shrink-0 mt-0.5"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div>
-                                <p class="text-amber-800 font-bold text-sm">Menunggu Verifikasi Bukti Bayar</p>
-                                <p class="text-amber-700 text-xs font-medium mt-0.5">Mahasiswa telah mengunggah bukti pembayaran. Silakan periksa gambar di bawah sebelum mengonfirmasi.</p>
-                            </div>
-                        </div>
-                        
-                        {{-- Bukti Pembayaran Preview --}}
-                        @if ($order->payment_proof)
-                            <div class="mt-1">
-                                <p class="text-xs font-bold text-base-content/60 mb-1.5">Bukti Transfer:</p>
-                                <div class="w-32 h-32 bg-base-200 border border-base-content/10 rounded-xl overflow-hidden cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-xs"
-                                     onclick="document.getElementById('proof_zoom_modal_{{ $order->id }}').showModal()">
-                                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer" class="w-full h-full object-cover" />
-                                </div>
-                            </div>
-
-                            <x-modal id="proof_zoom_modal_{{ $order->id }}" title="Bukti Transfer Mahasiswa" :showFooter="false" modalClass="max-w-2xl">
-                                <div class="w-full max-h-[80vh] overflow-y-auto flex items-center justify-center p-2 bg-base-200/50 rounded-xl border border-base-content/10">
-                                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer Full" class="max-w-full h-auto rounded-lg shadow-sm" />
-                                </div>
-                            </x-modal>
-                        @endif
-                    </div>
-                </div>
-            @endif
-
             <div class="flex flex-col sm:flex-row gap-3">
                 @if ($order->payment_method === 'qris_manual' && $order->payment_status === 'pending')
                     {{-- Aksi Verifikasi untuk QRIS Manual --}}
@@ -135,7 +137,7 @@
                         <input type="hidden" name="action_type" value="confirm_payment" />
                         <button type="submit"
                             class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full rounded-xl font-bold shadow-sm active:scale-95 transition-all">
-                            Konfirmasi Pembayaran
+                            Konfirmasi
                         </button>
                     </form>
                     <div class="flex-1">
