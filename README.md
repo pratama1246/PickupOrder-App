@@ -288,7 +288,7 @@ The interface was designed in Figma before development, following a design-first
 
 ### Main UI Mobile Version
 
-<img width="540" alt="IMG_20260530_192939" src="https://github.com/user-attachments/assets/0186e14e-5eae-4453-8e4a-bc1c334d728b" />
+<img width="320" alt="IMG_20260530_192939" src="https://github.com/user-attachments/assets/0186e14e-5eae-4453-8e4a-bc1c334d728b" />
 
 
 ### Browse Page
