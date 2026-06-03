@@ -192,8 +192,8 @@ php artisan db:seed
   - Email: `miacademy@pnc.ac.id`
 
 - **Student**
-  - NIM: `240202115`
-  - Email: `pratamaputra6854@gmail.com`
+  - NIM: `demo_student`
+  - Email: `demo.student@pnc.ac.id`
   - Note: this user is seeded with `is_first_login=true` so they will be forced to change the password on first login.
 
 Seeder also creates:
@@ -276,7 +276,7 @@ php artisan test
 
 ## 🎨 UI/UX Design
 
-The interface was designed in Figma before development, following a design-first workflow. The design system uses a custom **fern green** palette with Poppins typography, documented in `DESIGN.md`.
+The interface was designed in Figma before development, following a design-first workflow. The design system uses a custom **fern green** palette with Poppins typography, documented in `DESIGN.md[...]
 
 ---
 
@@ -311,9 +311,7 @@ The interface was designed in Figma before development, following a design-first
 
 ## 👥 Team
 
-| No | Name | NIM |
-|----|------|-----|
-| 1 | Pratama Putra Purwanto | 240202115 |
+Built as a college project at Politeknik Negeri Cilacap, Informatics Engineering Department.
 
 **Class:** Teknik Informatika 2D  
 **Course:** Framework Programming  
