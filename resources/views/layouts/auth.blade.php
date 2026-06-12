@@ -54,21 +54,38 @@
     </div>
     
     <div
-        class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-md flex flex-col md:flex-row min-h-[600px] relative z-10">
+        class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-md flex flex-col md:flex-row min-h-fit md:min-h-[600px] relative z-10 bg-fern-50">
 
-        <div class="bg-shadow-grey-900 text-white p-8 md:p-10 flex flex-col justify-between md:w-5/12 shrink-0">
-            <div>
-                <div
-                    class="inline-block bg-brand-gradient text-white px-4 py-1.5 rounded-md text-xs font-bold shadow-sm mb-4">
-                    Sistem Pickup Order PNC
+        <!-- Sidebar/Header Hero (Gelap) - Membentang Penuh di Mobile, Menjadi Sidebar di Desktop -->
+        <div class="bg-shadow-grey-900 text-white p-5 md:p-10 flex flex-row md:flex-col justify-between items-center md:items-start md:w-5/12 shrink-0">
+            <!-- Brand & Logo -->
+            <div class="flex items-center gap-3 md:block w-full">
+                <!-- Tampilan Mobile (Horizontal Row Banner) -->
+                <div class="flex items-center gap-3 md:hidden">
+                    <img src="{{ asset('assets/illustration/logo-pnc.jpg') }}" alt="Logo PNC"
+                        class="w-9 h-9 object-contain rounded-lg bg-white p-0.5 shadow-sm"
+                        onerror="this.src='https://ui-avatars.com/api/?name=PNC&color=7F9CF5&background=EBF4FF'">
+                    <div>
+                        <h2 class="text-xs font-bold text-white leading-tight">Sistem Pickup Order PNC</h2>
+                        <p class="text-[10px] text-white/60 font-medium">Politeknik Negeri Cilacap</p>
+                    </div>
                 </div>
 
-                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight text-white">
-                    @yield('hero-title', 'Pesan Makanan Langsung, Tanpa Perlu Ke kantin')
-                </h1>
+                <!-- Tampilan Desktop (Badge + Tagline) -->
+                <div class="hidden md:block">
+                    <div
+                        class="inline-block bg-brand-gradient text-white px-4 py-1.5 rounded-md text-xs font-bold shadow-sm mb-4">
+                        Sistem Pickup Order PNC
+                    </div>
+
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight text-white">
+                        @yield('hero-title', 'Pesan Makanan Langsung, Tanpa Perlu Ke kantin')
+                    </h1>
+                </div>
             </div>
 
-            <div class="mt-8 md:mt-0">
+            <!-- Footer: Made for PNC (Hanya Muncul di Desktop) -->
+            <div class="hidden md:block mt-8 md:mt-0">
                 <div class="bg-white text-base-content rounded-xl px-4 py-3 flex items-center gap-1.5 w-fit">
                     <span class="font-bold text-sm">Made From and For</span>
                     <span class="text-2xl flex items-center">
@@ -80,7 +97,8 @@
             </div>
         </div>
 
-        <div class="bg-fern-50 flex-1 flex items-center justify-center p-8 md:p-10">
+        <!-- Form Container (Responsif) -->
+        <div class="bg-fern-50 flex-1 flex items-center justify-center p-8 sm:p-10">
             <div class="w-full max-w-sm">
                 @yield('form')
             </div>
