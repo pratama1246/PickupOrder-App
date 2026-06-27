@@ -143,10 +143,10 @@ class DatabaseSeeder extends Seeder
 
         // 4. Seed Mahasiswa User
         $mahasiswa = User::firstOrCreate(
-            ['nim' => '240202115'],
+            ['nim' => 'demo_student'],
             [
-                'name'             => 'Pratama Putra',
-                'email'            => 'pratamaputra6854@gmail.com',
+                'name'             => 'Demo Student',
+                'email'            => 'demo.student@pnc.ac.id',
                 'password'         => Hash::make('pncpickup123'),
                 'is_first_login'   => true,
                 'password_changed' => false,
