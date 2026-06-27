@@ -54,7 +54,7 @@
     </div>
     
     <div
-        class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-md flex flex-col md:flex-row min-h-fit md:min-h-[600px] relative z-10 bg-fern-50">
+        class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-md flex flex-col md:flex-row min-h-fit md:min-h-[600px]! relative z-10 bg-fern-50">
 
         <!-- Sidebar/Header Hero (Gelap) - Membentang Penuh di Mobile, Menjadi Sidebar di Desktop -->
         <div class="bg-shadow-grey-900 text-white p-5 md:p-10 flex flex-row md:flex-col justify-between items-center md:items-start md:w-5/12 shrink-0">
@@ -98,7 +98,7 @@
         </div>
 
         <!-- Form Container (Responsif) -->
-        <div class="bg-fern-50 flex-1 flex items-center justify-center p-8 sm:p-10">
+        <div class="bg-fern-50 flex-1 flex items-center justify-center p-8 md:p-10">
             <div class="w-full max-w-sm">
                 @yield('form')
             </div>

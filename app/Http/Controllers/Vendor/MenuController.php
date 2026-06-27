@@ -20,6 +20,12 @@ class MenuController extends Controller
      */
     public function index(Request $request): View
     {
+        // Sanitasi parameter search untuk membatasi karakter khusus (hanya alfanumerik, spasi, @, titik, dan strip)
+        if ($request->filled('search')) {
+            $sanitizedSearch = preg_replace('/[^a-zA-Z0-9\s@\.\-]/', '', $request->input('search'));
+            $request->merge(['search' => $sanitizedSearch]);
+        }
+
         $canteen = Auth::user()->canteen;
 
         // Membatasi akses query hanya pada menu yang berelasi dengan kantin vendor bersangkutan.
@@ -72,15 +78,26 @@ class MenuController extends Controller
         if ($request->hasFile('image')) {
             // Pemrosesan Gambar: Konversi ke WebP, batasi lebar maksimal 800px untuk menghemat ruang disk,
             // serta atur kualitas kompresi ke 75% untuk menjaga kualitas visual yang optimal.
-            $filename = uniqid('menu_').'.webp';
-            $image = Image::decode($request->file('image'));
-            $image->scale(width: 800);
-            $webp = $image->encode(new WebpEncoder(quality: 75));
-            Storage::disk('public')->put('menus/'.$filename, $webp->toString());
-            $validated['image'] = 'menus/'.$filename;
+            $filename = \Illuminate\Support\Str::random(40).'.webp';
+            try {
+                $image = Image::decode($request->file('image'));
+                $image->scale(width: 800);
+                $webp = $image->encode(new WebpEncoder(quality: 75));
+                Storage::disk('public')->put('menus/'.$filename, $webp->toString());
+                $validated['image'] = 'menus/'.$filename;
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => 'Berkas gambar rusak atau tidak dapat diproses.'])->withInput();
+            }
         }
 
-        $canteen->menus()->create($validated);
+        try {
+            $canteen->menus()->create($validated);
+        } catch (\Exception $e) {
+            if (isset($validated['image'])) {
+                Storage::disk('public')->delete($validated['image']);
+            }
+            return back()->withErrors(['image' => 'Gagal menyimpan menu ke database. Silakan coba lagi.'])->withInput();
+        }
 
         return redirect()->route('vendor.menu.index')
             ->with('success', 'Menu berhasil ditambahkan.');
@@ -121,19 +138,33 @@ class MenuController extends Controller
         $validated['description'] = strip_tags($validated['description'] ?? '');
 
         if ($request->hasFile('image')) {
-            // Menghapus gambar lama di disk jika ada untuk mencegah sampah berkas tidak terpakai.
-            if ($menu->image) {
-                Storage::disk('public')->delete($menu->image);
+            $filename = \Illuminate\Support\Str::random(40).'.webp';
+            try {
+                $image = Image::decode($request->file('image'));
+                $image->scale(width: 800);
+                $webp = $image->encode(new WebpEncoder(quality: 75));
+                Storage::disk('public')->put('menus/'.$filename, $webp->toString());
+                $validated['image'] = 'menus/'.$filename;
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => 'Berkas gambar rusak atau tidak dapat diproses.'])->withInput();
             }
-            $filename = uniqid('menu_').'.webp';
-            $image = Image::decode($request->file('image'));
-            $image->scale(width: 800);
-            $webp = $image->encode(new WebpEncoder(quality: 75));
-            Storage::disk('public')->put('menus/'.$filename, $webp->toString());
-            $validated['image'] = 'menus/'.$filename;
         }
 
-        $menu->update($validated);
+        try {
+            $oldImage = $menu->image;
+            $menu->update($validated);
+
+            // Menghapus gambar lama di disk jika ada untuk mencegah sampah berkas tidak terpakai.
+            if (isset($validated['image']) && $oldImage) {
+                Storage::disk('public')->delete($oldImage);
+            }
+        } catch (\Exception $e) {
+            // Hapus berkas baru jika update DB gagal
+            if (isset($validated['image'])) {
+                Storage::disk('public')->delete($validated['image']);
+            }
+            return back()->withErrors(['image' => 'Gagal memperbarui menu di database. Silakan coba lagi.'])->withInput();
+        }
 
         return redirect()->route('vendor.menu.index')
             ->with('success', 'Menu berhasil diperbarui.');

@@ -20,6 +20,12 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
+        // Sanitasi parameter search untuk membatasi karakter khusus (hanya alfanumerik, spasi, @, titik, dan strip)
+        if ($request->filled('search')) {
+            $sanitizedSearch = preg_replace('/[^a-zA-Z0-9\s@\.\-]/', '', $request->input('search'));
+            $request->merge(['search' => $sanitizedSearch]);
+        }
+
         $query = User::whereIn('role', ['mahasiswa', 'vendor'])->orderBy('name');
 
         if ($request->filled('search')) {

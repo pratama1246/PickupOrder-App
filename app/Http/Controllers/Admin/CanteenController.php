@@ -23,6 +23,12 @@ class CanteenController extends Controller
      */
     public function index(Request $request): View
     {
+        // Sanitasi parameter search untuk membatasi karakter khusus (hanya alfanumerik, spasi, @, titik, dan strip)
+        if ($request->filled('search')) {
+            $sanitizedSearch = preg_replace('/[^a-zA-Z0-9\s@\.\-]/', '', $request->input('search'));
+            $request->merge(['search' => $sanitizedSearch]);
+        }
+
         $query = Canteen::with('owner')->withAvg('reviews', 'rating')->withCount('menus');
 
         if ($request->filled('search')) {
@@ -102,30 +108,44 @@ class CanteenController extends Controller
 
         $password = 'pncpickup123';
 
-        // Pendaftaran otomatis user ber-role vendor untuk pengelolaan mandiri oleh pemilik warung.
-        // Menggunakan forceCreate karena 'role' sengaja dikecualikan dari $fillable model User
-        // demi mencegah Mass Assignment Privilege Escalation dari input publik.
-        $user = User::forceCreate([
-            'name'             => 'Vendor '.$validated['name'],
-            'email'            => $email,
-            'password'         => Hash::make($password),
-            'role'             => 'vendor',
-            'is_first_login'   => true,
-            'password_changed' => false,
-        ]);
-
-        $validated['user_id'] = $user->id;
-
         if ($request->hasFile('image')) {
-            $filename = uniqid('canteen_').'.webp';
-            $image = Image::decode($request->file('image'));
-            $image->scale(width: 1200);
-            $webp = $image->encode(new WebpEncoder(quality: 75));
-            Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
-            $validated['image'] = 'canteens/'.$filename;
+            $filename = \Illuminate\Support\Str::random(40).'.webp';
+            try {
+                $image = Image::decode($request->file('image'));
+                $image->cover(1200, 450); // Aspect ratio landscape cover
+                $webp = $image->encode(new WebpEncoder(quality: 75));
+                Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
+                $validated['image'] = 'canteens/'.$filename;
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => 'Berkas gambar banner rusak atau tidak dapat diproses.'])->withInput();
+            }
         }
 
-        Canteen::create($validated);
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use (&$validated, $email, $password) {
+                // Pendaftaran otomatis user ber-role vendor untuk pengelolaan mandiri oleh pemilik warung.
+                // Menggunakan forceCreate karena 'role' sengaja dikecualikan dari $fillable model User
+                // demi mencegah Mass Assignment Privilege Escalation dari input publik.
+                $user = User::forceCreate([
+                    'name'             => 'Vendor '.$validated['name'],
+                    'email'            => $email,
+                    'password'         => Hash::make($password),
+                    'role'             => 'vendor',
+                    'is_first_login'   => true,
+                    'password_changed' => false,
+                ]);
+
+                $validated['user_id'] = $user->id;
+
+                Canteen::create($validated);
+            });
+        } catch (\Exception $e) {
+            // Hapus file baru jika transaksi gagal
+            if (isset($validated['image'])) {
+                Storage::disk('public')->delete($validated['image']);
+            }
+            return back()->withErrors(['image' => 'Gagal menambahkan kantin ke database. Silakan coba lagi.'])->withInput();
+        }
 
         return redirect()->route('admin.canteen.index')
             ->with('success', "Kantin berhasil ditambahkan. Akun Vendor dibuat dengan Email: {$email} dan Password: {$password}");
@@ -160,18 +180,33 @@ class CanteenController extends Controller
         $validated['description'] = strip_tags($validated['description'] ?? '');
 
         if ($request->hasFile('image')) {
-            if ($canteen->image) {
-                Storage::disk('public')->delete($canteen->image);
+            $filename = \Illuminate\Support\Str::random(40).'.webp';
+            try {
+                $image = Image::decode($request->file('image'));
+                $image->cover(1200, 450); // Aspect ratio landscape cover
+                $webp = $image->encode(new WebpEncoder(quality: 75));
+                Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
+                $validated['image'] = 'canteens/'.$filename;
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => 'Berkas gambar banner rusak atau tidak dapat diproses.'])->withInput();
             }
-            $filename = uniqid('canteen_').'.webp';
-            $image = Image::decode($request->file('image'));
-            $image->scale(width: 1200);
-            $webp = $image->encode(new WebpEncoder(quality: 75));
-            Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
-            $validated['image'] = 'canteens/'.$filename;
         }
 
-        $canteen->update($validated);
+        try {
+            $oldImage = $canteen->image;
+            $canteen->update($validated);
+
+            // Jika DB berhasil diupdate, lakukan penghapusan file lama di disk
+            if (isset($validated['image']) && $oldImage && ! str_starts_with($oldImage, 'assets/')) {
+                Storage::disk('public')->delete($oldImage);
+            }
+        } catch (\Exception $e) {
+            // Hapus file baru yang baru saja di-upload jika DB gagal diupdate
+            if (isset($validated['image'])) {
+                Storage::disk('public')->delete($validated['image']);
+            }
+            return back()->withErrors(['image' => 'Gagal memperbarui data kantin di database. Silakan coba lagi.'])->withInput();
+        }
 
         return redirect()->route('admin.canteen.index')
             ->with('success', 'Data kantin berhasil diperbarui.');

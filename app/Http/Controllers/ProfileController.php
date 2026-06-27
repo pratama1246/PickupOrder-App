@@ -42,7 +42,7 @@ class ProfileController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
-            'avatar' => ['nullable', 'image', 'max:10240'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
 
         $data = [
@@ -51,25 +51,37 @@ class ProfileController extends Controller
         ];
 
         if ($request->hasFile('avatar')) {
-            // Menghapus avatar lama dari penyimpanan agar disk server tidak lekas penuh.
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
-            }
-
             $file = $request->file('avatar');
-            $filename = 'avatars/'.uniqid('avatar_').'.webp';
+            $filename = 'avatars/' . \Illuminate\Support\Str::random(40) . '.webp';
 
-            // Memotong gambar dengan rasio persegi 400x400 dan dikompresi ke WebP.
-            $image = Image::decode($file);
-            $image->cover(400, 400);
-            $webp = $image->encode(new WebpEncoder(quality: 80));
-
-            Storage::disk('public')->put($filename, $webp->toString());
+            try {
+                // Memotong gambar dengan rasio persegi 400x400 dan dikompresi ke WebP.
+                $image = Image::decode($file);
+                $image->cover(400, 400);
+                $webp = $image->encode(new WebpEncoder(quality: 80));
+                Storage::disk('public')->put($filename, $webp->toString());
+            } catch (\Exception $e) {
+                return back()->withErrors(['avatar' => 'Berkas gambar rusak atau tidak dapat diproses.'])->withInput();
+            }
 
             $data['avatar'] = $filename;
         }
 
-        $user->update($data);
+        try {
+            $oldAvatar = $user->avatar;
+            $user->update($data);
+
+            // Menghapus avatar lama dari penyimpanan agar disk server tidak lekas penuh.
+            if (isset($data['avatar']) && $oldAvatar) {
+                Storage::disk('public')->delete($oldAvatar);
+            }
+        } catch (\Exception $e) {
+            // Hapus berkas baru jika update DB gagal
+            if (isset($data['avatar'])) {
+                Storage::disk('public')->delete($data['avatar']);
+            }
+            return back()->withErrors(['avatar' => 'Gagal memperbarui profil di database. Silakan coba lagi.'])->withInput();
+        }
 
         return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }

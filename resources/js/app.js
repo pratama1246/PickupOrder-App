@@ -78,13 +78,19 @@ document.addEventListener('click', (e) => {
 // untuk menghindari reload halaman secara penuh dan memberikan transisi halus.
 window.initLiveSearch = function (targetSelector) {
     return {
-        keyword: new URLSearchParams(window.location.search).get('search') || '',
+        keyword: (new URLSearchParams(window.location.search).get('search') || '').replace(/[^a-zA-Z0-9\s@\.\-]/g, ''),
         category: new URLSearchParams(window.location.search).get('category') || '',
         canteen: new URLSearchParams(window.location.search).get('canteen') || '',
         timeout: null,
         loading: false,
         init() {
-            this.$watch('keyword', value => this.triggerSearch());
+            this.$watch('keyword', value => {
+                const sanitized = value.replace(/[^a-zA-Z0-9\s@\.\-]/g, '');
+                if (value !== sanitized) {
+                    this.keyword = sanitized;
+                }
+                this.triggerSearch();
+            });
             this.$watch('category', value => this.triggerSearch());
             this.$watch('canteen', value => this.triggerSearch());
             

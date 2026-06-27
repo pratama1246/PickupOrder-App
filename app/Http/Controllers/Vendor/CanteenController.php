@@ -46,43 +46,76 @@ class CanteenController extends Controller
         // By default, do not modify image and qris_image unless specified.
         unset($validated['image'], $validated['qris_image']);
 
+        $newImageFile = null;
+        $newQrisFile = null;
+        $deleteOldImage = false;
+        $deleteOldQris = false;
+
+        // Banner Image
         if ($request->input('delete_image') == '1') {
-            if ($canteen->image && ! str_starts_with($canteen->image, 'assets/')) {
-                Storage::disk('public')->delete($canteen->image);
-            }
             $validated['image'] = null;
+            $deleteOldImage = true;
         } elseif ($request->hasFile('image')) {
-            // Melindungi file aset gambar bawaan sistem agar tidak terhapus secara tidak sengaja.
-            if ($canteen->image && ! str_starts_with($canteen->image, 'assets/')) {
-                Storage::disk('public')->delete($canteen->image);
+            $filename = \Illuminate\Support\Str::random(40).'.webp';
+            try {
+                $image = Image::decode($request->file('image'));
+                $image->cover(1200, 450); // Aspect ratio landscape cover
+                $webp = $image->encode(new WebpEncoder(quality: 75));
+                Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
+                $newImageFile = 'canteens/'.$filename;
+                $validated['image'] = $newImageFile;
+                $deleteOldImage = true;
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => 'Berkas gambar banner rusak atau tidak dapat diproses.'])->withInput();
             }
-            // Decode + re-encode ke WebP via Intervention Image untuk membuang metadata EXIF berbahaya.
-            $filename = uniqid('canteen_').'.webp';
-            $image    = Image::decode($request->file('image'));
-            $image->scale(width: 1200);
-            $webp = $image->encode(new WebpEncoder(quality: 75));
-            Storage::disk('public')->put('canteens/'.$filename, $webp->toString());
-            $validated['image'] = 'canteens/'.$filename;
         }
 
+        // QRIS Image
         if ($request->input('delete_qris_image') == '1') {
-            if ($canteen->qris_image) {
-                Storage::disk('public')->delete($canteen->qris_image);
-            }
             $validated['qris_image'] = null;
+            $deleteOldQris = true;
         } elseif ($request->hasFile('qris_image')) {
-            if ($canteen->qris_image) {
-                Storage::disk('public')->delete($canteen->qris_image);
+            $filename = \Illuminate\Support\Str::random(40).'.webp';
+            try {
+                $image = Image::decode($request->file('qris_image'));
+                $image->scale(width: 800); // 800px is perfect for scannable QR Codes
+                $webp = $image->encode(new WebpEncoder(quality: 85)); // Higher quality for scan precision
+                Storage::disk('public')->put('qris/'.$filename, $webp->toString());
+                $newQrisFile = 'qris/'.$filename;
+                $validated['qris_image'] = $newQrisFile;
+                $deleteOldQris = true;
+            } catch (\Exception $e) {
+                // Hapus new image if QRIS decode fails
+                if ($newImageFile) {
+                    Storage::disk('public')->delete($newImageFile);
+                }
+                return back()->withErrors(['qris_image' => 'Berkas gambar QRIS rusak atau tidak dapat diproses.'])->withInput();
             }
-            $filename = uniqid('qris_').'.webp';
-            $image    = Image::decode($request->file('qris_image'));
-            $image->scale(width: 800); // 800px is perfect for scannable QR Codes
-            $webp = $image->encode(new WebpEncoder(quality: 85)); // Higher quality for scan precision
-            Storage::disk('public')->put('qris/'.$filename, $webp->toString());
-            $validated['qris_image'] = 'qris/'.$filename;
         }
 
-        $canteen->update($validated);
+        try {
+            $oldImage = $canteen->image;
+            $oldQris = $canteen->qris_image;
+
+            $canteen->update($validated);
+
+            // Jika DB berhasil diupdate, lakukan penghapusan file lama di disk
+            if ($deleteOldImage && $oldImage && ! str_starts_with($oldImage, 'assets/')) {
+                Storage::disk('public')->delete($oldImage);
+            }
+            if ($deleteOldQris && $oldQris) {
+                Storage::disk('public')->delete($oldQris);
+            }
+        } catch (\Exception $e) {
+            // Hapus file baru yang baru saja di-upload jika DB gagal diupdate
+            if ($newImageFile) {
+                Storage::disk('public')->delete($newImageFile);
+            }
+            if ($newQrisFile) {
+                Storage::disk('public')->delete($newQrisFile);
+            }
+            return back()->withErrors(['image' => 'Gagal memperbarui data kantin di database. Silakan coba lagi.'])->withInput();
+        }
 
         return redirect()->route('vendor.dashboard')->with('success', 'Profil kantin berhasil diperbarui!');
     }

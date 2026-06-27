@@ -17,6 +17,12 @@ class CanteenController extends Controller
      */
     public function index(Request $request): View
     {
+        // Sanitasi parameter search untuk membatasi karakter khusus (hanya alfanumerik, spasi, @, titik, dan strip)
+        if ($request->filled('search')) {
+            $sanitizedSearch = preg_replace('/[^a-zA-Z0-9\s@\.\-]/', '', $request->input('search'));
+            $request->merge(['search' => $sanitizedSearch]);
+        }
+
         // Membatasi menu yang dimuat hanya yang berstatus aktif dan stoknya tersedia.
         // Menerapkan pencarian dan filter kategori secara rekursif ke dalam relasi menus.
         $query = Canteen::withAvg('reviews', 'rating')->with(['menus' => function ($q) use ($request) {

@@ -545,12 +545,18 @@ class CheckoutController extends Controller
     {
         $paymentProofPath = null;
         if ($request->hasFile('payment_proof')) {
-            $filename = uniqid('proof_').'.webp';
-            $image = Image::decode($request->file('payment_proof'));
-            $image->scale(width: 1000); // 1000px is perfect for scannable receipt details
-            $webp = $image->encode(new WebpEncoder(quality: 80));
-            Storage::disk('public')->put('proofs/'.$filename, $webp->toString());
-            $paymentProofPath = 'proofs/'.$filename;
+            try {
+                $filename = \Illuminate\Support\Str::random(40).'.webp';
+                $image = Image::decode($request->file('payment_proof'));
+                $image->scale(width: 1000); // 1000px is perfect for scannable receipt details
+                $webp = $image->encode(new WebpEncoder(quality: 80));
+                Storage::disk('public')->put('proofs/'.$filename, $webp->toString());
+                $paymentProofPath = 'proofs/'.$filename;
+            } catch (\Exception $e) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'payment_proof' => 'Berkas gambar bukti pembayaran rusak atau tidak dapat diproses.',
+                ]);
+            }
         }
 
         $sharedOrderCode = Order::generateOrderCode();
