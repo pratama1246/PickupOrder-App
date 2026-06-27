@@ -61,7 +61,10 @@ It supports 3 main roles:
 - Home & About page
 - Browse canteens and menus
 - Cart (add/update/remove)
-- Checkout (prepare, submit, retry payment)
+- Checkout with 3 payment methods:
+  * **Midtrans** (online payment via Snap, automatic verification)
+  * **QRIS Manual** (scan vendor's QR code, upload payment proof, manual verification by vendor)
+  * **Pay Direct** (cash on pickup, confirmed by vendor)
 - Order history:
   * view details
   * cancel/delete (including cancel by payment group)
@@ -209,10 +212,9 @@ DB_PASSWORD=
 MIDTRANS_SERVER_KEY=your-server-key
 MIDTRANS_CLIENT_KEY=your-client-key
 MIDTRANS_IS_PRODUCTION=false
-MIDTRANS_SNAP_URL=https://app.sandbox.midtrans.com/snap/snap.js
 ```
 
-> Get your keys from [Midtrans Dashboard](https://dashboard.sandbox.midtrans.com). Set `MIDTRANS_IS_PRODUCTION=true` and update `MIDTRANS_SNAP_URL` to the production URL when deploying to production.
+> Get your keys from the [Midtrans Dashboard](https://dashboard.sandbox.midtrans.com). Set `MIDTRANS_IS_PRODUCTION=true` when deploying to production. The frontend automatically loads the sandbox or production script depending on this setting.
 
 ### Email (Resend)
 
@@ -222,6 +224,8 @@ RESEND_AUDIENCE_ID=your-audience-id
 MAIL_FROM_ADDRESS="noreply@yourdomain.com"
 MAIL_FROM_NAME="${APP_NAME}"
 ```
+
+> **Note:** The email integration is currently configured as a boilerplate setup using `resend/resend-laravel`, but the actual transactional email notifications are not yet implemented in the backend application.
 
 ### Queue & Session
 
@@ -282,6 +286,7 @@ This project contains migrations such as:
 - `create_orders_table`
 - `create_orders_items_table`
 - `create_reviews_table`
+- `create_cart_items_table` (to support database-persistent cart items)
 
 Plus additional changes:
 
@@ -290,12 +295,22 @@ Plus additional changes:
 - add menu category
 - add performance indexes
 - add canteen daily target
+- drop unique order code constraint from orders
+- add manual QRIS and payment proof columns
 
 ---
 
-## Payments (Midtrans)
+## Payments
 
-### Webhook / Notification
+This app supports **3 payment methods**:
+
+| Method | Description | Verification |
+|---|---|---|
+| **Midtrans (Snap)** | Online payment via Midtrans gateway | Automatic via webhook |
+| **QRIS Manual** | Student scans vendor's QRIS code, uploads payment proof | Manual by vendor |
+| **Pay Direct** | Student pays cash directly at the canteen | Manual by vendor |
+
+### Midtrans Webhook / Notification
 
 Payment notification endpoint:
 
@@ -398,7 +413,7 @@ npm run build
 
 ## Queue Worker
 
-This app uses database queues. Make sure to run the queue worker so background jobs (e.g., email sending) are processed.
+This app uses database queues. Make sure to run the queue worker so background jobs are processed.
 
 **Development:**
 
