@@ -519,8 +519,6 @@ The interface was designed in Figma before development, following a design-first
 
 ---
 
-## 👥 Team
-
 Built as a college project at Politeknik Negeri Cilacap, Informatics Engineering Department.
 
 **Class:** Teknik Informatika 2D
