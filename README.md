@@ -28,6 +28,7 @@ It supports 3 main roles:
 
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
 - [Requirements](#requirements)
 - [Local Setup](#local-setup)
 - [Environment Configuration (.env)](#environment-configuration-env)
@@ -116,6 +117,71 @@ It supports 3 main roles:
 - Alpine.js
 - ApexCharts
 - Vite (asset bundling)
+
+---
+
+## Project Structure
+
+A breakdown of the project directories, files, and modules:
+
+```
+pickuporder-app/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/                # Controllers for Admin Panel (Canteen, User, Dashboard)
+│   │   │   ├── User/                 # Controllers for Student/User features (Canteen, Cart, Checkout, Order, Payment)
+│   │   │   ├── Vendor/               # Controllers for Vendor Canteen Panel (Canteen, Dashboard, Menu, Order, Report)
+│   │   │   ├── AuthController.php    # Handles Login, Logout, and Password Reset Flow
+│   │   │   ├── HomeController.php    # Landing Page Controller
+│   │   │   └── ProfileController.php # User Profile Updates
+│   │   └── Middleware/
+│   │       ├── CheckOnlineOrderHours.php # Restricts orders to active operational hours
+│   │       ├── CheckRole.php         # Custom role-based routing (Admin, Vendor, Student)
+│   │       ├── SecurityHeadersMiddleware.php # Sets secure HTTP response headers
+│   │       └── SyncCartSession.php   # Syncs guest session cart to database on login
+│   └── Models/
+│       ├── Canteen.php               # Canteen Model (stores profile, location, daily targets)
+│       ├── CartItem.php              # Persistent User Shopping Cart items
+│       ├── Menu.php                  # Food and beverage items linked to Canteen
+│       ├── Order.php                 # Orders header (tracks price, method, queue status, qr/proof)
+│       ├── OrderItem.php             # Pivot table/line items for individual order components
+│       ├── Review.php                # User ratings and comments for orders
+│       └── User.php                  # Primary User representation (with roles: Admin, Vendor, Student)
+├── config/                           # Standard Laravel configuration files
+├── database/
+│   ├── factories/                    # Model factories for testing and seeding
+│   ├── migrations/                   # Database schema definition files
+│   └── seeders/                      # Seeders to populate dummy databases & test accounts
+├── public/                           # Compiled CSS/JS assets, uploaded files, images, icons
+├── resources/
+│   ├── css/
+│   │   └── app.css                   # Custom Tailwind CSS v4 entrypoint + color/design tokens
+│   ├── js/
+│   │   └── app.js                    # Main client-side script entrypoint
+│   └── views/
+│       ├── admin/                    # Admin Dashboard and management pages
+│       ├── auth/                     # Authentication pages (login, first-login password change)
+│       ├── components/               # Reusable Blade components
+│       │   ├── admin/                # Admin sidebar and specific UI helpers
+│       │   ├── user/                 # User cart cards, summaries, and order controls
+│       │   ├── vendor/               # Vendor dashboard-specific layout parts
+│       │   ├── breadcrumb.blade.php  # Global navigation breadcrumbs
+│       │   ├── foodcard.blade.php    # Display menu cards with order CTAs
+│       │   ├── status-badge.blade.php# Maps order status to semantic status colors
+│       │   └── ...                   # Other base layout blocks (Navbar, Dock, Footer, Toast)
+│       ├── errors/                   # Custom HTTP Error boundary screens (403, 404, etc.)
+│       ├── layouts/                  # Base document skeletons (app, admin, vendor, auth)
+│       ├── user/                     # Student frontend templates (Index, Browse, History, Order Detail)
+│       ├── vendor/                   # Vendor panel views (canteen edit, dashboard, menu control, reports)
+│       └── profile.blade.php         # User profile configuration screen
+├── routes/
+│   ├── web.php                       # Application routes grouped by roles (Admin, Vendor, User, Auth)
+│   └── console.php                   # CLI routes and tasks
+├── bootstrap/                        # Application bootstrap, routing, and middleware registration
+├── vite.config.js                    # Vite packaging setup for building assets
+└── package.json                      # Frontend dependency configuration (TailwindCSS v4, DaisyUI v5, AlpineJS)
+```
 
 ---
 
