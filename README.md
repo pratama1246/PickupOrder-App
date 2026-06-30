@@ -520,7 +520,7 @@ The interface was designed in Figma before development, following a design-first
 
 ## License
 
-This repository currently does not include a `LICENSE` file. If you plan to publish it publicly, consider adding an appropriate license.
+This project is open-sourced software licensed under the [MIT License](LICENSE).
 
 ---
 
