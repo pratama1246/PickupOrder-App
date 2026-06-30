@@ -136,6 +136,7 @@ pickuporder-app/
 │   ├── factories/                   # Database factories for generating test data
 │   ├── migrations/                  # Database schema definitions
 │   └── seeders/                     # Seeders to populate database with initial & demo accounts
+├── docs/                            # Project documentation (Figma design, UI analysis, etc.)
 ├── public/                          # Publicly accessible assets and entry points (index.php)
 ├── resources/
 │   ├── css/                         # Application stylesheets (Tailwind CSS v4 custom theme)
