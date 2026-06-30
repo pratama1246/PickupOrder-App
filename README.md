@@ -1,4 +1,4 @@
-# 🛒 PickupOrder-App (PNC)
+# 🛒 PickupOrder-App
 
 **PickupOrder-App** is a **Laravel 13 (PHP 8.3+)** web application for **canteen/food pickup ordering**, designed for internal use at **Politeknik Negeri Cilacap**.
 
