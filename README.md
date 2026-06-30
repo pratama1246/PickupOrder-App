@@ -20,7 +20,6 @@ It supports 3 main roles:
 [![DaisyUI](https://img.shields.io/badge/DaisyUI-v5-5A0EF8?style=for-the-badge&logo=daisyui&logoColor=white)](https://daisyui.com)
 [![Alpine.js](https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=black)](https://alpinejs.dev)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
-[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://figma.com)
 
 ---
 
@@ -487,7 +486,7 @@ php artisan test
 
 ## 🎨 UI/UX Design
 
-The interface was designed in Figma before development, following a design-first workflow. The design system uses a custom **fern green** palette with Poppins typography, documented in `DESIGN.md`.
+The interface was designed in Figma before development, following a design-first workflow. The design system uses a custom **fern green** palette with Poppins typography.
 
 ---
 
@@ -516,14 +515,6 @@ The interface was designed in Figma before development, following a design-first
 ### Admin Dashboard
 
 <img width="800" alt="admin-dashboard" src="https://github.com/user-attachments/assets/95b1b740-6cb6-4b66-8346-d8846c9defeb" />
-
----
-
-Built as a college project at Politeknik Negeri Cilacap, Informatics Engineering Department.
-
-**Class:** Teknik Informatika 2D
-**Course:** Framework Programming
-**Institution:** Politeknik Negeri Cilacap
 
 ---
 
