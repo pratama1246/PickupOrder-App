@@ -1,6 +1,6 @@
 # 🛒 PickupOrder-App
 
-**PickupOrder-App** is a **Laravel 13 (PHP 8.3+)** web application for **canteen/food pickup ordering**, designed for internal use at **Politeknik Negeri Cilacap**.
+**PickupOrder-App** is a modern and responsive **Laravel 13 (PHP 8.3+)** web application designed to streamline food pre-ordering and pickup operations at **Politeknik Negeri Cilacap**. By enabling students to order and pay ahead, the platform effectively eliminates queue bottlenecks in the campus canteens during peak hours.
 
 It supports 3 main roles:
 
