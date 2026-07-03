@@ -56,7 +56,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Kantin Harmoni',
                 'description' => 'Menyediakan masakan prasmanan rumahan sehat dan higienis.',
-                'image' => 'assets/canteen/harmoni.jpg',
+                'image' => null,
                 'is_open' => true,
             ]
         );
@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
                 'category' => 'Makanan',
                 'description' => 'Nasi goreng dengan telur mata sapi, kerupuk, dan suwiran ayam.',
                 'price' => 11999.00,
-                'image' => 'assets/food/nasigoreng.jpg',
+                'image' => null,
                 'stock' => 50,
                 'is_available' => true,
             ]),
@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
                 'category' => 'Makanan',
                 'description' => 'Ayam goreng krispi digeprek dengan cabai rawit pedas mantap.',
                 'price' => 15000.00,
-                'image' => 'assets/food/ayamgeprek.jpg',
+                'image' => null,
                 'stock' => 30,
                 'is_available' => true,
             ]),
@@ -83,7 +83,7 @@ class DatabaseSeeder extends Seeder
                 'category' => 'Minuman',
                 'description' => 'Minuman segar teh manis dingin dengan tambahan biji selasih.',
                 'price' => 3000.00,
-                'image' => 'assets/food/esteh.jpg',
+                'image' => null,
                 'stock' => 100,
                 'is_available' => true,
             ]),
@@ -108,7 +108,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Mi Academy',
                 'description' => 'Spesialis mie pedas dan dimsum nikmat.',
-                'image' => 'assets/canteen/harmoni.jpg', // Placeholder
+                'image' => null,
                 'is_open' => true,
             ]
         );
@@ -119,7 +119,7 @@ class DatabaseSeeder extends Seeder
                 'category' => 'Makanan',
                 'description' => 'Mie pedas manis dengan toping ayam tabur dan pangsit.',
                 'price' => 11000.00,
-                'image' => 'assets/food/nasigoreng.jpg',
+                'image' => null,
                 'stock' => 40,
                 'is_available' => true,
             ]),
@@ -127,7 +127,7 @@ class DatabaseSeeder extends Seeder
                 'category' => 'Makanan',
                 'description' => 'Dimsum gurih isi udang dibalut kulit renyah.',
                 'price' => 9500.00,
-                'image' => 'assets/food/ayamgeprek.jpg',
+                'image' => null,
                 'stock' => 20,
                 'is_available' => true,
             ]),
@@ -135,7 +135,7 @@ class DatabaseSeeder extends Seeder
                 'category' => 'Minuman',
                 'description' => 'Es teh lemon segar.',
                 'price' => 4500.00,
-                'image' => 'assets/food/esteh.jpg',
+                'image' => null,
                 'stock' => 50,
                 'is_available' => true,
             ]),

@@ -43,8 +43,8 @@
 
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-6 sm:mt-8 relative z-20">
         <div>
-            <p class="text-xs text-base-content/60 font-bold uppercase">Total Pembayaran</p>
-            <p class="text-xl sm:text-2xl font-black text-fern-700">{{ $order->formatted_total }}</p>
+            <p class="text-xs text-base-content/60 font-semibold">Total Pembayaran</p>
+            <p class="text-xl sm:text-2xl font-bold text-fern-700">{{ $order->formatted_total }}</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto relative z-20">
             @if (in_array($order->status, ['selesai', 'dibatalkan']))
@@ -52,11 +52,6 @@
                     @csrf
                     <button type="submit"
                         class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full sm:w-auto px-6 min-h-0 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
                         Beli Lagi
                     </button>
                 </form>

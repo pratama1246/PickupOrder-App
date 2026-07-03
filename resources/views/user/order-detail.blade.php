@@ -561,11 +561,6 @@
                                         @csrf
                                         <button type="submit"
                                             class="btn bg-fern-700 hover:bg-fern-800 text-white border-none w-full h-12 min-h-0 rounded-xl font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                            </svg>
                                             Beli Lagi
                                         </button>
                                     </form>

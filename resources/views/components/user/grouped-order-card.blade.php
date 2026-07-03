@@ -71,7 +71,7 @@
 
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-5 border-t border-amber-200">
         <div>
-            <p class="text-xs text-base-content/60 font-bold uppercase">Total Pembayaran</p>
+            <p class="text-xs text-base-content/60 font-semi">Total Pembayaran</p>
             <p class="text-xl sm:text-2xl font-black text-fern-700">{{ $formattedTotalGroup }}</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
