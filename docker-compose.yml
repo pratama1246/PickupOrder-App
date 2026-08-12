@@ -1,0 +1,115 @@
+services:
+  # ============================================
+  # MySQL Database (Pickup Order App)
+  # ============================================
+  db:
+    image: mysql:8.0
+    container_name: pickuporder_db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: pickuporder_app
+      MYSQL_USER: pickup_user
+      MYSQL_PASSWORD: pickup_password
+    ports:
+      - "3308:3306"   # Port 3308 agar tidak bentrok dengan project lain
+    volumes:
+      - pickup_mysql_data:/var/lib/mysql
+    networks:
+      - pickuporder_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # phpMyAdmin (Web GUI DB Manager)
+  # ============================================
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: pickuporder_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"     # Akses di http://localhost:8081
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pickuporder_network
+
+  # ============================================
+  # Laravel App (PHP 8.3 + Apache + Vite Assets)
+  # ============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pickuporder_app
+    restart: unless-stopped
+    ports:
+      - "8000:80"     # Akses di http://localhost:8000
+    environment:
+      APP_NAME: "Pickup Order PNC"
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: "http://localhost:8000"
+      APP_KEY: "base64:xK1uX8q9d/eW4k6bY7a8c9d0e1f2g3h4i5j6k7l8m9n="
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: pickuporder_app
+      DB_USERNAME: pickup_user
+      DB_PASSWORD: pickup_password
+      SESSION_DRIVER: database
+      QUEUE_CONNECTION: database
+      CACHE_STORE: database
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - pickuporder_network
+
+  # ============================================
+  # Laravel Migration & Seeder (Jalan Sekali)
+  # ============================================
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pickuporder_migrate
+    command: >
+      sh -c "
+        php artisan migrate --force &&
+        php artisan db:seed --force &&
+        php artisan storage:link || true
+      "
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: pickuporder_app
+      DB_USERNAME: pickup_user
+      DB_PASSWORD: pickup_password
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pickuporder_network
+    restart: "no"
+
+volumes:
+  pickup_mysql_data:
+    driver: local
+
+networks:
+  pickuporder_network:
+    driver: bridge
