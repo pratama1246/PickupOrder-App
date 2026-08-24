@@ -55,21 +55,21 @@ services:
     restart: unless-stopped
     ports:
       - "8000:80"     # Akses di http://localhost:8000
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - ./storage/app/public:/var/www/html/storage/app/public
+    env_file:
+      - .env          # Baca langsung dari .env lokal (tidak masuk ke image)
     environment:
-      APP_NAME: "Pickup Order PNC"
-      APP_ENV: production
-      APP_DEBUG: "false"
+      # Override nilai yang berbeda di Docker vs lokal
       APP_URL: "http://localhost:8000"
-      APP_KEY: "base64:xK1uX8q9d/eW4k6bY7a8c9d0e1f2g3h4i5j6k7l8m9n="
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306
       DB_DATABASE: pickuporder_app
       DB_USERNAME: pickup_user
       DB_PASSWORD: pickup_password
-      SESSION_DRIVER: database
-      QUEUE_CONNECTION: database
-      CACHE_STORE: database
     depends_on:
       db:
         condition: service_healthy
@@ -86,12 +86,15 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: pickuporder_migrate
-    command: >
-      sh -c "
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
         php artisan migrate --force &&
         php artisan db:seed --force &&
         php artisan storage:link || true
-      "
+    env_file:
+      - .env
     environment:
       DB_CONNECTION: mysql
       DB_HOST: db

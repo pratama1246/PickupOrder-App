@@ -10,6 +10,8 @@
 /storage/logs/*
 /public/storage
 /public/build
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
 
 # Environment files
 .env
