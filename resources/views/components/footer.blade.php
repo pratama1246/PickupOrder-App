@@ -8,8 +8,10 @@
     <div class="footer sm:footer-horizontal p-10 px-6 sm:px-10 md:px-16 lg:px-24">
 
         <aside>
-            <div class="bg-fern-700 text-white font-bold text-lg px-3 py-2 rounded-lg tracking-wide w-fit mb-2">
-                LOGO
+            <div class="mb-3">
+                <a href="{{ route('home') }}" class="group inline-flex items-center transition active:scale-95" aria-label="PickupOrder PNC">
+                    <x-brand-logo variant="light" size="md" />
+                </a>
             </div>
             <p class="text-sm text-base-content/70 max-w-xs leading-relaxed">
                 Sistem Pickup Order Politeknik Negeri Cilacap. Pesan makanan kantin tanpa antri, langsung dari

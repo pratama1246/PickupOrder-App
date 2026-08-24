@@ -7,9 +7,10 @@
 --}}
 <header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50 shadow-md">
     <div class="flex items-center gap-3 sm:gap-4">
-        <div class="bg-fern-700 text-white font-bold text-lg px-3 py-1 rounded-lg tracking-wide shrink-0">
-            LOGO
-        </div>
+        <a href="{{ route('admin.dashboard') }}" class="group inline-flex items-center transition active:scale-95 shrink-0" aria-label="PickupOrder PNC Admin">
+            <x-brand-logo variant="dark" size="sm" />
+        </a>
+        <div class="h-5 w-px bg-white/20 hidden sm:block"></div>
         <span class="text-white/90 font-bold text-base sm:text-lg tracking-wide">Admin <span
                 class="max-[380px]:hidden">Dashboard</span></span>
     </div>

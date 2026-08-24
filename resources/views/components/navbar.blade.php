@@ -8,10 +8,8 @@
 <div class="navbar bg-shadow-grey-900 shadow-sm px-6 sticky top-0 z-50 h-20">
 
     <div class="navbar-start">
-        <a href="/" class="flex items-center gap-2 transition active:scale-95">
-            <div class="bg-fern-700 text-white font-bold text-lg px-3 py-1 rounded-lg tracking-wide">
-                LOGO
-            </div>
+        <a href="/" class="group flex items-center transition active:scale-95" aria-label="PickupOrder PNC">
+            <x-brand-logo variant="dark" size="md" />
         </a>
     </div>
 

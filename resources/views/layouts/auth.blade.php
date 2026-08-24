@@ -62,20 +62,13 @@
             <div class="flex items-center gap-3 md:block w-full">
                 <!-- Tampilan Mobile (Horizontal Row Banner) -->
                 <div class="flex items-center gap-3 md:hidden">
-                    <img src="{{ asset('assets/illustration/logo-pnc.jpg') }}" alt="Logo PNC"
-                        class="w-9 h-9 object-contain rounded-lg bg-white p-0.5 shadow-sm"
-                        onerror="this.src='https://ui-avatars.com/api/?name=PNC&color=7F9CF5&background=EBF4FF'">
-                    <div>
-                        <h2 class="text-xs font-bold text-white leading-tight">Sistem Pickup Order PNC</h2>
-                        <p class="text-[10px] text-white/60 font-medium">Politeknik Negeri Cilacap</p>
-                    </div>
+                    <x-brand-logo variant="dark" size="sm" />
                 </div>
 
-                <!-- Tampilan Desktop (Badge + Tagline) -->
+                <!-- Tampilan Desktop (Brand Logo + Tagline) -->
                 <div class="hidden md:block">
-                    <div
-                        class="inline-block bg-brand-gradient text-white px-4 py-1.5 rounded-md text-xs font-bold shadow-sm mb-4">
-                        Sistem Pickup Order PNC
+                    <div class="mb-5">
+                        <x-brand-logo variant="dark" size="md" />
                     </div>
 
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight text-white">
