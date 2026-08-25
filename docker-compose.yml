@@ -109,6 +109,24 @@ services:
       - pickuporder_network
     restart: "no"
 
+  # ============================================
+  # Ngrok Tunnel (Otomatis Nyala di Docker)
+  # ============================================
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: pickuporder_ngrok
+    restart: unless-stopped
+    command:
+      - "http"
+      - "--domain=junior-strategy-worst.ngrok-free.dev"
+      - "app:80"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    depends_on:
+      - app
+    networks:
+      - pickuporder_network
+
 volumes:
   pickup_mysql_data:
     driver: local
