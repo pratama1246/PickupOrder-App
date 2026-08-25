@@ -6,12 +6,12 @@
   - Mengintegrasikan tombol logout aman di bagian bawah sidebar dengan pemicu form POST ('vendor-logout-form') 
     guna melindungi proses keluar dari serangan CSRF.
 --}}
-<aside class="w-64 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
+<aside class="w-64 h-full bg-fern-50 border-r border-fern-200 flex flex-col shrink-0 overflow-y-auto">
     <nav class="flex-1 px-3 py-4 space-y-1">
 
         <a href="{{ route('vendor.dashboard') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('vendor/dashboard') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('vendor/dashboard') ? 'bg-fern-700 text-white shadow-sm' : 'text-fern-900/75 hover:bg-fern-100/70 hover:text-fern-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -24,7 +24,7 @@
 
         <a href="{{ route('vendor.order.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('vendor/order*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('vendor/order*') ? 'bg-fern-700 text-white shadow-sm' : 'text-fern-900/75 hover:bg-fern-100/70 hover:text-fern-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -36,7 +36,7 @@
 
         <a href="{{ route('vendor.menu.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('vendor/menu*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('vendor/menu*') ? 'bg-fern-700 text-white shadow-sm' : 'text-fern-900/75 hover:bg-fern-100/70 hover:text-fern-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -46,7 +46,7 @@
 
         <a href="{{ route('vendor.report.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('vendor/report*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('vendor/report*') ? 'bg-fern-700 text-white shadow-sm' : 'text-fern-900/75 hover:bg-fern-100/70 hover:text-fern-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -56,9 +56,9 @@
         </a>
     </nav>
 
-    <div class="p-3 border-t border-white/10 mt-auto">
+    <div class="p-3 border-t border-fern-200 mt-auto">
         <a href="#" onclick="event.preventDefault(); document.getElementById('vendor-logout-form').submit();"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm text-red-400 hover:bg-white/10 hover:text-red-300 transition-colors">
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"

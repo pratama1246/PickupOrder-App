@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 120" fill="none">
+  <!-- Monochrome Solid White Lockup -->
+  <g transform="translate(16, 14) scale(0.22)">
+    <rect x="96" y="64" width="88" height="384" rx="44" fill="#FFFFFF" />
+    <path d="M140 64H276C353.32 64 416 126.68 416 204C416 281.32 353.32 344 276 344H140V260H276C306.928 260 332 234.928 332 204C332 173.072 306.928 148 276 148H140V64Z" fill="#FFFFFF" />
+    <path d="M220 148H276C306.928 148 332 173.072 332 204C332 234.928 306.928 260 276 260H220V148Z" fill="#000000" />
+    <path d="M236 148V104C236 90.7452 246.745 80 260 80C273.255 80 284 90.7452 284 104V148" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" />
+    <circle cx="276" cy="204" r="18" fill="#FFFFFF" />
+  </g>
+
+  <g transform="translate(132, 0)">
+    <text x="0" y="80" font-family="Poppins, 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="58" font-weight="900" letter-spacing="-1.5" fill="#FFFFFF">
+      PickupOrder
+    </text>
+  </g>
+</svg>

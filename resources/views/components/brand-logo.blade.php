@@ -2,68 +2,119 @@
     'variant' => 'dark',     // 'dark' (untuk navbar gelap) | 'light' (untuk footer / background terang)
     'size' => 'md',          // 'sm' | 'md' | 'lg'
     'showText' => true,
-    'showBadge' => true,
-    'tag' => 'PNC'
 ])
 
 @php
     $sizeConfig = [
         'sm' => [
-            'svg' => 'w-7 h-7',
-            'text' => 'text-sm',
-            'badge' => 'text-[9px] px-1 py-0.5',
-            'gap' => 'gap-2',
+            'icon' => 'w-8 h-8',
+            'full' => 'h-8 sm:h-9 w-auto',
         ],
         'md' => [
-            'svg' => 'w-9 h-9',
-            'text' => 'text-base sm:text-lg',
-            'badge' => 'text-[10px] px-1.5 py-0.5',
-            'gap' => 'gap-2.5',
+            'icon' => 'w-11 h-11',
+            'full' => 'h-10 sm:h-11 w-auto',
         ],
         'lg' => [
-            'svg' => 'w-12 h-12',
-            'text' => 'text-xl sm:text-2xl',
-            'badge' => 'text-xs px-2 py-0.5',
-            'gap' => 'gap-3',
+            'icon' => 'w-14 h-14',
+            'full' => 'h-13 sm:h-14 w-auto',
         ],
     ];
 
     $cfg = $sizeConfig[$size] ?? $sizeConfig['md'];
 
     $isDark = $variant === 'dark';
-    $textPrimaryClass = $isDark ? 'text-white' : 'text-shadow-grey-900';
-    $textSecondaryClass = $isDark ? 'text-emerald-400' : 'text-fern-700';
-
-    $badgeClass = $isDark
-        ? 'bg-fern-900/90 text-sunrise-gold-500 border border-sunrise-gold-500/30'
-        : 'bg-fern-100 text-fern-800 border border-fern-300';
+    
+    // Pick correct SVG colors based on theme variant
+    $textPrimaryColor = $isDark ? '#FFFFFF' : '#131720';
+    $textSecondaryColor = $isDark ? '#4ADE80' : '#306939';
+    $stemColorStart = $isDark ? '#4ADE80' : '#347B42';
+    $stemColorEnd = $isDark ? '#16A34A' : '#1E5228';
+    $loopColorStart = $isDark ? '#A3E635' : '#84CC16';
+    $loopColorEnd = $isDark ? '#65A30D' : '#558B0E';
+    $handleStroke = $isDark ? '#16A34A' : '#2E7D32';
 @endphp
 
-<div {{ $attributes->merge(['class' => 'inline-flex items-center ' . $cfg['gap'] . ' select-none group']) }}>
-    {{-- Converted Brand SVG Icon (Transparent Background) --}}
-    <div class="{{ $cfg['svg'] }} shrink-0 transition-transform group-hover:scale-105 drop-shadow-sm flex items-center justify-center">
-        <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Light Green / Lime Top & Handle -->
-            <path d="M272.5 27.2 L258.0 26.0 L240.1 27.2 L216.9 34.7 L204.8 41.6 L187.4 57.2 L175.3 75.2 L167.8 93.7 L164.3 122.6 L163.1 123.8 L121.5 124.4 L103.5 130.7 L90.2 140.6 L83.3 148.7 L76.9 159.7 L71.7 176.4 L72.3 260.3 L85.0 250.5 L94.9 247.0 L108.7 245.9 L126.7 251.1 L135.4 257.4 L226.2 348.3 L232.6 352.3 L239.5 352.3 L243.6 350.0 L433.9 157.3 L421.2 140.0 L413.1 133.6 L400.9 127.3 L386.5 123.8 L348.3 123.2 L346.6 104.7 L341.3 85.0 L335.6 72.9 L326.9 60.1 L311.8 45.1 L302.6 38.7 L288.1 31.8 Z M200.7 112.2 L202.5 103.5 L207.7 91.4 L221.0 75.2 L238.4 64.8 L259.2 61.9 L275.4 65.3 L288.7 72.9 L296.2 79.8 L303.2 89.1 L307.8 98.9 L311.3 120.3 L309.5 123.8 L201.9 123.8 Z" fill="#CDD588" fill-rule="evenodd" />
-            <!-- Dark Fern Green Bottom -->
-            <path d="M440.3 211.2 L258.0 396.9 L248.2 402.7 L241.2 404.4 L225.0 403.3 L210.6 394.6 L74.6 258.6 L71.7 261.5 L71.1 269.0 L71.7 414.8 L76.3 432.8 L85.6 450.1 L99.5 465.2 L112.2 473.8 L129.0 480.8 L146.4 483.7 L364.5 483.7 L380.7 481.4 L394.0 476.7 L406.2 469.8 L421.2 456.5 L429.3 445.5 L436.2 431.0 L440.3 413.7 Z" fill="#47885E" />
-            <!-- White Checkmark Ribbon -->
-            <path d="M75.2 258.0 L211.7 394.6 L224.5 402.1 L239.5 403.8 L247.0 402.1 L258.0 395.7 L440.9 209.4 L433.3 158.5 L240.7 352.3 L229.7 351.8 L135.9 258.6 L125.5 251.1 L109.3 246.5 L97.2 247.0 L85.0 251.1 Z" fill="#FFFFFF" />
-        </svg>
-    </div>
-
-    {{-- Brand Typography & PNC Badge --}}
+<div {{ $attributes->merge(['class' => 'inline-flex items-center select-none group shrink-0']) }}>
     @if($showText)
-        <div class="flex items-center gap-1.5 leading-none">
-            <span class="font-extrabold tracking-tight {{ $cfg['text'] }} {{ $textPrimaryClass }}">
-                Pickup<span class="{{ $textSecondaryClass }}">Order</span>
-            </span>
+        {{-- Complete 100% Vector SVG Brand Logo Lockup (Icon + Wordmark in SVG) --}}
+        <div class="{{ $cfg['full'] }} shrink-0 transition-transform group-hover:scale-[1.02] flex items-center justify-center">
+            <svg class="h-full w-auto" viewBox="0 0 540 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="bl-stem-{{ $variant }}-{{ $size }}" x1="80" y1="80" x2="200" y2="450" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="{{ $stemColorStart }}" />
+                        <stop offset="100%" stop-color="{{ $stemColorEnd }}" />
+                    </linearGradient>
+                    <linearGradient id="bl-loop-{{ $variant }}-{{ $size }}" x1="160" y1="60" x2="420" y2="340" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="{{ $loopColorStart }}" />
+                        <stop offset="100%" stop-color="{{ $loopColorEnd }}" />
+                    </linearGradient>
+                    <filter id="bl-shadow-{{ $variant }}-{{ $size }}" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="{{ $isDark ? '#000000' : '#1E5228' }}" flood-opacity="{{ $isDark ? '0.35' : '0.2' }}" />
+                    </filter>
+                </defs>
 
-            @if($showBadge)
-                <span class="{{ $cfg['badge'] }} {{ $badgeClass }} font-black rounded-md tracking-wider uppercase inline-flex items-center shadow-xs">
-                    {{ $tag }}
-                </span>
-            @endif
+                <!-- Left: Master Logo Icon Mark -->
+                <g transform="translate(16, 14) scale(0.22)" filter="url(#bl-shadow-{{ $variant }}-{{ $size }})">
+                    <!-- Monogram P Vertical Stem -->
+                    <rect x="96" y="64" width="88" height="384" rx="44" fill="url(#bl-stem-{{ $variant }}-{{ $size }})" />
+
+                    <!-- Monogram P Forward Loop / Food Bag Shape -->
+                    <path d="M140 64H276C353.32 64 416 126.68 416 204C416 281.32 353.32 344 276 344H140V260H276C306.928 260 332 234.928 332 204C332 173.072 306.928 148 276 148H140V64Z" 
+                          fill="url(#bl-loop-{{ $variant }}-{{ $size }})" />
+
+                    <!-- Pure White Inner Cutout -->
+                    <path d="M220 148H276C306.928 148 332 173.072 332 204C332 234.928 306.928 260 276 260H220V148Z" 
+                          fill="#FFFFFF" />
+
+                    <!-- Bag Handle Arc on top of P -->
+                    <path d="M236 148V104C236 90.7452 246.745 80 260 80C273.255 80 284 90.7452 284 104V148" 
+                          stroke="{{ $handleStroke }}" stroke-width="16" stroke-linecap="round" />
+
+                    <!-- Fast Pickup Checkmark Accent (Warm Gold) -->
+                    <circle cx="276" cy="204" r="18" fill="#FFBF4A" />
+                </g>
+
+                <!-- Right: Vector SVG Typography "PickupOrder" -->
+                <g transform="translate(132, 0)">
+                    <text x="0" y="80" font-family="Poppins, 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="58" font-weight="900" letter-spacing="-1.5">
+                        <tspan fill="{{ $textPrimaryColor }}">Pickup</tspan><tspan fill="{{ $textSecondaryColor }}">Order</tspan>
+                    </text>
+                </g>
+            </svg>
+        </div>
+    @else
+        {{-- Standalone Icon Only SVG --}}
+        <div class="{{ $cfg['icon'] }} shrink-0 transition-transform group-hover:scale-105 drop-shadow-sm flex items-center justify-center">
+            <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="bl-icon-stem-{{ $variant }}-{{ $size }}" x1="80" y1="80" x2="200" y2="450" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="{{ $stemColorStart }}" />
+                        <stop offset="100%" stop-color="{{ $stemColorEnd }}" />
+                    </linearGradient>
+                    <linearGradient id="bl-icon-loop-{{ $variant }}-{{ $size }}" x1="160" y1="60" x2="420" y2="340" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="{{ $loopColorStart }}" />
+                        <stop offset="100%" stop-color="{{ $loopColorEnd }}" />
+                    </linearGradient>
+                </defs>
+
+                <!-- Monogram P Vertical Stem -->
+                <rect x="96" y="64" width="88" height="384" rx="44" fill="url(#bl-icon-stem-{{ $variant }}-{{ $size }})" />
+
+                <!-- Monogram P Forward Loop / Food Bag Shape -->
+                <path d="M140 64H276C353.32 64 416 126.68 416 204C416 281.32 353.32 344 276 344H140V260H276C306.928 260 332 234.928 332 204C332 173.072 306.928 148 276 148H140V64Z" 
+                      fill="url(#bl-icon-loop-{{ $variant }}-{{ $size }})" />
+
+                <!-- Pure White Inner Cutout -->
+                <path d="M220 148H276C306.928 148 332 173.072 332 204C332 234.928 306.928 260 276 260H220V148Z" 
+                      fill="#FFFFFF" />
+
+                <!-- Bag Handle Arc on top of P -->
+                <path d="M236 148V104C236 90.7452 246.745 80 260 80C273.255 80 284 90.7452 284 104V148" 
+                      stroke="{{ $handleStroke }}" stroke-width="16" stroke-linecap="round" />
+
+                <!-- Fast Pickup Checkmark Accent (Warm Gold) -->
+                <circle cx="276" cy="204" r="18" fill="#FFBF4A" />
+            </svg>
         </div>
     @endif
 </div>

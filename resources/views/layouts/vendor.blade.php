@@ -13,6 +13,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Vendor Dashboard - PNC')</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/brand/favicon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/brand/apple-touch-icon.svg') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')

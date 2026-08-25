@@ -5,14 +5,14 @@
   - Menyediakan dropdown pengaturan akun, navigasi kembali ke halaman utama publik, 
     dan tombol keluar terproteksi CSRF form POST.
 --}}
-<header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50 shadow-md">
+<header class="navbar bg-fern-50 border-b border-fern-200 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50">
     <div class="flex items-center gap-3 sm:gap-4">
         <a href="{{ route('admin.dashboard') }}" class="group inline-flex items-center transition active:scale-95 shrink-0" aria-label="PickupOrder PNC Admin">
-            <x-brand-logo variant="dark" size="sm" />
+            <x-brand-logo variant="light" size="sm" />
         </a>
-        <div class="h-5 w-px bg-white/20 hidden sm:block"></div>
-        <span class="text-white/90 font-bold text-base sm:text-lg tracking-wide">Admin <span
-                class="max-[380px]:hidden">Dashboard</span></span>
+        <div class="h-5 w-px bg-fern-300 hidden sm:block"></div>
+        <span class="text-fern-950 font-bold text-base sm:text-lg tracking-wide">Admin <span
+                class="max-[380px]:hidden text-fern-700">Dashboard</span></span>
     </div>
 
     <div class="flex items-center gap-3">

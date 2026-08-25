@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="fav-bg-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F4FBF5" />
+    </linearGradient>
+    <linearGradient id="fav-p-stem" x1="10" y1="10" x2="25" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#347B42" />
+      <stop offset="100%" stop-color="#1E5228" />
+    </linearGradient>
+    <linearGradient id="fav-p-loop" x1="20" y1="8" x2="52" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#84CC16" />
+      <stop offset="100%" stop-color="#558B0E" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle App Container Background -->
+  <rect width="64" height="64" rx="16" fill="url(#fav-bg-grad)" />
+  <rect x="0.5" y="0.5" width="63" height="63" rx="15.5" stroke="#E2EFE4" stroke-width="1" />
+
+  <!-- Centered Scaled Master Logo Mark -->
+  <g transform="translate(8, 8) scale(0.09375)">
+    <!-- Monogram P Vertical Stem -->
+    <rect x="96" y="64" width="88" height="384" rx="44" fill="url(#fav-p-stem)" />
+
+    <!-- Monogram P Forward Loop / Food Bag Shape -->
+    <path d="M140 64H276C353.32 64 416 126.68 416 204C416 281.32 353.32 344 276 344H140V260H276C306.928 260 332 234.928 332 204C332 173.072 306.928 148 276 148H140V64Z" 
+          fill="url(#fav-p-loop)" />
+
+    <!-- Pure White Inner Cutout -->
+    <path d="M220 148H276C306.928 148 332 173.072 332 204C332 234.928 306.928 260 276 260H220V148Z" 
+          fill="#FFFFFF" />
+
+    <!-- Bag Handle Arc on top of P -->
+    <path d="M236 148V104C236 90.7452 246.745 80 260 80C273.255 80 284 90.7452 284 104V148" 
+          stroke="#2E7D32" stroke-width="16" stroke-linecap="round" />
+
+    <!-- Fast Pickup Checkmark Accent (Warm Gold) -->
+    <circle cx="276" cy="204" r="18" fill="#FFBF4A" />
+  </g>
+</svg>

@@ -8,12 +8,12 @@
   - Memuat dropdown profil dengan verifikasi avatar, pemetaan navigasi khusus vendor, 
     dan mekanisme keluar (logout) aman.
 --}}
-<header class="navbar bg-shadow-grey-900 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50 shadow-md">
+<header class="navbar bg-fern-50 border-b border-fern-200 h-20 flex items-center justify-between px-3 sm:px-6 shrink-0 z-50">
     <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
         <a href="{{ route('vendor.dashboard') }}" class="group inline-flex items-center transition active:scale-95 shrink-0" aria-label="PickupOrder PNC Vendor">
-            <x-brand-logo variant="dark" size="sm" />
+            <x-brand-logo variant="light" size="sm" />
         </a>
-        <div class="h-5 w-px bg-white/20 hidden sm:block shrink-0"></div>
+        <div class="h-5 w-px bg-fern-300 hidden sm:block shrink-0"></div>
 
         <div x-data="{
             hover: false,
@@ -33,13 +33,13 @@
             class="min-w-0 flex-1 overflow-hidden">
 
             <div x-ref="text"
-                class="text-white/90 font-bold text-base sm:text-lg tracking-wide transition-transform ease-linear"
+                class="text-fern-950 font-bold text-base sm:text-lg tracking-wide transition-transform ease-linear"
                 :class="hover && scrollDist > 0 ? 'whitespace-nowrap inline-block' : 'truncate block'"
                 :style="hover && scrollDist > 0 ?
                     `transform: translateX(-${scrollDist + 8}px); transition-duration: ${Math.max(scrollDist * 20, 500)}ms;` :
                     'transform: translateX(0); transition-duration: 300ms;'">
                 {{ optional(auth()->user()->canteen)->name ?? 'Vendor' }} <span
-                    class="max-[380px]:hidden">Dashboard</span>
+                    class="max-[380px]:hidden text-fern-700">Dashboard</span>
             </div>
         </div>
     </div>

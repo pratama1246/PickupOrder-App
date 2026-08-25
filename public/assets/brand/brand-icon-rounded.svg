@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="app-bg-grad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F4FBF5" />
+    </linearGradient>
+    <linearGradient id="app-p-stem" x1="80" y1="80" x2="200" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#347B42" />
+      <stop offset="100%" stop-color="#1E5228" />
+    </linearGradient>
+    <linearGradient id="app-p-loop" x1="160" y1="60" x2="420" y2="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#84CC16" />
+      <stop offset="100%" stop-color="#558B0E" />
+    </linearGradient>
+    <filter id="app-icon-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#1E5228" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- Squircle App Icon Background -->
+  <rect width="512" height="512" rx="128" fill="url(#app-bg-grad)" />
+  <rect x="1" y="1" width="510" height="510" rx="127" stroke="#E2EFE4" stroke-width="2" />
+
+  <!-- Centered Scaled Logo Mark -->
+  <g transform="translate(64, 64) scale(0.75)" filter="url(#app-icon-shadow)">
+    <!-- Monogram P Vertical Stem -->
+    <rect x="96" y="64" width="88" height="384" rx="44" fill="url(#app-p-stem)" />
+
+    <!-- Monogram P Forward Loop / Food Bag Shape -->
+    <path d="M140 64H276C353.32 64 416 126.68 416 204C416 281.32 353.32 344 276 344H140V260H276C306.928 260 332 234.928 332 204C332 173.072 306.928 148 276 148H140V64Z" 
+          fill="url(#app-p-loop)" />
+
+    <!-- Pure White Inner Cutout -->
+    <path d="M220 148H276C306.928 148 332 173.072 332 204C332 234.928 306.928 260 276 260H220V148Z" 
+          fill="#FFFFFF" />
+
+    <!-- Bag Handle Arc on top of P -->
+    <path d="M236 148V104C236 90.7452 246.745 80 260 80C273.255 80 284 90.7452 284 104V148" 
+          stroke="#2E7D32" stroke-width="16" stroke-linecap="round" />
+
+    <!-- Fast Pickup Checkmark Accent (Warm Gold) -->
+    <circle cx="276" cy="204" r="18" fill="#FFBF4A" />
+  </g>
+</svg>

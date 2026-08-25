@@ -6,12 +6,12 @@
   - Menyertakan tombol pintas keluar (logout) yang memicu submit form POST ('admin-logout-form') 
     secara aman di bagian footer sidebar.
 --}}
-<aside class="w-64 h-full bg-shadow-grey-900 flex flex-col shrink-0 overflow-y-auto">
+<aside class="w-64 h-full bg-fern-50 border-r border-fern-200 flex flex-col shrink-0 overflow-y-auto">
     <nav class="flex-1 px-3 py-4 space-y-1">
 
         <a href="{{ route('admin.dashboard') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('admin/dashboard') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('admin/dashboard') ? 'bg-fern-700 text-white shadow-sm' : 'text-fern-900/75 hover:bg-fern-100/70 hover:text-fern-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -24,7 +24,7 @@
 
         <a href="{{ route('admin.canteen.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('admin/canteen*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('admin/canteen*') ? 'bg-fern-700 text-white shadow-sm' : 'text-fern-900/75 hover:bg-fern-100/70 hover:text-fern-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
@@ -35,7 +35,7 @@
 
         <a href="{{ route('admin.users.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-       {{ request()->is('admin/users*') ? 'bg-fern-700 text-white shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+       {{ request()->is('admin/users*') ? 'bg-fern-700 text-white shadow-sm' : 'text-fern-900/75 hover:bg-fern-100/70 hover:text-fern-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -47,9 +47,9 @@
         </a>
     </nav>
 
-    <div class="p-3 border-t border-white/10 mt-auto">
+    <div class="p-3 border-t border-fern-200 mt-auto">
         <a href="#" onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm text-red-400 hover:bg-white/10 hover:text-red-300 transition-colors">
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
