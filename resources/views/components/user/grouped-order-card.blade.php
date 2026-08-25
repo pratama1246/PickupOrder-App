@@ -28,7 +28,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                 </svg>
-                <span class="text-xs font-bold text-amber-700 uppercase tracking-wide">Menunggu Pembayaran</span>
+                <span class="text-xs font-bold text-amber-700">Menunggu Pembayaran</span>
             </div>
             <h2 class="text-sm sm:text-xl font-bold text-base-content mb-1 whitespace-nowrap truncate max-w-[240px] sm:max-w-none">No. Transaksi: {{ $firstOrder->payment_code }}</h2>
             <p class="text-xs sm:text-sm font-medium text-base-content/70">Waktu Pickup: {{ $firstOrder->pickup_time->format('H:i, d M Y') }}</p>

@@ -317,7 +317,7 @@
 
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-[11px] font-semibold text-base-content/50 tracking-wide">Progres</span>
+                            <span class="text-[11px] font-semibold text-base-content/50">Progres</span>
                             <span class="text-xs font-bold {{ $targetPercentageReal >= 100 ? 'text-emerald-600' : 'text-fern-700' }}">
                                 {{ $targetPercentageReal }}%
                             </span>
@@ -332,11 +332,11 @@
 
                     <div class="grid grid-cols-2 gap-2 bg-base-200/40 rounded-xl p-3">
                         <div>
-                            <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Target</p>
+                            <p class="text-[10px] font-semibold text-base-content/40 mb-1">Target</p>
                             <p class="text-xs font-bold text-base-content leading-tight">Rp{{ number_format($dailyTarget, 0, ',', '.') }}</p>
                         </div>
                         <div>
-                            <p class="text-[10px] font-semibold text-base-content/40 uppercase tracking-wide mb-1">Sisa</p>
+                            <p class="text-[10px] font-semibold text-base-content/40 mb-1">Sisa</p>
                             <p class="text-xs font-bold {{ $remaining > 0 ? 'text-amber-600' : 'text-emerald-600' }} leading-tight">
                                 {{ $remaining > 0 ? 'Rp'.number_format($remaining, 0, ',', '.') : 'Lunas' }}
                             </p>

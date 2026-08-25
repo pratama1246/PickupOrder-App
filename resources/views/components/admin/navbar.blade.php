@@ -11,8 +11,8 @@
             <x-brand-logo variant="light" size="sm" />
         </a>
         <div class="h-5 w-px bg-fern-300 hidden sm:block"></div>
-        <span class="text-fern-950 font-bold text-base sm:text-lg tracking-wide">Admin <span
-                class="max-[380px]:hidden text-fern-700">Dashboard</span></span>
+        <span class="text-fern-950 font-bold text-base sm:text-lg">Admin <span
+                class="max-[380px]:hidden text-fern-700 font-extrabold">Dashboard</span></span>
     </div>
 
     <div class="flex items-center gap-3">
@@ -26,14 +26,14 @@
                 @else
                     <div
                         class="bg-fern-100 text-fern-700 w-8 rounded-full ring-2 ring-fern-200 flex items-center justify-center">
-                        <span class="text-sm font-bold uppercase">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
+                        <span class="text-sm font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
                     </div>
                 @endif
             </div>
             <ul tabindex="0"
                 class="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-64 p-2 shadow-lg border border-base-200 text-base-content">
                 <div class="px-4 py-2.5 border-b border-base-200 mb-1 min-w-0">
-                    <div class="text-[10px] font-bold text-fern-700 uppercase tracking-wider">Administrator</div>
+                    <div class="text-[10px] font-bold text-fern-700">Administrator</div>
                     <div class="text-sm font-bold text-base-content truncate">{{ auth()->user()->name }}</div>
                     <div class="text-xs text-base-content/50 truncate">{{ auth()->user()->email }}</div>
                 </div>

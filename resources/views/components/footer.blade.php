@@ -18,7 +18,7 @@
                 genggamanmu.
             </p>
             <div class="mt-4">
-                <p class="text-xs font-bold text-fern-700 uppercase tracking-wider mb-2">Metode Pembayaran</p>
+                <p class="text-xs font-bold text-fern-700 mb-2">Metode Pembayaran</p>
                 <div class="flex items-center gap-2 flex-wrap">
                     <span
                         class="text-xs bg-base-100 border border-base-300 rounded-md px-2 py-1 font-medium text-base-content/80">Tunai</span>

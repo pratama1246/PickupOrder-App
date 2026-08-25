@@ -54,7 +54,7 @@
                                     d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.66-1.01l.82-1.23A2 2 0 0 1 10.08 4h3.84a2 2 0 0 1 1.67 1.01l.82 1.23A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" />
                                 <circle cx="12" cy="13" r="3" />
                             </svg>
-                            <span class="text-[9px] text-white font-bold uppercase tracking-wider">Ubah</span>
+                            <span class="text-[9px] text-white font-bold">Ubah</span>
                         </div>
                     </div>
 
@@ -78,7 +78,7 @@
                         @endif
                     </div>
                     <div class="mt-6 pt-6 border-t border-base-content/10 text-left">
-                        <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wider mb-1">NIM / NIP / ID
+                        <p class="text-xs font-semibold text-base-content/50 mb-1">NIM / NIP / ID
                         </p>
                         <p class="font-medium text-shadow-grey-900">{{ $user->nim ?? '-' }}</p>
                     </div>

@@ -82,9 +82,9 @@
     @if ($order->status === 'siap_diambil')
         <x-modal id="pickup_modal_{{ $order->id }}" title="Kode Pengambilan" :showFooter="false">
             <div class="text-center py-4 bg-white rounded-2xl">
-                <p class="text-xs font-bold text-base-content/70 uppercase mb-3">Kode Pengambilan</p>
-                <canvas id="qr-code-{{ $order->id }}" class="mx-auto rounded-xl"></canvas>
-                <p class="text-3xl font-black text-base-content tracking-widest mt-4">
+                <p class="text-xs font-bold text-base-content/70 mb-3">Kode Pengambilan</p>
+                <div class="bg-base-100 border border-base-content/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-inner">
+                    <p class="text-3xl font-black text-base-content mt-4">
                     {{ $order->pickup_code }}</p>
                 <p class="text-xs text-base-content/50 mt-2 font-medium">Tunjukkan ke kasir untuk verifikasi pesanan</p>
             </div>

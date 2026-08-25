@@ -343,7 +343,7 @@
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs font-medium text-base-content leading-snug">
                                     {{ $eventText }}
-                                    <span class="inline-flex items-center ml-1 px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-bold text-base-content/50 tracking-wide align-middle">#{{ $shortCode }}</span>
+                                    <span class="inline-flex items-center ml-1 px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-bold text-base-content/50 align-middle">#{{ $shortCode }}</span>
                                 </p>
                                 <p class="text-[11px] text-base-content/40 font-medium mt-1">
                                     oleh {{ $userName }}

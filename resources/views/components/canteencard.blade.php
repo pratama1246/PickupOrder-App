@@ -41,7 +41,7 @@
         <h2 class="card-title font-bold text-lg md:text-xl text-base-content mb-1 flex flex-wrap items-center gap-2">
             <span>{{ $name }}</span>
             @if (!$isOpen)
-                <span class="badge bg-red-500 text-white border-none font-extrabold text-[10px] px-2 py-0.5 tracking-wider uppercase">Tutup</span>
+                <span class="badge bg-red-500 text-white border-none font-extrabold text-[10px] px-2 py-0.5">Tutup</span>
             @endif
         </h2>
         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl w-fit mb-3 bg-base-200">

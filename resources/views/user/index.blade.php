@@ -197,7 +197,7 @@
                     <div>
                         <span class="text-xs font-bold text-fern-700">Langkah 3</span>
                         <h3 class="text-base font-bold text-base-content mt-0.5 mb-1">Ambil di Kantin</h3>
-                        <p class="text-xs text-base-content/60 font-medium luppercase tracking-widereading-snug">Ambil makananmu setelah pesanan
+                        <p class="text-xs text-base-content/60 font-medium leading-snug">Ambil makananmu setelah pesanan
                             siap.</p>
                     </div>
                 </div>

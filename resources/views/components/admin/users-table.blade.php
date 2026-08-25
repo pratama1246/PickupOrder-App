@@ -15,7 +15,7 @@
     <div class="overflow-x-auto w-full">
         <table class="table w-full min-w-max">
             <thead>
-                <tr class="bg-base-200 text-xs font-bold uppercase text-base-content/60 border-b border-base-content/10">
+                <tr class="bg-base-200 text-xs font-bold text-base-content/60 border-b border-base-content/10">
                     <th class="py-3 px-4 text-left w-12">
                         <input type="checkbox"
                             class="checkbox checkbox-sm border-base-content/30 focus:ring-0 checked:bg-fern-700 checked:text-white"

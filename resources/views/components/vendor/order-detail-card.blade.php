@@ -28,7 +28,7 @@
         @endforeach
 
         <div class="mt-4 pt-4 border-t border-base-content/10">
-            <p class="text-xs font-bold text-base-content/60 uppercase mb-1">Catatan dari Pembeli</p>
+            <p class="text-xs font-bold text-base-content/60 mb-1">Catatan dari Pembeli</p>
             <p class="text-sm font-medium text-base-content">{{ $order->notes ?? 'Tidak ada catatan.' }}</p>
         </div>
     </div>

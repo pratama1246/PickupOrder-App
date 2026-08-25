@@ -80,7 +80,7 @@
         <div
             class="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t border-base-content/5 pt-3 sm:pt-0 sm:border-none">
             <div class="block sm:hidden">
-                <p class="text-[10px] text-base-content/50 font-bold uppercase tracking-wider mb-0.5">Subtotal</p>
+                <p class="text-[10px] text-base-content/50 font-bold mb-0.5">Subtotal</p>
                 <p class="text-sm font-bold text-base-content">
                     Rp. <span
                         x-text="(items[{{ $itemId }}].qty * items[{{ $itemId }}].price).toLocaleString('id-ID')">{{ number_format($price * $quantity, 0, ',', '.') }}</span>,00

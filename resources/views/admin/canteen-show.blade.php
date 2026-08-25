@@ -136,7 +136,7 @@
                         </div>
                     @endif
                     <div>
-                        <p class="text-xs font-bold text-base-content/50 uppercase">Pemilik Kantin (Vendor)</p>
+                        <p class="text-xs font-bold text-base-content/50">Pemilik Kantin (Vendor)</p>
                         <p class="text-base-content font-bold flex items-center gap-2">
                             {{ optional($canteen->owner)->name ?? 'Tidak diketahui' }}
                         </p>

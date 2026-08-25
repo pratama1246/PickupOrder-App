@@ -414,11 +414,11 @@
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="bg-base-100 rounded-2xl p-4 border border-base-content/10 shadow-sm">
-                                    <p class="text-xs text-base-content/50 uppercase font-bold mb-1">Metode Pembayaran</p>
+                                    <p class="text-xs text-base-content/50 font-bold mb-1">Metode Pembayaran</p>
                                     <p class="font-bold text-base-content text-sm">{{ $order->payment_method_label }}</p>
                                 </div>
                                 <div class="bg-base-100 rounded-2xl p-4 border border-base-content/10 shadow-sm">
-                                    <p class="text-xs text-base-content/50 uppercase font-bold mb-1">Status Pembayaran</p>
+                                    <p class="text-xs text-base-content/50 font-bold mb-1">Status Pembayaran</p>
                                     @php
                                         $payBadgeClass = match ($order->payment_status) {
                                             'paid' => 'bg-emerald-100 text-emerald-800',
@@ -469,10 +469,10 @@
                             @if ($step == 5)
                                 <div
                                     class="bg-white border border-base-content/15 rounded-3xl p-5 text-center shadow-sm">
-                                    <p class="text-xs font-bold text-base-content/70 uppercase mb-3">Kode Pengambilan
+                                    <p class="text-xs font-bold text-base-content/70 mb-3">Kode Pengambilan
                                     </p>
                                     <canvas id="qr-code" class="mx-auto rounded-xl"></canvas>
-                                    <p class="text-3xl font-black text-base-content tracking-widest mt-4">
+                                    <p class="text-3xl font-black text-base-content mt-4">
                                         {{ $order->pickup_code }}</p>
                                     <p class="text-xs text-base-content/50 mt-2 font-medium">Tunjukkan ke kasir untuk
                                         verifikasi pesanan</p>

@@ -18,7 +18,7 @@
                 <label
                     class="input input-bordered flex items-center w-full shadow-sm rounded-3xl border-base-content/40 focus-within:border-base-content input-md pr-12">
                     <input type="text" id="manual_code_input" placeholder="Masukkan kode pesanan"
-                        class="grow text-sm sm:text-base font-bold uppercase pl-2 placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-sm"
+                        class="grow text-sm sm:text-base font-bold pl-2 placeholder:font-medium placeholder:text-sm"
                         maxlength="6">
                 </label>
                 <button type="button" onclick="searchManualCode()"
