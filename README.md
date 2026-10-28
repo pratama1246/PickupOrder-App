@@ -452,4 +452,4 @@ Initial data populated by `php artisan db:seed`:
 
 ## License
 
-This software is open-source, distributed under the [MIT License](LICENSE). Politeknik Negeri Cilacap.
+This software is open-source, distributed under the [MIT License](LICENSE).
