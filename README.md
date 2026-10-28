@@ -1,528 +1,455 @@
-# 🛒 PickupOrder-App
+<div align="center">
+  <img src="public/assets/brand/brand-logo-horizontal.svg" alt="PickupOrder PNC Logo" width="380" />
 
-**PickupOrder-App** is a modern and responsive **Laravel 13 (PHP 8.3+)** web application designed to streamline food pre-ordering and pickup operations at **Politeknik Negeri Cilacap**. By enabling students to order and pay ahead, the platform effectively eliminates queue bottlenecks in the campus canteens during peak hours.
+  <p><strong>Campus Canteen Pre-Order and Pickup Platform for Politeknik Negeri Cilacap</strong></p>
 
-It supports 3 main roles:
-
-- **Student (User / Mahasiswa)**: browse canteens & menus, add items to cart, checkout, pay, view order history, review menu items, and reorder.
-- **Vendor**: manage canteen profile, manage menus, process incoming orders (including QR/code scanning), and view sales reports.
-- **Admin**: manage canteens and users (including bulk actions and user import).
-
-> Payments are integrated via **Midtrans** (Snap/notification) and the app exposes a webhook endpoint to receive payment notifications.
-> Built as a college project at Politeknik Negeri Cilacap, Informatics Engineering Department.
+  <p>
+    <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white" alt="Laravel 13" /></a>
+    <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.3+-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP 8.3+" /></a>
+    <a href="https://mysql.com"><img src="https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL 8.0+" /></a>
+    <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS v4" /></a>
+    <a href="https://daisyui.com"><img src="https://img.shields.io/badge/DaisyUI-v5-5A0EF8?style=flat-square&logo=daisyui&logoColor=white" alt="DaisyUI v5" /></a>
+    <a href="https://alpinejs.dev"><img src="https://img.shields.io/badge/Alpine.js-v3-8BC0D0?style=flat-square&logo=alpinedotjs&logoColor=black" alt="Alpine.js v3" /></a>
+    <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-v8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite v8" /></a>
+    <a href="https://midtrans.com"><img src="https://img.shields.io/badge/Payments-Midtrans_%7C_QRIS-002B49?style=flat-square" alt="Midtrans and QRIS" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License: MIT" /></a>
+  </p>
+</div>
 
 ---
 
-[![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
-[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![DaisyUI](https://img.shields.io/badge/DaisyUI-v5-5A0EF8?style=for-the-badge&logo=daisyui&logoColor=white)](https://daisyui.com)
-[![Alpine.js](https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=black)](https://alpinejs.dev)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
+### Quick Start
+
+```bash
+git clone https://github.com/pratama1246/PickupOrder-App.git
+cd PickupOrder-App
+composer run setup
+```
 
 ---
 
 ## Table of Contents
 
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Requirements](#requirements)
-- [Local Setup](#local-setup)
-- [Environment Configuration (.env)](#environment-configuration-env)
-- [Database Seed / Demo Accounts](#database-seed--demo-accounts)
-- [Database Structure (Migrations)](#database-structure-migrations)
-- [Payments (Midtrans)](#payments-midtrans)
-- [Testing Midtrans Webhook with Ngrok](#testing-midtrans-webhook-with-ngrok)
-- [Run the App](#run-the-app)
-- [Queue Worker](#queue-worker)
-- [Testing](#testing)
-- [Security Notes](#security-notes)
-- [UI/UX Design](#uiux-design)
-- [Screenshots](#screenshots)
-- [Team](#team)
+- [System Overview](#system-overview)
+- [Practical Use Cases](#practical-use-cases)
+- [Core Engineering Capabilities](#core-engineering-capabilities)
+- [System Architecture](#system-architecture)
+- [Repository Structure](#repository-structure)
+- [Environment Configuration](#environment-configuration)
+- [Local Setup and Runbook](#local-setup-and-runbook)
+- [Midtrans Integration and Webhook](#midtrans-integration-and-webhook)
+- [Operational Deployment Runbook](#operational-deployment-runbook)
+- [Default Demo Accounts](#default-demo-accounts)
+- [Interface Gallery](#interface-gallery)
 - [License](#license)
 
 ---
 
-## Key Features
+## System Overview
 
-### Authentication & Profile
+**PickupOrder-App** is a multi-role web platform built to solve physical queue congestion across Politeknik Negeri Cilacap (PNC) canteen food stalls during peak break hours. The system enables students to explore canteen menus, submit orders ahead of class dismissal, and choose between automated online payment (Midtrans Snap), manual QRIS transfers with image proof validation, or cash settlement at pickup.
 
-- Login (with throttling)
-- Forgot password
-- Logout
-- **Force password change on first login**
-- Update profile + update password
+The platform coordinates three distinct user roles:
+1. **Student (Mahasiswa)**: Menu discovery, multi-item cart management, checkout with time-fencing validation, order tracking, code-based pickup verification, and menu ratings.
+2. **Canteen Vendor**: Food stall profile configuration, live order intake dashboard, barcode/code scanner verification at the counter, menu inventory toggling, daily revenue target monitoring, and sales summaries.
+3. **Campus Administrator**: Canteen stall lifecycle management, bulk student account provisioning via spreadsheet/CSV import, access toggles, and system-wide audits.
 
-### Student (User / Mahasiswa)
-
-- Home & About page
-- Browse canteens and menus
-- Cart (add/update/remove)
-- Checkout with 3 payment methods:
-  * **Midtrans** (online payment via Snap, automatic verification)
-  * **QRIS Manual** (scan vendor's QR code, upload payment proof, manual verification by vendor)
-  * **Pay Direct** (cash on pickup, confirmed by vendor)
-- Order history:
-  * view details
-  * cancel/delete (including cancel by payment group)
-  * review menu items
-  * reorder
-- Payment status polling API (used by frontend JavaScript)
-
-### Vendor
-
-- Vendor dashboard
-- Edit canteen profile
-- Toggle canteen open/closed
-- Set daily target
-- Menu management (CRUD)
-- Incoming order management:
-  * list orders
-  * scan order by code
-  * update order status
-  * cancel/delete order
-  * delete order
-- Sales report
-
-### Admin
-
-- Admin dashboard
-- Canteen management (CRUD + bulk delete)
-- User management (CRUD):
-  * bulk delete
-  * bulk toggle
-  * toggle user per item
-  * import users + download template
+The application adheres to local-first data residency: all transactions and session states persist in MySQL, static media and payment slips reside on local disk storage with public symlinks, and zero external telemetry is collected.
 
 ---
 
-## Tech Stack
+## Practical Use Cases
 
-**Backend**
+### 1. Student Peak Lunch Rush (Mahasiswa)
+- **Problem**: 15 to 30-minute campus break windows are consumed waiting in line at physical food counters, causing delayed returns to lecture halls.
+- **Solution**: Students order meals 10 to 20 minutes prior to break from their phone or laptop. The system holds the order in state until the kitchen prepares it, sending a status update when the food is ready for counter pickup.
 
-- PHP `^8.3`
-- Laravel Framework `^13.0`
-- Midtrans PHP SDK: `midtrans/midtrans-php`
-- Image processing: `intervention/image-laravel`
-- Email: `resend/resend-laravel`
+### 2. Canteen Stall Kitchen Operations (Vendor)
+- **Problem**: Stall operators manage orders via paper notes and unverified phone chat screenshots, resulting in incorrect meals, unpaid orders, and counter chaos.
+- **Solution**: The vendor portal surfaces a structured incoming order board. When a student arrives, the vendor enters or scans the order pickup code, marks the item fulfilled, and checks daily gross revenue progress against predefined financial targets.
 
-**Frontend**
-
-- Blade Templates
-- Tailwind CSS v4 + DaisyUI v5
-- Alpine.js
-- ApexCharts
-- Vite (asset bundling)
+### 3. Departmental Campus Administration (Admin)
+- **Problem**: Academic terms require provisioning hundreds of student accounts and regulating authorized vendors without manual database queries.
+- **Solution**: Department administrators use bulk CSV template imports with automatic initial credential configuration (`is_first_login` flag) and manage vendor stall allocations through a single console.
 
 ---
 
-## Project Structure
+## Core Engineering Capabilities
 
-A breakdown of the project directories and modules:
+- **Operational Window Enforcement (`CheckOnlineOrderHours` Middleware)**:
+  Order placement is strictly bounded to campus operating hours defined in `.env` (`ORDER_START_TIME` to `ORDER_END_TIME`, with active day filtering). Requests outside this window are intercepted at the HTTP pipeline level and rejected with contextual feedback.
+- **Dual Payment Verification Flow**:
+  - *Automated Webhook*: Incoming Midtrans notifications (`POST /payment/notification`) undergo cryptographic SHA-512 signature validation (`hash('sha512', order_id + status_code + gross_amount + server_key)`) without external SDK roundtrip overhead. Grouped order records tied to a single payment code are transitioned atomically.
+  - *Manual QRIS*: Image proofs submitted by students are validated via Intervention Image, stored in private disk directories, and gated behind vendor review before order preparation begins.
+- **Non-Blocking Client Status Polling (`/api/order/{id}/payment-status`)**:
+  A lightweight JSON polling endpoint allows client interfaces to reflect settlement status in real time if webhook delivery is delayed by network partitions.
+- **Unified Cart Synchronization (`SyncCartSession` Middleware)**:
+  Cart contents are reconciled between guest session storage and authenticated database records, preventing item loss during login transitions.
+- **First-Login Credential Rotation Gate**:
+  Accounts seeded or imported by administrators require an immediate password change on first authentication before accessing transactional endpoints.
+- **Layered HTTP Defense (`SecurityHeadersMiddleware`)**:
+  Applies Content Security Policy (CSP), clickjacking prevention (`X-Frame-Options: SAMEORIGIN`), MIME-type sniffing defense (`X-Content-Type-Options: nosniff`), and rate throttling on login (`5 req/min`) and checkout (`10 req/min`).
+- **Tailored Design System Tokens**:
+  Utilizes Tailwind CSS v4 `@theme` tokens (`fern-700`, `vanilla-custard-50`, `pnc-navy`) combined with DaisyUI v5 components and Poppins typography.
 
+---
+
+## System Architecture
+
+```mermaid
+flowchart TD
+    subgraph Clients["Client Layer"]
+        MClient["Mahasiswa (Mobile / Desktop Web)"]
+        VClient["Vendor Terminal (Stall Counter)"]
+        AClient["Campus Admin (Management Console)"]
+    end
+
+    subgraph HTTPGateway["HTTP Gateway & Middleware Pipeline"]
+        Nginx["Web Server / Vite Dev Server"]
+        SecHeaders["SecurityHeadersMiddleware\n(CSP, X-Frame-Options, Nosniff)"]
+        HoursCheck["CheckOnlineOrderHours\n(Schedule Verification)"]
+        RoleCheck["CheckRole Middleware\n(mahasiswa | vendor | admin)"]
+    end
+
+    subgraph AppKernel["Laravel 13 Application Layer"]
+        UserCtrl["User & Checkout Controllers\n(Cart, Orders, Reviews)"]
+        VendorCtrl["Vendor Controllers\n(Order Scan, Menus, Reports)"]
+        AdminCtrl["Admin Controllers\n(Canteen CRUD, CSV User Import)"]
+        CallbackCtrl["PaymentCallbackController\n(SHA-512 Signature Verification)"]
+    end
+
+    subgraph AsyncWorkers["Background Processing"]
+        QueueWorker["Laravel Queue Worker\n(Database Driver)"]
+    end
+
+    subgraph Persistence["Storage Layer"]
+        MySQL[("MySQL 8.0+ Database\n(Users, Canteens, Orders, Items, Reviews)")]
+        DiskStorage[("Local Disk Storage\n(/storage/app/public)")]
+    end
+
+    subgraph ExternalGateways["External Payment Infrastructure"]
+        MidtransSnap["Midtrans Snap Gateway\n(Online Payment Engine)"]
+        MidtransWebhook["Midtrans Webhook Callbacks\n(Notification POST)"]
+    end
+
+    Clients --> Nginx
+    Nginx --> SecHeaders
+    SecHeaders --> HoursCheck
+    HoursCheck --> RoleCheck
+
+    RoleCheck --> UserCtrl
+    RoleCheck --> VendorCtrl
+    RoleCheck --> AdminCtrl
+
+    UserCtrl -->|Request Payment Token| MidtransSnap
+    MidtransWebhook -->|POST /payment/notification| CallbackCtrl
+
+    UserCtrl --> MySQL
+    VendorCtrl --> MySQL
+    AdminCtrl --> MySQL
+    CallbackCtrl --> MySQL
+
+    VendorCtrl --> DiskStorage
+    UserCtrl --> DiskStorage
+
+    AppKernel -.->|Enqueue Background Jobs| QueueWorker
+    QueueWorker --> MySQL
 ```
+
+---
+
+## Repository Structure
+
+```text
 pickuporder-app/
 ├── app/
+│   ├── Helpers/
+│   │   └── OrderHelper.php              # Schedule validation and active day calculation
 │   ├── Http/
-│   │   ├── Controllers/             # Request controllers (Admin, Vendor, User, Auth)
-│   │   └── Middleware/              # HTTP request filters (Role checks, order hours, security)
-│   └── Models/                      # Eloquent models representing database tables & relationships
-├── bootstrap/                       # Application bootstrapping and configuration caching
-├── config/                          # Application configuration files (app, database, services, etc.)
+│   │   ├── Controllers/
+│   │   │   ├── Admin/                   # Canteen CRUD, user bulk operations and CSV imports
+│   │   │   ├── AuthController.php       # Authentication, throttling and first-login password flow
+│   │   │   ├── HomeController.php       # Public landing and information pages
+│   │   │   ├── ProfileController.php    # User and vendor profile and credential updates
+│   │   │   ├── User/                    # Cart, Checkout, Order History, Payment Callback, Reviews
+│   │   │   └── Vendor/                  # Dashboard, live order processing, menu management, reports
+│   │   └── Middleware/
+│   │       ├── CheckOnlineOrderHours.php# Restricts checkout to configured operating schedule
+│   │       ├── CheckRole.php            # Role-based access control (mahasiswa, vendor, admin)
+│   │       ├── SecurityHeadersMiddleware.php # CSP, frame isolation and security headers
+│   │       └── SyncCartSession.php      # Session-to-database cart synchronization
+│   └── Models/                          # Eloquent entities (User, Canteen, Menu, Order, OrderItem, Review)
+├── bootstrap/
+│   └── app.php                          # Pipeline configuration, route bindings and CSRF exemptions
+├── config/                              # Configuration profiles (services, app, database)
 ├── database/
-│   ├── factories/                   # Database factories for generating test data
-│   ├── migrations/                  # Database schema definitions
-│   └── seeders/                     # Seeders to populate database with initial & demo accounts
-├── docs/                            # UI/UX design guidelines and page layout analyses
-├── public/                          # Publicly accessible assets and entry points (index.php)
+│   ├── migrations/                      # Schema migrations (relational tables, QRIS proofs, daily targets)
+│   └── seeders/                         # DatabaseSeeder with demo users, canteens and orders
+├── docs/                                # Layout analyses and UI design specifications
+├── public/
+│   ├── assets/                          # Brand SVGs, vector assets and PNC illustrations
+│   └── index.php                        # HTTP front controller
 ├── resources/
-│   ├── css/                         # Application stylesheets (Tailwind CSS v4 custom theme)
-│   ├── js/                          # Application scripts (Alpine.js integration)
+│   ├── css/
+│   │   └── app.css                      # Tailwind CSS v4 custom theme and color tokens
+│   ├── js/
+│   │   └── app.js                       # Alpine.js, ApexCharts and Axios client scripts
 │   └── views/
-│       ├── admin/                   # Admin panel views
-│       ├── auth/                    # Authentication views (login, forced password changes)
-│       ├── components/              # Reusable Blade components (global, admin, vendor, user)
-│       ├── errors/                  # Custom HTTP error pages (403, 404, etc.)
-│       ├── layouts/                 # Master app page templates
-│       ├── user/                    # Student/User flow views
-│       └── vendor/                  # Vendor dashboard and menu management views
-├── routes/                          # Web and console routing definitions
-└── tests/                           # Application test suites (Unit & Feature tests)
+│       ├── admin/                       # Campus administrator interface views
+│       ├── components/                  # Reusable Blade components (cards, navbar, status badges)
+│       ├── layouts/                     # Master templates (app, auth, admin)
+│       ├── user/                        # Student-facing views (browse, canteen, checkout, history)
+│       └── vendor/                      # Vendor booth portal views (dashboard, scan, menu CRUD)
+├── routes/
+│   ├── console.php                      # Artisan command definitions
+│   └── web.php                          # HTTP routing, middleware groups and webhook entry points
+├── tests/                               # Unit and feature test suites
+├── composer.json                        # PHP dependencies and automated workflow scripts
+├── package.json                         # Node dependencies (Tailwind v4, DaisyUI v5, Alpine)
+└── vite.config.js                       # Vite asset build and bundling configuration
 ```
 
 ---
 
-## Requirements
+## Environment Configuration
 
-- PHP **8.3+**
-- Composer
-- Node.js + npm
-- MySQL / MariaDB
-- Queue worker (for background jobs)
+Copy `.env.example` to `.env` and configure key parameters:
+
+| Variable | Default Value | Description |
+|---|---|---|
+| `APP_NAME` | `PickupOrder-App` | Platform identity title |
+| `APP_ENV` | `local` | Environment mode (`local`, `production`) |
+| `APP_KEY` | *(Generated)* | 32-character application encryption key |
+| `APP_URL` | `http://localhost:8000` | Base URL (must match Ngrok / production domain) |
+| `DB_CONNECTION` | `mysql` | Primary database driver |
+| `DB_HOST` | `127.0.0.1` | MySQL server host |
+| `DB_PORT` | `3306` | MySQL port |
+| `DB_DATABASE` | `pickuporder_app` | MySQL database name |
+| `DB_USERNAME` | `root` | Database username |
+| `DB_PASSWORD` | `""` | Database password |
+| `ORDER_START_TIME` | `07:30` | Daily operational opening time (WIB) |
+| `ORDER_END_TIME` | `15:30` | Daily operational cutoff time (WIB) |
+| `ORDER_ACTIVE_DAYS` | `Monday,Tuesday,...` | Comma-delimited active order days |
+| `MIDTRANS_SERVER_KEY` | *(Required)* | Midtrans server authentication key |
+| `MIDTRANS_CLIENT_KEY` | *(Required)* | Midtrans client public key |
+| `MIDTRANS_IS_PRODUCTION` | `false` | Set `true` for live production transactions |
+| `QUEUE_CONNECTION` | `database` | Asynchronous queue driver |
+| `SESSION_DRIVER` | `database` | Session persistence storage |
 
 ---
 
-## Local Setup
+## Local Setup and Runbook
 
-```bash
-# 1) Clone repository
-git clone https://github.com/pratama1246/PickupOrder-App.git
-cd PickupOrder-App
+### Prerequisites
 
-# 2) Install backend dependencies
-composer install
+| Component | Minimum Version | Note |
+|---|---|---|
+| PHP | `^8.3` | Required extensions: `pdo_mysql`, `curl`, `mbstring`, `gd` |
+| Composer | `^2.5` | Dependency management |
+| Node.js | `^20.0` | Node Package Manager (`npm`) |
+| MySQL | `^8.0` | Or MariaDB `^10.5` |
 
-# 3) Create environment file
-cp .env.example .env
+### 1. Automated Setup (Recommended)
 
-# 4) Generate app key
-php artisan key:generate
-
-# 5) Configure your .env (DB, Midtrans, Resend, etc.)
-
-# 6) Run migrations
-php artisan migrate
-
-# 7) Seed demo data (optional)
-php artisan db:seed
-
-# 8) Create storage symlink (required for image uploads)
-php artisan storage:link
-
-# 9) Install frontend dependencies
-npm install
-
-# 10) Build frontend assets
-npm run build
-```
-
-> Alternatively, you can use the provided composer script (steps 2, 3, 4, 6, 9, 10 in one command):
+Run the predefined setup script which handles dependency installation, `.env` initialization, key generation, database migration, and frontend asset compilation:
 
 ```bash
 composer run setup
 ```
 
-> Note: `composer run setup` does not run `php artisan storage:link` or `php artisan db:seed`. Run those manually if needed.
+After the script finishes, generate the public storage symlink for uploaded canteen images and QRIS receipts:
 
----
-
-## Environment Configuration (.env)
-
-### Application
-
-```env
-APP_NAME=PickupOrder-App
-APP_ENV=local
-APP_URL=http://localhost:8000
-APP_TIMEZONE=Asia/Jakarta
-APP_LOCALE=id
+```bash
+php artisan storage:link
 ```
 
-### Order Schedule (Jam Operasional)
-
-The app enforces ordering hours. Orders outside this window will be rejected.
-
-```env
-ORDER_START_TIME="07:30"
-ORDER_END_TIME="15:30"
-ORDER_ACTIVE_DAYS="Monday,Tuesday,Wednesday,Thursday,Friday"
-```
-
-### Database
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=pickuporder_app
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-### Midtrans Payment
-
-```env
-MIDTRANS_SERVER_KEY=your-server-key
-MIDTRANS_CLIENT_KEY=your-client-key
-MIDTRANS_IS_PRODUCTION=false
-```
-
-> Get your keys from the [Midtrans Dashboard](https://dashboard.sandbox.midtrans.com). Set `MIDTRANS_IS_PRODUCTION=true` when deploying to production. The frontend automatically loads the sandbox or production script depending on this setting.
-
-### Email (Resend)
-
-```env
-RESEND_API_KEY=your-resend-api-key
-RESEND_AUDIENCE_ID=your-audience-id
-MAIL_FROM_ADDRESS="noreply@yourdomain.com"
-MAIL_FROM_NAME="${APP_NAME}"
-```
-
-> **Note:** The email integration is currently configured as a boilerplate setup using `resend/resend-laravel`, but the actual transactional email notifications are not yet implemented in the backend application.
-
-### Queue & Session
-
-```env
-QUEUE_CONNECTION=database
-SESSION_DRIVER=database
-```
-
----
-
-## Database Seed / Demo Accounts
-
-The main seeder is: `database/seeders/DatabaseSeeder.php`
-
-Run:
+*(Optional)* Seed demo data (users, canteens, menus, and historical orders):
 
 ```bash
 php artisan db:seed
 ```
 
-### Demo accounts (from seeder)
+### 2. Manual Step-by-Step Setup
 
-> Demo password: `pncpickup123`
-
-- **Admin**
-  * NIM: `admin`
-  * Email: `admin@pnc.ac.id`
-
-- **Vendor 1**
-  * NIM: `vendor_harmoni`
-  * Email: `kantinharmoni@pnc.ac.id`
-
-- **Vendor 2**
-  * NIM: `vendor_mi`
-  * Email: `miacademy@pnc.ac.id`
-
-- **Student**
-  * NIM: `demo_student`
-  * Email: `demo.student@pnc.ac.id`
-  * Note: this user is seeded with `is_first_login=true` so they will be forced to change the password on first login.
-
-Seeder also creates:
-
-- 2 demo canteens
-- multiple demo menus
-- ~40 historical orders over the last 7 days
-- demo reviews for completed orders
-
----
-
-## Database Structure (Migrations)
-
-This project contains migrations such as:
-
-- `create_users_table`
-- `create_canteens_table`
-- `create_menus_table`
-- `create_orders_table`
-- `create_orders_items_table`
-- `create_reviews_table`
-- `create_cart_items_table` (to support database-persistent cart items)
-
-Plus additional changes:
-
-- add avatar to users
-- add payment-related fields to orders
-- add menu category
-- add performance indexes
-- add canteen daily target
-- drop unique order code constraint from orders
-- add manual QRIS and payment proof columns
-
----
-
-## Payments
-
-This app supports **3 payment methods**:
-
-| Method | Description | Verification |
-|---|---|---|
-| **Midtrans (Snap)** | Online payment via Midtrans gateway | Automatic via webhook |
-| **QRIS Manual** | Student scans vendor's QRIS code, uploads payment proof | Manual by vendor |
-| **Pay Direct** | Student pays cash directly at the canteen | Manual by vendor |
-
-### Midtrans Webhook / Notification
-
-Payment notification endpoint:
-
-- `POST /payment/notification`
-
-Notes:
-
-- This endpoint **does not** use auth middleware.
-- This endpoint must be excluded from CSRF protection so Midtrans can call it.
-
-### Payment Status Polling (Frontend)
-
-- `GET /api/order/{id}/payment-status`
-
-Used by the frontend to periodically refresh the payment status.
-
----
-
-## Testing Midtrans Webhook with Ngrok
-
-Since Midtrans needs a **publicly accessible URL** to send payment notifications, you need to expose your local server using [ngrok](https://ngrok.com) during development.
-
-### 1. Install ngrok
+If configuring step-by-step:
 
 ```bash
-# macOS (Homebrew)
-brew install ngrok
+# Clone and enter workspace
+git clone https://github.com/pratama1246/PickupOrder-App.git
+cd PickupOrder-App
 
-# Windows (Chocolatey)
-choco install ngrok
+# Install backend dependencies
+composer install
 
-# Or download directly from https://ngrok.com/download
-```
+# Environment initialization
+cp .env.example .env
+php artisan key:generate
 
-### 2. Start your Laravel app
+# Execute database migrations
+php artisan migrate
 
-```bash
-composer run dev
-# or
-php artisan serve --port=8000
-```
+# Link public storage disk
+php artisan storage:link
 
-### 3. Expose local server with ngrok
-
-```bash
-ngrok http 8000
-```
-
-You will get a public URL like:
-
-```
-Forwarding   https://abc123.ngrok-free.app -> http://localhost:8000
-```
-
-### 4. Set notification URL in Midtrans Dashboard
-
-Go to [Midtrans Sandbox Dashboard](https://dashboard.sandbox.midtrans.com):
-
-```
-Settings > Configuration > Payment Notification URL
-```
-
-Fill in:
-
-```
-https://abc123.ngrok-free.app/payment/notification
-```
-
-### 5. Update your `.env`
-
-```env
-APP_URL=https://abc123.ngrok-free.app
-```
-
-> Remember to update the ngrok URL every time you restart ngrok, as the URL changes each session (unless you use a paid ngrok plan with a fixed domain).
-
----
-
-## Run the App
-
-### Development
-
-```bash
-php artisan serve
-```
-
-To run a full dev mode (server + queue listener + logs + vite), use:
-
-```bash
-composer run dev
-```
-
-### Production Build
-
-```bash
+# Install and build frontend assets
+npm install
 npm run build
 ```
 
----
+### 3. Running the Development Stack
 
-## Queue Worker
-
-This app uses database queues. Make sure to run the queue worker so background jobs are processed.
-
-**Development:**
+To run all development processes concurrently (Laravel server, queue listener, log streaming via Pail, Vite asset watcher, and Ngrok tunnel):
 
 ```bash
+composer run dev
+```
+
+Alternatively, run each process in dedicated terminal tabs:
+
+```bash
+# Terminal 1: HTTP Server
+php artisan serve --host=0.0.0.0 --port=8000
+
+# Terminal 2: Queue Listener
 php artisan queue:listen --tries=1
+
+# Terminal 3: Asset Compiler
+npm run dev
 ```
 
-**Production:**
+---
+
+## Midtrans Integration and Webhook
+
+The platform supports three checkout methods:
+- **Midtrans Snap**: Credit Card, GoPay, ShopeePay, Bank Transfer (BCA, BNI, BRI, Mandiri). Handled via client popup and verified through backend webhook callbacks.
+- **Manual QRIS**: The student transfers via standard static/dynamic QRIS, uploads the screenshot receipt, and awaits vendor counter confirmation.
+- **Pay Direct**: Cash on pickup confirmed manually at the canteen register.
+
+### Webhook Handling (`POST /payment/notification`)
+
+- This route is excluded from CSRF validation inside `bootstrap/app.php` to accept external calls from Midtrans servers.
+- The controller calculates the expected SHA-512 signature using the raw payload and `MIDTRANS_SERVER_KEY`:
+  ```php
+  $expected = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+  ```
+  If signatures match, order statuses (`pending`, `settlement`, `expire`, `cancel`) are propagated to all items associated with the `payment_code`.
+
+### Local Webhook Testing via Ngrok
+
+1. Start an Ngrok tunnel pointing to port 8000:
+   ```bash
+   ngrok http 8000
+   ```
+2. Note the generated HTTPS forwarding URL (e.g. `https://your-domain.ngrok-free.app`).
+3. Set your notification endpoint in the [Midtrans Sandbox Dashboard](https://dashboard.sandbox.midtrans.com):
+   `Settings > Configuration > Payment Notification URL`
+   ```
+   https://your-domain.ngrok-free.app/payment/notification
+   ```
+4. Update `APP_URL` in `.env`:
+   ```env
+   APP_URL=https://your-domain.ngrok-free.app
+   ```
+
+---
+
+## Operational Deployment Runbook
+
+When deploying to a production server (Ubuntu/Debian, Nginx, PHP-FPM, MySQL):
+
+### 1. Production Build & Optimization
+```bash
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan storage:link
+php artisan migrate --force
+```
+
+### 2. Supervisor Configuration for Queue Workers
+Create `/etc/supervisor/conf.d/pickuporder-worker.conf`:
+
+```ini
+[program:pickuporder-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/pickuporder-app/artisan queue:work database --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/var/www/pickuporder-app/storage/logs/worker.log
+stopwaitsecs=3600
+```
+
+Update supervisor processes:
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start pickuporder-worker:*
+```
+
+### 3. Automated Test Execution
+Run test verification suites prior to shipping updates:
 
 ```bash
-php artisan queue:work --daemon
-```
-
-> For production, it is recommended to use a process manager like **Supervisor** to keep the queue worker running persistently.
-
----
-
-## Testing
-
-```bash
-php artisan test
+composer run test
 ```
 
 ---
 
-## Security Notes
+## Default Demo Accounts
 
-- Never commit `.env` to version control.
-- Keep `MIDTRANS_SERVER_KEY` and all secrets inside `.env` only.
-- Midtrans webhook endpoint must validate the notification signature per [Midtrans best practices](https://docs.midtrans.com/docs/verifying-data-authenticity).
-- Always set `MIDTRANS_IS_PRODUCTION=false` in development to avoid real transactions.
-- When going live, update `APP_URL` to your real domain and set `MIDTRANS_IS_PRODUCTION=true`.
+Initial data populated by `php artisan db:seed`:
+
+> Default password for all seeded accounts: `pncpickup123`
+
+| Role | Username / Identifier | Email Address | Initial State |
+|---|---|---|---|
+| **Admin** | `admin` | `admin@pnc.ac.id` | Active |
+| **Vendor 1 (Kantin Harmoni)** | `vendor_harmoni` | `kantinharmoni@pnc.ac.id` | Active (Booth Open) |
+| **Vendor 2 (Kantin MI)** | `vendor_mi` | `miacademy@pnc.ac.id` | Active (Booth Open) |
+| **Student (Mahasiswa)** | `demo_student` | `demo.student@pnc.ac.id` | Requires password change on first login |
 
 ---
 
-## 🎨 UI/UX Design
+## Interface Gallery
 
-The interface was designed in Figma before development, following a design-first workflow. The design system uses a custom **fern green** palette with Poppins typography.
+### Customer Discovery & Mobile Layout
+<p align="center">
+  <img width="800" alt="Main Landing Page" src="https://github.com/user-attachments/assets/4f1f8180-c962-4472-ac7f-78ed208991f1" />
+</p>
 
----
+<p align="center">
+  <img width="320" alt="Mobile Responsive Navigation" src="https://github.com/user-attachments/assets/0186e14e-5eae-4453-8e4a-bc1c334d728b" />
+</p>
 
-## 📸 Screenshots
+### Menu Catalog & Detail View
+<p align="center">
+  <img width="800" alt="Browse Canteen Menus" src="https://github.com/user-attachments/assets/04d379f8-bc73-411c-a7e1-c2a21e5985c2" />
+</p>
 
-### Main UI
+<p align="center">
+  <img width="800" alt="Menu Item Detail" src="https://github.com/user-attachments/assets/48df6952-a5ce-4505-84d1-65ef45cf3c72" />
+</p>
 
-<img width="800" alt="main-page" src="https://github.com/user-attachments/assets/4f1f8180-c962-4472-ac7f-78ed208991f1" />
+### Operational Portals
+<p align="center">
+  <img width="800" alt="Vendor Stall Dashboard" src="https://github.com/user-attachments/assets/3a467efb-f938-4e31-ab98-1fa361633cf6" />
+</p>
 
-### Main UI Mobile Version
-
-<img width="320" alt="IMG_20260530_192939" src="https://github.com/user-attachments/assets/0186e14e-5eae-4453-8e4a-bc1c334d728b" />
-
-### Browse Page
-
-<img width="800" alt="browse-page" src="https://github.com/user-attachments/assets/04d379f8-bc73-411c-a7e1-c2a21e5985c2" />
-
-### Menu Detail Page
-
-<img width="800" alt="menu-detail-page" src="https://github.com/user-attachments/assets/48df6952-a5ce-4505-84d1-65ef45cf3c72" />
-
-### Vendor Canteen Dashboard
-
-<img width="800" alt="vendor-dashboard" src="https://github.com/user-attachments/assets/3a467efb-f938-4e31-ab98-1fa361633cf6" />
-
-### Admin Dashboard
-
-<img width="800" alt="admin-dashboard" src="https://github.com/user-attachments/assets/95b1b740-6cb6-4b66-8346-d8846c9defeb" />
+<p align="center">
+  <img width="800" alt="Campus Admin Dashboard" src="https://github.com/user-attachments/assets/95b1b740-6cb6-4b66-8346-d8846c9defeb" />
+</p>
 
 ---
 
 ## License
 
-This project is open-sourced software licensed under the [MIT License](LICENSE).
-
----
-
-[![GitHub](https://img.shields.io/badge/GitHub-pratama1246-black?logo=github)](https://github.com/pratama1246)
+This software is open-source, distributed under the [MIT License](LICENSE). Politeknik Negeri Cilacap.

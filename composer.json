@@ -1,11 +1,16 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "pnc/pickuporder-app",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Platform pemesanan dan pengambilan makanan kantin kampus Politeknik Negeri Cilacap berbasis Laravel 13.",
     "keywords": [
         "laravel",
-        "framework"
+        "laravel-13",
+        "pickup-order",
+        "canteen-management",
+        "midtrans",
+        "qris",
+        "politeknik-negeri-cilacap"
     ],
     "license": "MIT",
     "require": {
